@@ -16,10 +16,11 @@ PR Number: $ARGUMENTS (auto-detect from current branch if not provided)
 Create a structured task list:
 
 - [ ] Step 1: Identify PR to Review
-- [ ] Step 2: Run PR Review
-- [ ] Step 3: Run Quick Checks
-- [ ] Step 4: Update Project State
-- [ ] Step 5: Present Next Steps
+- [ ] Step 2: Fetch Open Review Comments
+- [ ] Step 3: Run PR Review
+- [ ] Step 4: Run Quick Checks
+- [ ] Step 5: Update Project State
+- [ ] Step 6: Present Next Steps
 
 ### Step 1: Identify PR to Review
 
@@ -35,7 +36,17 @@ GH_PAGER= gh pr view --json number,title,state,headRefName,url --jq '"PR #\(.num
 
 If PR is already merged or closed, inform user and exit.
 
-### Step 2: Run PR Review & Fix Issues
+### Step 2: Fetch Open Review Comments
+
+Use the `gh-address-comments` skill to download all open review comments on this PR:
+
+```
+/gh-address-comments
+```
+
+This fetches all unresolved review comments and inline code feedback left by reviewers. Compile these into a list of known issues before proceeding. The review in Step 3 must not duplicate work already called out in these comments — instead, treat them as pre-identified issues that must be resolved alongside any new findings.
+
+### Step 3: Run PR Review & Fix Issues
 
 Run comprehensive PR review using 1-5 specialized instruction sets. Depending on your capabilitites, run as:
 
@@ -62,7 +73,7 @@ Determine which to run based on the scope of the PR. The following are available
 
 **Address ALL issues**, not just critical ones. Continue iterating until no issues remain.
 
-### Step 3: Run Quick Checks
+### Step 4: Run Quick Checks
 
 **If changes were made:**
 
@@ -74,7 +85,7 @@ git diff --name-only origin/main...HEAD -- '*.swift' | xargs -r swiftlint lint -
 ./scripts/test.sh unit 1
 ```
 
-### Step 4: Update Project State
+### Step 5: Update Project State
 
 Update STATE.md to record pre-merge completion:
 
@@ -91,7 +102,7 @@ git commit -m "chore: mark PR review complete"
 git push
 ```
 
-### Step 5: Present Next Steps
+### Step 6: Present Next Steps
 
 ```
 ✅ PR Review Complete
