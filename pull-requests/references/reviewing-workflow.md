@@ -19,8 +19,7 @@ Create a structured task list:
 - [ ] Step 2: Fetch Open Review Comments
 - [ ] Step 3: Run PR Review
 - [ ] Step 4: Run Quick Checks
-- [ ] Step 5: Update Project State
-- [ ] Step 6: Present Next Steps
+- [ ] Step 5: Present Next Steps
 
 ### Step 1: Identify PR to Review
 
@@ -38,11 +37,22 @@ If PR is already merged or closed, inform user and exit.
 
 ### Step 2: Fetch Open Review Comments
 
-Use the `gh-address-comments` skill to download all open review comments on this PR:
+Run all `gh` commands with elevated network access.
 
-```
-/gh-address-comments
-```
+Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+
+## 1) Inspect comments needing attention
+- Run `scripts/fetch_comments.py` which will print out all the comments and review threads on the PR
+
+## 2) Ask the user for clarification
+- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
+- Ask the user which numbered comments should be addressed
+
+## 3) If user chooses comments
+- Apply fixes for the selected comments
+
+Notes:
+- If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
 
 This fetches all unresolved review comments and inline code feedback left by reviewers. Compile these into a list of known issues before proceeding. The review in Step 3 must not duplicate work already called out in these comments — instead, treat them as pre-identified issues that must be resolved alongside any new findings.
 
@@ -50,13 +60,13 @@ This fetches all unresolved review comments and inline code feedback left by rev
 
 Run comprehensive PR review using 1-5 specialized instruction sets. Depending on your capabilitites, run as:
 
-1. **Agent Team** - parallel agents for each review type, then aggregate results
-(or, if agent teams not supportedL)
-1. **Sub-agents** - parallel instructions for each sub-agent, then aggregate results
-(or, if neither supported)
-3. **Sequential instructions** - run each review type one after another 
+  1. **Agent Team** - parallel agents for each review type, then aggregate results
+  (or, if agent teams not supportedL)
+  1. **Sub-agents** - parallel instructions for each sub-agent, then aggregate results
+  (or, if neither supported)
+  1. **Sequential instructions** - run each review type one after another 
 
-Determine which to run based on the scope of the PR. The following are available to use at your discretion:
+1. Determine which to run based on the scope of the PR. The following are available to use at your discretion:
 
 - **code-reviewer**: Code quality, bugs, logic errors → `./references/code-reviewer-instructions.md`
 - **code-simplifier**: Code complexity and duplication → `./references/code-simplifier-instructions.md`
@@ -67,11 +77,19 @@ Determine which to run based on the scope of the PR. The following are available
 
 **For each issue found:**
 
-1. **Critical issues** - Must fix immediately
-2. **Important issues** - Should fix before merge
-3. **Suggestions** - Consider fixing
+2. Compile a list of issues categorized by severity and present to the user with your recommendations.
 
-**Address ALL issues**, not just critical ones. Continue iterating until no issues remain.
+   1. **Critical issues** - Must fix immediately
+   2. **Important issues** - Should fix before merge
+   3. **Suggestions** - Consider fixing
+
+3. Ask the user how they would like to proceed.
+
+4. Address the selected comments and issues.
+
+5. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
+
+6. Commit your changes with a message like "fix: address PR review comments" and push to the branch.
 
 ### Step 4: Run Quick Checks
 
@@ -85,24 +103,7 @@ git diff --name-only origin/main...HEAD -- '*.swift' | xargs -r swiftlint lint -
 ./scripts/test.sh unit 1
 ```
 
-### Step 5: Update Project State
-
-Update STATE.md to record pre-merge completion:
-
-```markdown
-Status: PR Review complete - ready for milestone completion
-Last activity: [today's date] - PR Review complete (CI + reviews passed)
-```
-
-Commit the state update:
-
-```bash
-git add .planning/STATE.md
-git commit -m "chore: mark PR review complete"
-git push
-```
-
-### Step 6: Present Next Steps
+### Step 5: Present Next Steps
 
 ```
 ✅ PR Review Complete
@@ -126,7 +127,6 @@ Ready for merge when you are.
 
 ## Critical Rules
 
-- **Fix ALL issues** - Don't skip "minor" issues; they compound
 - **Re-run after fixes** - Confirm issues are resolved before proceeding
 - **Don't skip steps** - Each review type catches different issues
 - **Final validation required** - Confirm no regressions from fixes
