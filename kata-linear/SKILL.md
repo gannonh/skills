@@ -12,11 +12,11 @@ Always invoke `/linear` for the actual MCP calls.
 
 Parse the user's request to determine which workflow to run:
 
-| User says | Mode |
-|-----------|------|
-| "start KAT-N", "pick up KAT-N", "implement KAT-N", "work on KAT-N" | **Start** |
-| "finish KAT-N", "complete KAT-N", "done with KAT-N", "close KAT-N" | **End** |
-| "what's next", "what should I work on", "next ticket", "next issue" | **Next** |
+| User says                                                           | Mode      |
+| ------------------------------------------------------------------- | --------- |
+| "start KAT-N", "pick up KAT-N", "implement KAT-N", "work on KAT-N"  | **Start** |
+| "finish KAT-N", "complete KAT-N", "done with KAT-N", "close KAT-N"  | **End**   |
+| "what's next", "what should I work on", "next ticket", "next issue" | **Next**  |
 
 If ambiguous, ask.
 
@@ -71,6 +71,7 @@ Find the next actionable issue.
 ### Step 5 — Summarize
 
 Present to the user:
+
 - Issue title and acceptance criteria
 - Blocker status (all clear)
 - Context loaded (specs, mocks, relevant code)
@@ -84,6 +85,7 @@ Present to the user:
 ### Step 1 — Gather evidence
 
 Ask the user to confirm or provide:
+
 - PR link or branch with changes
 - Test results (unit and/or E2E)
 - Screenshots or spec-state references demonstrating acceptance criteria
@@ -94,6 +96,7 @@ If a PR already exists on the current branch, detect it with `gh pr view`.
 
 Check if the project's CLAUDE.md or Linear workflow contract defines a hard gate.
 Common gates:
+
 - Referenced spec states/interactions are verified
 - Evidence links are attached (tests, screenshots, or traceable PR notes)
 - Gap analysis items are either closed or split into follow-up issues
@@ -127,6 +130,12 @@ If evidence is insufficient, list what's missing and stop.
 ### Step 6 — Summarize
 
 Present:
+
 - Issue marked Done with evidence link
 - Which downstream issue(s) were promoted to Todo
 - Suggested next action
+
+## Important Reminders
+
+- Always pass `includeRelations: true` when calling `get_issue` to see blocking dependencies.
+- Always reference the attached media as the source of truth for design specs and mocks.
