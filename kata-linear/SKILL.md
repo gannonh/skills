@@ -59,7 +59,7 @@ Find the next actionable issue.
 ### Step 3 — Load context
 
 1. Read the issue description for references to specs, mocks, docs, or design files.
-2. Check the project's CLAUDE.md for pointers to spec/mock/design directories.
+2. Read Linear documents (execution model, workflow contract) for project-specific guidance.
 3. Read relevant spec files, mock images, or design references found in steps 1 and 2.
 4. Check existing source code in the areas the issue will touch.
 
