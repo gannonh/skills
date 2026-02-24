@@ -62,7 +62,8 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 Notes:
 - If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
 
-**Only after the user has answered which comments to address and you have applied (or skipped) those fixes and resolved/replied in GitHub, proceed to Step 3.**
+
+**STOP HERE: Only after the user has answered which comments to address and you have applied (or skipped) those fixes and resolved/replied in GitHub, proceed to Step 3.**
 
 ### Step 3: Run PR Review & Fix Issues
 
@@ -72,9 +73,15 @@ Depending on your capabilities, run as:
 
   1. **Agent Team** – parallel agents for each review type, then aggregate results
   (or, if agent teams not supported)
-  2. **Sub-agents** – parallel instructions for each sub-agent, then aggregate results
+  1. **Sub-agents** – parallel instructions for each sub-agent, then aggregate results
   (or, if neither supported)
-  3. **Sequential instructions** – run each review type one after another
+  1. **Sequential instructions** – run each review type one after another
+
+IMPORTANT:
+
+- Claude Code: Run as agent Teams or Sub-agents
+- Codex: Run as Sub-agents
+- Cursor: Run as Sub-agents
 
 1. Determine which to run based on the scope of the PR. The following are available (use at your discretion):
 
@@ -98,6 +105,8 @@ Depending on your capabilities, run as:
 5. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
 
 6. Commit your changes with a message like "fix: address PR review comments" and push to the branch.
+
+**STOP HERE: Only after the user has answered which review issues to address and you have applied those fixes and resolved/replied in GitHub, proceed to Step 4.**
 
 ### Step 4: Run Quick Checks
 
