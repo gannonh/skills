@@ -78,26 +78,26 @@ Depending on your capabilities, run as:
 
 1. Determine which to run based on the scope of the PR. The following are available (use at your discretion):
 
-- Code quality, bugs, logic errors → `./references/code-reviewer-instructions.md`
-- Code complexity and duplication → `./references/code-simplifier-instructions.md`
-- Comment accuracy → `./references/comment-analyzer-instructions.md`
-- Error handling patterns → `./references/failure-finder-instructions.md`
-- Test coverage completeness → `./references/pr-test-analyzer-instructions.md`
-- Type design quality → `./references/type-design-analyzer-instructions.md`
+- **code-reviewer**: Code quality, bugs, logic errors → `./references/code-reviewer-instructions.md`
+- **code-simplifier**: Code complexity and duplication → `./references/code-simplifier-instructions.md`
+- **comment-analyzer**: Comment accuracy → `./references/comment-analyzer-instructions.md`
+- **failure-finder**: Error handling patterns → `./references/failure-finder-instructions.md`
+- **pr-test-analyzer**: Test coverage completeness → `./references/pr-test-analyzer-instructions.md`
+- **type-design-analyzer**: Type design quality → `./references/type-design-analyzer-instructions.md`
 
-1. **Aggregate results** from all review types, then compile a list of issues categorized by severity and present to the user:
+2. **Aggregate results** from all review types, then compile a list of issues categorized by severity and present to the user:
 
    - **Critical issues** – Must fix immediately
    - **Important issues** – Should fix before merge
    - **Suggestions** – Consider fixing
 
-2. **You MUST ask the user:** "How would you like to proceed? Which issues (by severity or item) should I address?" Do not assume or skip this question. Do not apply fixes until the user has answered.
+3. **You MUST ask the user:** "How would you like to proceed? Which issues (by severity or item) should I address?" Do not assume or skip this question. Do not apply fixes until the user has answered.
 
-3. Address the comments and issues the user selected.
+4. Address the comments and issues the user selected.
 
-4. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
+5. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
 
-5. Commit your changes with a message like "fix: address PR review comments" and push to the branch.
+6. Commit your changes with a message like "fix: address PR review comments" and push to the branch.
 
 ### Step 4: Run Quick Checks
 
