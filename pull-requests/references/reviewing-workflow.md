@@ -135,6 +135,8 @@ Ready for merge when you are.
 
 ## Critical Rules
 
-- **Re-run after fixes** - Confirm issues are resolved before proceeding
-- **Don't skip steps** - Each review type catches different issues
-- **Final validation required** - Confirm no regressions from fixes
+- **Step 2 gate** – Always present numbered PR comment findings and ask which to address. Do not proceed to apply fixes or to Step 3 until the user has answered.
+- **Step 3 required** – Always run the full PR review (agent team, sub-agents, or sequential instruction sets). Do not substitute a brief manual review. Always present issues by severity, then ask how the user would like to proceed before addressing any.
+- **Re-run after fixes** – Confirm issues are resolved before proceeding
+- **Don't skip steps** – Each review type catches different issues
+- **Final validation required** – Confirm no regressions from fixes
