@@ -51,10 +51,14 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 ## 3) If user chooses comments
 - Apply fixes for the selected comments
 
+## 4) Resolve/reply to comments
+- As you address comments, close them out in the GitHub UI and reply to reviewers with your changes and any questions for clarification.
+- For those comments not addressed, reply to reviewers with your reasoning and ask for any clarification if needed.
+
 Notes:
 - If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
 
-This fetches all unresolved review comments and inline code feedback left by reviewers. Compile these into a list of known issues before proceeding. The review in Step 3 must not duplicate work already called out in these comments — instead, treat them as pre-identified issues that must be resolved alongside any new findings.
+Once the open review comments are addressed, proceed to Step 3:
 
 ### Step 3: Run PR Review & Fix Issues
 
