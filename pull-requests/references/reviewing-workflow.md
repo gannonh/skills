@@ -16,8 +16,8 @@ PR Number: $ARGUMENTS (auto-detect from current branch if not provided)
 Create a structured task list:
 
 - [ ] Step 1: Identify PR to Review
-- [ ] Step 2: Fetch Open Review Comments
-- [ ] Step 3: Run PR Review
+- [ ] Step 2: Fetch Open Review Comments & Fix Issues
+- [ ] Step 3: Run PR Review & Fix Issues
 - [ ] Step 4: Run Quick Checks
 - [ ] Step 5: Present Next Steps
 
