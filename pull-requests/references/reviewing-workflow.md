@@ -35,23 +35,23 @@ GH_PAGER= gh pr view --json number,title,state,headRefName,url --jq '"PR #\(.num
 
 If PR is already merged or closed, inform user and exit.
 
-### Step 2: Fetch Open Review Comments
+### Step 2: Fetch Open Review Comments & Fix Issues
 
 Run all `gh` commands with elevated network access.
 
 Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
 
-## 1) Inspect comments needing attention
+#### 1: Inspect comments needing attention
 - Run `scripts/fetch_comments.py` which will print out all the comments and review threads on the PR
 
-## 2) Ask the user for clarification
+#### 2: Ask the user for clarification
 - Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
 - Ask the user which numbered comments should be addressed
 
-## 3) If user chooses comments
+#### 3: If user chooses comments
 - Apply fixes for the selected comments
 
-## 4) Resolve/reply to comments
+#### 4: Resolve/reply to comments
 - As you address comments, close them out in the GitHub UI and reply to reviewers with your changes and any questions for clarification.
 - For those comments not addressed, reply to reviewers with your reasoning and ask for any clarification if needed.
 
@@ -62,7 +62,7 @@ Once the open review comments are addressed, proceed to Step 3:
 
 ### Step 3: Run PR Review & Fix Issues
 
-Run comprehensive PR review using 1-5 specialized instruction sets. Depending on your capabilitites, run as:
+Run your own comprehensive PR review using 1-5 specialized instruction sets. Depending on your capabilitites, run as:
 
   1. **Agent Team** - parallel agents for each review type, then aggregate results
   (or, if agent teams not supportedL)
