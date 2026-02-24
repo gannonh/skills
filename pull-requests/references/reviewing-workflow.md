@@ -46,33 +46,37 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 
 **NOTE: the script lives under the skill’s directory, not the current workspace.**
 
-#### 2: Ask the user for clarification
-- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
-- Ask the user which numbered comments should be addressed
+#### 2: Present findings and ask the user (required gate)
+- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for each.
+- **You MUST then ask the user:** "Which of these comments (by number) should I address? Reply with numbers, 'none', or 'all'."
+- Do not assume "none" or skip this question. Do not apply fixes or proceed to Step 3 until the user has answered.
 
 #### 3: If user chooses comments
-- Apply fixes for the selected comments
+- Apply fixes only for the comments the user selected (by number). If the user said "none", skip applying fixes.
+- Resolve or reply to those threads in the GitHub UI as you address them.
 
 #### 4: Resolve/reply to comments
 - As you address comments, close them out in the GitHub UI and reply to reviewers with your changes and any questions for clarification.
-- For those comments not addressed, reply to reviewers with your reasoning and ask for any clarification if needed.
+- For those comments not addressed (user said "none" or did not select them), reply to reviewers with your reasoning and ask for any clarification if needed.
 
 Notes:
 - If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
 
-Once the open review comments are addressed, proceed to Step 3:
+**Only after the user has answered which comments to address and you have applied (or skipped) those fixes and resolved/replied in GitHub, proceed to Step 3.**
 
 ### Step 3: Run PR Review & Fix Issues
 
-Run your own comprehensive PR review using 1-5 specialized instruction sets. Depending on your capabilitites, run as:
+**This step MUST run every time.** Do not substitute a brief manual review or skip it. Run the full review using specialized instruction sets, then aggregate and present by severity before asking the user how to proceed.
 
-  1. **Agent Team** - parallel agents for each review type, then aggregate results
-  (or, if agent teams not supportedL)
-  1. **Sub-agents** - parallel instructions for each sub-agent, then aggregate results
+Depending on your capabilities, run as:
+
+  1. **Agent Team** – parallel agents for each review type, then aggregate results
+  (or, if agent teams not supported)
+  2. **Sub-agents** – parallel instructions for each sub-agent, then aggregate results
   (or, if neither supported)
-  1. **Sequential instructions** - run each review type one after another 
+  3. **Sequential instructions** – run each review type one after another
 
-1. Determine which to run based on the scope of the PR. The following are available to use at your discretion:
+1. Determine which to run based on the scope of the PR. The following are available (use at your discretion):
 
 - **code-reviewer**: Code quality, bugs, logic errors → `./references/code-reviewer-instructions.md`
 - **code-simplifier**: Code complexity and duplication → `./references/code-simplifier-instructions.md`
@@ -81,17 +85,15 @@ Run your own comprehensive PR review using 1-5 specialized instruction sets. Dep
 - **pr-test-analyzer**: Test coverage completeness → `./references/pr-test-analyzer-instructions.md`
 - **type-design-analyzer**: Type design quality → `./references/type-design-analyzer-instructions.md`
 
-**For each issue found:**
+2. **Aggregate results** from all review types, then compile a list of issues categorized by severity and present to the user:
 
-2. Compile a list of issues categorized by severity and present to the user with your recommendations.
+   - **Critical issues** – Must fix immediately
+   - **Important issues** – Should fix before merge
+   - **Suggestions** – Consider fixing
 
-   1. **Critical issues** - Must fix immediately
-   2. **Important issues** - Should fix before merge
-   3. **Suggestions** - Consider fixing
+3. **You MUST ask the user:** "How would you like to proceed? Which issues (by severity or item) should I address?" Do not assume or skip this question. Do not apply fixes until the user has answered.
 
-3. Ask the user how they would like to proceed.
-
-4. Address the selected comments and issues.
+4. Address the comments and issues the user selected.
 
 5. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
 
