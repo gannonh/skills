@@ -47,15 +47,18 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 4. Scope non-GitHub Actions checks.
    - If `detailsUrl` is not a GitHub Actions run, label it as external and only report the URL.
    - Do not attempt Buildkite or other providers; keep the workflow lean.
-5. Summarize failures for the user.
+5. Summarize failures.
    - Provide the failing check name, run URL (if any), and a concise log snippet.
    - Call out missing logs explicitly.
 6. Create a plan.
-   - Use the `create-plan` skill to draft a concise plan and request approval.
-7. Implement after approval.
-   - Apply the approved plan, summarize diffs/tests, and ask about opening a PR.
+   - Use the `create-plan` skill to draft a concise plan.
+7. Implement plan.
+   - Apply the plan, summarize diffs/tests, commit and push changes.
 8. Recheck status.
-   - After changes, suggest re-running the relevant tests and `gh pr checks` to confirm.
+   - After changes, re-run the relevant tests and `gh pr checks` to confirm.
+   - If new or existing failures remain, repeat the workflow until CI passes
+9. Summarize outcome.
+   - Once CI checks pass, summarize the fix and confirm with the user before merging or proceeding to the next steps in their workflow.
 
 ## Bundled Resources
 

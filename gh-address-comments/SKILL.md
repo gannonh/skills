@@ -13,7 +13,7 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 
 ## 1) Inspect comments needing attention
 
-- Run `./scripts/fetch_comments.py` which will print out all the comments and review threads on the PR
+- Run `<path-to-skill>/scripts/fetch_comments.py` which will print out all the comments and review threads on the PR
 
 ## 2) Ask the user for clarification
 
