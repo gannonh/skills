@@ -84,11 +84,11 @@ Present to the user:
 
 ### Step 1 — Gather evidence
 
-Ask the user to confirm or provide:
+Gather evidence:
 
 - PR link or branch with changes
 - Test results (unit and/or E2E)
-- Screenshots or spec-state references demonstrating acceptance criteria
+- Screenshots/video or spec-state references demonstrating acceptance criteria
 
 If a PR already exists on the current branch, detect it with `gh pr view`.
 
@@ -100,10 +100,12 @@ Common gates:
 - Referenced spec states/interactions are verified
 - Evidence links are attached (tests, screenshots, or traceable PR notes)
 - Gap analysis items are either closed or split into follow-up issues
+- Acceptance criteria are all marked as verified in the issue checklist
+- Definition of Done checklist is completed
 
 If evidence is insufficient, list what's missing and stop.
 
-### Step 3 — Attach evidence to the issue
+### Step 3 — Attach evidence to the issue & PR
 
 1. Call `create_comment` on the issue with a structured evidence summary:
    ```
@@ -111,8 +113,9 @@ If evidence is insufficient, list what's missing and stop.
    - PR: [link]
    - Tests: [pass/fail summary]
    - Acceptance coverage: [which criteria verified]
-   - Screenshots: [if applicable]
+   - Screenshots/video: [if applicable]
    ```
+2. If a PR exists, add the same summary as a comment on the PR. 
 
 ### Step 4 — Move to Done
 
