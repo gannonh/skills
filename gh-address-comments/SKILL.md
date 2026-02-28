@@ -9,7 +9,12 @@ metadata:
 
 Guide to find the open PR for the current branch and address its comments with gh CLI. Run all `gh` commands with elevated network access.
 
-Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+## Preflight
+
+1. Create a structured task list of the following steps 
+2. Inform the user of what you are doing
+
+You should endeavor to run this entire workflow autonomously, only engaging the user if issues arise or uncertain how to best proceed.
 
 ## Step 1: Inspect comments needing attention
 
@@ -41,3 +46,4 @@ Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), th
 Notes:
 
 - If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
+- If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
