@@ -11,18 +11,32 @@ Guide to find the open PR for the current branch and address its comments with g
 
 Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
 
-## 1) Inspect comments needing attention
+## Step 1: Inspect comments needing attention
 
 - Run `<path-to-skill>/scripts/fetch_comments.py` which will print out all the comments and review threads on the PR
 
-## 2) Ask the user for clarification
+## Step 2: Enumarate issues identified in comments and review threads
 
-- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for it
-- Ask the user which numbered comments should be addressed
+- Number all the review threads and comments 
+- Provide a short summary of each "issue candidate," including any suggested fixes from the reviewer
 
-## 3) If user chooses comments
+## Step 3: Identify actionable issues to address
 
-- Apply fixes for the selected comments
+- For each issue candidate, analyze against the codebase to distinguish actionable items from false positives or comments that do not require code changes (for example, questions, suggestions, or style comments).
+
+## Step 4: Apply fixes to all actionable issues
+
+- Use TDD when possible: write a failing test that captures the issue, then apply the fix to make the test pass.
+
+## Step 5: Run checks, commit and push changes
+
+- After applying fixes, run the relevant tests and checks locally to confirm the issue is resolved.
+- Summarize the changes made, commit with a clear message referencing the PR and issue numbers, and push the changes to the PR branch.
+
+### Step 5: Monitor CI Actions and address any new failures
+
+- After pushing, monitor the PR's CI checks for any new failures that may arise from the changes.
+- If new failures occur, use the `gh-fix-ci` skill to analyze the CI logs, identify the root cause, and apply necessary fixes.
 
 Notes:
 
