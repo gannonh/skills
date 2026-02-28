@@ -46,6 +46,6 @@ This skill handles the complete PR lifecycle. Based on context and user intent, 
 
 | Intent      | Workflow  | Key Actions                                                 |
 | ----------- | --------- | ----------------------------------------------------------- |
-| "Create PR" | Creating  | Branch → Commit → Push → `gh pr create`                     |
+| "Create PR" | Creating  | Branch → Commit → Push → `<path-to-skill>/scripts/create_pr_safe.py`        |
 | "Review PR" | Reviewing | Identify PR → Run review agents → Fix issues → Update state |
 | "Merge PR"  | Merging   | CI checks → Confirm ready → `gh pr merge` → Checkout main   |
