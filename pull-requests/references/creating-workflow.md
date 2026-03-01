@@ -12,8 +12,8 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
 ## Process
 
 1. **Create a new branch** if on main
-   - Generate branch name from issue, e.g. `feature/39-day-status-tracking`. 
-     - If using Linear use the Linear MCP to get the suggested branch name from the issue. 
+   - Generate branch name from issue, e.g. `feature/39-day-status-tracking`.
+     - If using Linear use the Linear MCP to get the suggested branch name from the issue.
      - If no issue context, generate a descriptive branch name based on the changes being made.
    - Otherwise use the provided branch name
 
@@ -21,12 +21,17 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
    - Follow conventional commits format
    - Use descriptive commit messages
 
-3. **Push the branch to origin**
+3. **Run checks**
+   - Run CI checks locally; e.g., `npm run test:ci:local`
+   - Fix and commit any issues until checks pass before pushing or creating the PR
+
+4. **Push the branch to origin**
+
    ```bash
    git push -u origin $(git branch --show-current)
    ```
 
-4. **Create a pull request** using the safe Python helper (never inline `--body`)
+5. **Create a pull request** using the safe Python helper (never inline `--body`)
    - Always use `<path-to-skill>/scripts/create_pr_safe.py` with a file-backed body to prevent shell interpolation corruption.
    - Use a single-quoted heredoc (`<<'EOF'`) so markdown content is treated as literal text.
 
@@ -48,7 +53,7 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
      - verify the created body matches the source content
      - auto-repair with `gh pr edit --body-file` if mismatch is detected
 
-5. **Report back** with a link to the PR
+6. **Report back** with a link to the PR
 
 ## Success Criteria
 
