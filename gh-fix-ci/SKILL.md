@@ -1,17 +1,13 @@
 ---
 name: "gh-fix-ci"
-description: "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions; use `gh` to inspect checks and logs, summarize failure context, draft a fix plan, and implement only after explicit approval. Treat external providers (for example Buildkite) as out of scope and report only the details URL."
+description: "Use when a user asks to debug or fix failing GitHub PR checks that run in GitHub Actions. Trigger words include: 'fix CI', 'debug GitHub Actions', 'gh pr checks', 'CI is red', 'GitHub Actions failed', 'fix the build', and similar phrases indicating a need to investigate and resolve CI failures in a GitHub-hosted repository."
 ---
 
 # Gh Pr Checks Plan Fix
 
 ## Overview
 
-Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failure snippet, then propose a fix plan and implement after explicit approval.
-
-- If a plan-oriented skill (for example `create-plan`) is available, use it; otherwise draft a concise plan inline and request approval before implementing.
-
-Prereq: authenticate with the standard GitHub CLI once (for example, run `gh auth login`), then confirm with `gh auth status` (repo + workflow scopes are typically required).
+Use gh to locate failing PR checks, fetch GitHub Actions logs for actionable failures, summarize the failures, and implement fixes.
 
 ## Inputs
 
@@ -62,7 +58,7 @@ Prereq: authenticate with the standard GitHub CLI once (for example, run `gh aut
 
 ## Bundled Resources
 
-### scripts/inspect_pr_checks.py
+### <path-to-skill>/scripts/inspect_pr_checks.py
 
 Fetch failing PR checks, pull GitHub Actions logs, and extract a failure snippet. Exits non-zero when failures remain so it can be used in automation.
 
