@@ -39,13 +39,28 @@ digraph uat_flow {
 }
 ```
 
-## Output Contract
+## Step-by-Step Workflow
 
-1. Start with an overview: succinctly describe what was built.
-2. Summarize the scope: in 2-5 bullets (what changed, in user terms).
-3. Declare `Mode`: `user-facing`, `non-user-facing`, or `mixed`.
-4. Validate in small slices with explicit pass/fail capture per slice.
-5. End with `Recommendation`: `GO`, `GO with follow-ups`, or `NO-GO`.
+1. Identify scope and mode.
+   - Confirm what behavior is being accepted.
+   - Declare `Mode`: `user-facing`, `non-user-facing`, or `mixed`.
+2. Define acceptance slices.
+   - Break validation into small slices (2-5), each with clear pass/fail criteria.
+3. Execute validation.
+   - `user-facing`: run an end-to-end demo using `agent-browser` (or `electron` for Electron apps).
+   - `non-user-facing`: run executable proof commands (tests, logs, traces, metrics).
+   - `mixed`: run user-facing demo first, then technical proof tied to the same outcome.
+4. Capture evidence.
+   - Save screenshots/video for user-facing slices.
+   - Save exact commands and key output lines for technical slices.
+5. Report results to the user.
+   - Start with overview and scope bullets.
+   - List each slice with explicit `Pass`/`Fail`.
+   - End with `Recommendation`: `GO`, `GO with follow-ups`, or `NO-GO`.
+6. If recommendation is `GO` or `GO with follow-ups`, update the ticket with UAT evidence.
+   - This is mandatory after successful completion.
+   - Include mode, slice-by-slice results, evidence paths/links, and recommendation.
+   - If no ticket is known, ask for the ticket ID before closing UAT.
 
 ## Mode Playbooks
 
@@ -90,6 +105,20 @@ npx agent-browser screenshot /tmp/uat-scenario-1.png
 
 - Run user-facing layer first via `agent-browser` end-to-end demo.
 - Then run backend/infrastructure proof tied to the same user outcome.
+
+## Ticket Update (Required on Success)
+
+After `GO` or `GO with follow-ups`, post a ticket comment in the project system of record (Linear/Jira/GitHub issue) with:
+
+1. UAT verdict (`GO` / `GO with follow-ups`)
+2. Scope validated (2-5 bullets)
+3. Mode used (`user-facing` / `non-user-facing` / `mixed`)
+4. Slice-by-slice pass/fail summary
+5. Evidence links or file paths (screenshots, videos, logs)
+6. Commands run (for non-user-facing or mixed technical slices)
+7. Any follow-ups or residual risks
+
+Do not mark acceptance complete until this ticket update is posted.
 
 ## Quick Reference
 
