@@ -1,6 +1,6 @@
 ---
 name: user-acceptance
-description: Use when finishing a ticket or pull request and the user asks to validate, demo, or sign off on delivered behavior, including non-user-facing changes.
+description: Use when finishing a ticket or pull request and the user asks to validate, demo, or sign off on delivered behavior, including non-user-facing changes. Triggers include: "UAT", "verify", "walk me through", "show what changed", "can we merge?", and similar phrases indicating a need for an acceptance walkthrough or demonstration before merge.
 ---
 
 # Running User Acceptance Walkthroughs
@@ -11,6 +11,7 @@ Acceptance at delivery time should be experiential, not just a test summary.
 Primary goal: help the human directly see and feel what changed before merge.
 If work is not user-facing, run and show executable proof with user-impact translation.
 For user-facing work, run an end-to-end demo with `agent-browser` skill (use `electron` skill if an electron app) as the default validation method.
+Then give the user instructions for running it themselves.
 
 ## When to Use
 
@@ -56,6 +57,7 @@ digraph uat_flow {
 5. Report results to the user.
    - Start with overview and scope bullets.
    - List each slice with explicit `Pass`/`Fail`.
+   - Provide instructions to the user for running the same validation themselves.
    - End with `Recommendation`: `GO`, `GO with follow-ups`, or `NO-GO`.
 6. If recommendation is `GO` or `GO with follow-ups`, update the ticket with UAT evidence.
    - This is mandatory after successful completion.
@@ -92,6 +94,7 @@ npx agent-browser screenshot /tmp/uat-scenario-1.png
 - Guide one scenario at a time: user action -> expected result -> what to report.
 - Wait for user confirmation before moving to next scenario.
 - Ask at least one "does this feel right?" UX confidence question.
+- Provide instructions and encourage the user to run the same demo themselves - seeing is believing.
 - Prefer hands-on preview over abstract summary.
 
 ### Non-user-facing mode
