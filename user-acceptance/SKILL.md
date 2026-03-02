@@ -10,7 +10,7 @@ description: Use when finishing a ticket or pull request and the user asks to va
 Acceptance at delivery time should be experiential, not just a test summary.
 Primary goal: help the human directly see and feel what changed before merge.
 If work is not user-facing, run and show executable proof with user-impact translation.
-For user-facing work, run an end-to-end demo with `agent-browser` as the default validation method.
+For user-facing work, run an end-to-end demo with `agent-browser` skill (use `electron` skill if an electron app) as the default validation method.
 
 ## When to Use
 
@@ -51,8 +51,8 @@ digraph uat_flow {
 
 ### User-facing mode
 
-- Use `agent-browser` to execute and demonstrate the full user flow end-to-end.
-- Start with `agent-browser` setup/connection commands, then perform each scenario with concrete commands (`open`, `snapshot`, `click`, `fill`, `wait`, `screenshot`).
+- Use `agent-browser` (or `electron`) skill to execute and demonstrate the full user flow end-to-end.
+- Start with `agent-browser` (or `electron`) skill setup/connection commands, then perform each scenario with concrete commands (`open`, `snapshot`, `click`, `fill`, `wait`, `screenshot`).
 - Provide explicit run commands and expected checkpoints for each step.
 - Capture demo evidence (at minimum screenshots; include recording when useful).
 - Report pass/fail per scenario based on observed UI behavior from the live demo.
