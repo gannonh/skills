@@ -38,8 +38,11 @@ Find the next actionable issue.
    a. Query `list_issues` for the project with state `Backlog`.
    b. For each Backlog issue, call `get_issue` with `includeRelations: true`.
    c. Find issues whose `blockedBy` entries are all `Done` (or have no blockers).
-   d. Present unblocked issues as candidates.
-4. If the project has Linear documents (execution model, workflow contract), fetch them
+4. If multiple candidates, determine if they can be run concurrently in isolated worktrees in two ways:
+   a. Re-check Linear tickets (scope + blockers); then
+   b. Inspect the current code boundaries they would touch to see if there’s hidden coupling.
+5. Present unblocked issues as candidates, including concurency guidance/risks
+5. If the project has Linear documents (execution model, workflow contract), fetch them
    with `list_documents` and `get_document` to understand pillar/phase ordering.
 
 ---
