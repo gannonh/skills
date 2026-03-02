@@ -1,6 +1,6 @@
 ---
 name: user-acceptance
-description: Use when finishing a ticket or pull request and the user asks to validate, demo, or sign off on delivered behavior, including non-user-facing changes. Triggers include: "UAT", "verify", "walk me through", "show what changed", "can we merge?", and similar phrases indicating a need for an acceptance walkthrough or demonstration before merge.
+description: Use when finishing a ticket or pull request and the user asks to validate, demo, or sign off on delivered behavior, including non-user-facing changes. Triggers include "UAT", "verify", "walk me through", "show what changed", "can we merge?", and similar phrases indicating a need for an acceptance walkthrough or demonstration before merge.
 ---
 
 # Running User Acceptance Walkthroughs
@@ -125,11 +125,11 @@ Do not mark acceptance complete until this ticket update is posted.
 
 ## Quick Reference
 
-| Mode            | First step                   | Evidence required                         | Done when                                 |
-| --------------- | ---------------------------- | ----------------------------------------- | ----------------------------------------- |
-| user-facing     | Run `agent-browser` scenario 1 | `agent-browser` command trace + screenshots/video + observed behavior | User confirms pass/fail for all scenarios |
-| non-user-facing | Run proof command(s)         | Command output + impact translation       | Reproducible evidence reviewed            |
-| mixed           | User scenario first via `agent-browser` | Both `agent-browser` demo evidence and technical proof | Both layers accepted                      |
+| Mode            | First step                              | Evidence required                                                     | Done when                                 |
+| --------------- | --------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------- |
+| user-facing     | Run `agent-browser` scenario 1          | `agent-browser` command trace + screenshots/video + observed behavior | User confirms pass/fail for all scenarios |
+| non-user-facing | Run proof command(s)                    | Command output + impact translation                                   | Reproducible evidence reviewed            |
+| mixed           | User scenario first via `agent-browser` | Both `agent-browser` demo evidence and technical proof                | Both layers accepted                      |
 
 ## Common Mistakes
 
