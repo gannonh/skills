@@ -1,37 +1,38 @@
 # iOS / macOS Demo Playbook
 
-Use the `automating-ios-simulator` skill to run a live end-to-end demo in the iOS Simulator.
+Build and launch the actual app in the iOS Simulator, then use the feature as a real user would. This is not running XCTest or XCUITest — it is opening the app, navigating to the feature, and interacting with it live.
+
+Use the `automating-ios-simulator` skill to control the running app.
 
 ## Core Loop
 
 For each acceptance slice:
 
-1. **Launch** the app in the simulator
+1. **Build and launch the app** in the simulator (this must happen first)
 2. **Map** the screen to discover interactive elements
-3. **Interact** using semantic navigation (text, type, accessibility ID)
-4. **Screenshot** at each checkpoint to capture evidence
-5. **Re-map** after navigation or state changes to verify expected result
+3. **Use the feature** — tap, type, swipe, scroll as a real user would
+4. **Screenshot** at each checkpoint to capture what the user sees
+5. **Re-map** after navigation or state changes to verify the expected outcome appeared
+6. **Give the user run instructions** — after demoing each slice, tell the user exactly how to launch the app and reproduce the same walkthrough on their own device/simulator
 
 ## Example
 
 ```bash
-# Verify environment
+# Step 1: Verify environment and build/launch the app
 bash scripts/sim_health_check.sh
-
-# Launch app
 python scripts/app_launcher.py --launch com.example.myapp
 
-# Map screen to see interactive elements
+# Step 2: See what's on screen
 python scripts/screen_mapper.py
 
-# Execute the scenario
+# Step 3: Use the feature — navigate to login, fill fields, submit
 python scripts/navigator.py --find-text "Login" --tap
 python scripts/navigator.py --find-type TextField --enter-text "user@example.com"
 python scripts/navigator.py --find-text "Submit" --tap
 
-# Capture evidence
+# Step 4: See what happened
 python scripts/screen_mapper.py
-# Screenshot is taken automatically; or use xcrun simctl io booted screenshot /tmp/uat-ios-scenario.png
+xcrun simctl io booted screenshot /tmp/uat-ios-scenario.png
 ```
 
 ## Guidance

@@ -10,8 +10,20 @@ description: Use when finishing a ticket or pull request and the user asks to va
 Acceptance at delivery time should be experiential, not just a test summary.
 Primary goal: help the human directly see and feel what changed before merge.
 If work is not user-facing, run and show executable proof with user-impact translation.
-For user-facing work, run a live end-to-end demo using the appropriate automation tool for the platform.
+For user-facing work, **launch the actual app and use the feature as a real user would** — navigating screens, clicking buttons, filling forms, observing results.
 Then give the user instructions for running it themselves.
+
+## Demo means "use the app", not "run tests"
+
+Running e2e tests is not a demo. Tests verify code correctness. A demo lets the user see the feature working in the real app, interactively, so they can judge whether the right thing was built.
+
+For user-facing work, the sequence is always:
+1. **Start the app** (dev server, simulator, Electron launch)
+2. **Navigate to the feature** in the running app
+3. **Use it** — click, type, scroll, interact as a user would
+4. **Show the result** — screenshot or describe what appeared on screen
+
+Only after the live demo, run tests if needed to confirm no regressions. Tests supplement the demo; they do not replace it.
 
 ## When to Use
 
@@ -118,6 +130,7 @@ Do not mark acceptance complete until this ticket update is posted.
 
 ## Common Mistakes
 
+- Running e2e or UI tests instead of launching the app and using the feature
 - Dumping a static checklist with no interaction
 - Reporting only test counts with no demonstration
 - Skipping a live demo for user-facing changes
@@ -134,9 +147,11 @@ Do not mark acceptance complete until this ticket update is posted.
 | "I already summarized everything; that is enough." | Summaries do not replace user experience or executable demonstration.            |
 | "User can test later after merge."                 | Acceptance belongs before merge unless explicitly deferred by user.              |
 | "Tests pass, so it works."                         | Tests prove code correctness. Acceptance proves the right thing was built.       |
+| "I'll run the e2e test suite as the demo."         | E2e tests are automated assertions. A demo is using the app interactively.      |
 
 ## Red Flags - Stop and Correct
 
+- You are about to run a test suite instead of launching the app and using the feature.
 - You are about to send only a summary/checklist.
 - You cannot point to any observed behavior or executed proof.
 - You are treating CI green status as equivalent to acceptance.

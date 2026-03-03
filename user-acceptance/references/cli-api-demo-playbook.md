@@ -9,7 +9,7 @@ For each acceptance slice:
 1. **Run** the command or request that exercises the changed behavior
 2. **Capture** the exact command and key output lines (not raw dump)
 3. **Translate** the technical output into user impact
-4. **Provide** a one-liner the user can run independently to verify
+4. **Give the user run instructions** — provide the exact commands the user can copy-paste to reproduce the same demo independently
 
 ## CLI Tool Example
 
