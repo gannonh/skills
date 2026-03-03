@@ -36,66 +36,33 @@ If PR is already merged or closed, inform user and exit.
 
 ### Step 2: Run CI Checks
 
-**Run CI checks and fix any issues:**
+Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then run checks in this order:
 
-#### Phase 1: Run swiftlint on changed files
-```bash
-git diff --name-only origin/main...HEAD -- '*.swift' | xargs -r swiftlint lint --strict
-```
+#### Phase 1: Lint changed files
+Run the project's linter on files changed in this branch.
 
-#### Phase 2: Validate coverage configuration
-```bash
-./scripts/check-coverage-config.sh
-```
-If missing files found, add them to coverage-config.json.
+#### Phase 2: Build the project
+Run the project's build command.
 
-#### Phase 3: Build the project
-```bash
-./scripts/build.sh
-```
+#### Phase 3: Run unit tests
+Run the project's unit test suite.
 
-#### Phase 4: Run unit tests
-```bash
-./scripts/test.sh unit 1
-```
+#### Phase 4: Check test coverage (if the project has coverage tooling)
+Run coverage checks if the project has them configured.
 
-#### Phase 5: Check test coverage
-```bash
-./scripts/check-coverage.sh
-```
+#### Phase 5: Run relevant integration/UI tests (if applicable)
+Run integration or UI tests that cover the functionality changed in this PR.
 
-**Analyze coverage** (if needed):
-```bash
-./scripts/coverage-detail.sh                    # Full report
-./scripts/coverage-json.sh --summary            # File overview sorted by %
-./scripts/coverage-json.sh --functions          # Show uncovered functions only
-```
-
-#### Phase 6: Run relevant UI tests
-
-```bash
-./scripts/test.sh ui 1 "<TestClass>/<testMethod>"
-```
-
-Run UI tests that cover the functionality changed in this milestone.
-
-#### Phase 7: Fix all failures and violations
-
+#### Phase 6: Fix all failures and violations
 Fix all issues before continuing. Re-run checks until all pass.
-
-#### Phase 8: Final check
-
-```bash
-./scripts/check-all.sh --skip-ui
-```
 
 **If all checks pass:**
 ```
 ✅ CI Checks Passed
-- SwiftLint: No violations
+- Lint: No violations
 - Build: Successful
-- Unit Tests: All passing
-- Coverage: Thresholds met
+- Tests: All passing
+- Coverage: Thresholds met (if applicable)
 ```
 
 ### Step 3: Present Merge Readiness

@@ -4,14 +4,16 @@ You will analyze recently modified code and apply refinements that:
 
 1. **Preserve Functionality**: Never change what the code does - only how it does it. All original features, outputs, and behaviors must remain intact.
 
-2. **Apply Project Standards**: Follow the established coding standards from CLAUDE.md including:
+2. **Apply Project Standards**: Follow the established coding standards from the project's CLAUDE.md (or equivalent). Look for rules covering:
 
-   - Use ES modules with proper import sorting and extensions
-   - Prefer `function` keyword over arrow functions
-   - Use explicit return type annotations for top-level functions
-   - Follow proper React component patterns with explicit Props types
-   - Use proper error handling patterns (avoid try/catch when possible)
-   - Maintain consistent naming conventions
+   - Import style and module system conventions
+   - Function declaration preferences
+   - Type annotation and interface patterns
+   - Component/module structure conventions
+   - Error handling patterns
+   - Naming conventions
+
+   If no project standards file exists, follow the conventions already established in the codebase.
 
 3. **Enhance Clarity**: Simplify code structure by:
 

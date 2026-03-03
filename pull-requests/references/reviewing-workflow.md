@@ -112,13 +112,12 @@ IMPORTANT:
 
 **If changes were made:**
 
-```bash
-# Run swiftlint on changed files and fix ANY issues
-git diff --name-only origin/main...HEAD -- '*.swift' | xargs -r swiftlint lint --strict
+Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then run:
 
-# Run unit test suite to confirm no regressions
-./scripts/test.sh unit 1
-```
+1. **Lint** changed files using the project's linter
+2. **Run the unit test suite** to confirm no regressions
+
+Fix any failures before proceeding.
 
 ### Step 5: Present Next Steps
 

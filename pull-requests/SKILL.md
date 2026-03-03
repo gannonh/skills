@@ -1,6 +1,6 @@
 ---
 name: pull-requests
-description: Use this skill for pull request workflows - creating PRs (branch, commit, push, open), reviewing PRs (code quality, test coverage, issue fixing), or merging PRs (CI checks, merge, cleanup). Handles the complete PR lifecycle via gh CLI. Triggers included, "create PR", "open PR", "review PR", "merge PR".
+description: Use this skill for pull request workflows - creating PRs (branch, commit, push, open), reviewing PRs (code quality, test coverage, issue fixing), addressing PR review comments (fix feedback, respond to reviewers), or merging PRs (CI checks, merge, cleanup). Handles the complete PR lifecycle via gh CLI. Triggers include "create PR", "open PR", "review PR", "merge PR", "address PR comments", "fix review feedback", "respond to reviewer", "push for review", "submit PR".
 ---
 
 # Pull Request Workflows
@@ -34,6 +34,14 @@ This skill handles the complete PR lifecycle. Based on context and user intent, 
 
 → See `./references/reviewing-workflow.md`
 
+### Use Addressing Workflow when:
+
+- User asks to "address comments", "fix review feedback", "respond to reviewer"
+- PR exists with unresolved review comments
+- User wants to respond to specific feedback without a full review sweep
+
+→ See `./references/addressing-workflow.md`
+
 ### Use Merging Workflow when:
 
 - User asks to "merge PR", "complete PR", "finalize changes"
@@ -44,8 +52,9 @@ This skill handles the complete PR lifecycle. Based on context and user intent, 
 
 ## Quick Reference
 
-| Intent      | Workflow  | Key Actions                                                 |
-| ----------- | --------- | ----------------------------------------------------------- |
-| "Create PR" | Creating  | Branch → Commit → Push → `<path-to-skill>/scripts/create_pr_safe.py`        |
-| "Review PR" | Reviewing | Identify PR → Run review agents → Fix issues → Update state |
-| "Merge PR"  | Merging   | CI checks → Confirm ready → `gh pr merge` → Checkout main   |
+| Intent              | Workflow   | Key Actions                                                  |
+| ------------------- | ---------- | ------------------------------------------------------------ |
+| "Create PR"         | Creating   | Branch → Commit → Push → `<path-to-skill>/scripts/create_pr_safe.py` |
+| "Review PR"         | Reviewing  | Identify PR → Run review agents → Fix issues → Update state |
+| "Address comments"  | Addressing | Fetch comments → User selects → Fix → Reply → Push          |
+| "Merge PR"          | Merging    | CI checks → Confirm ready → `gh pr merge` → Checkout main   |

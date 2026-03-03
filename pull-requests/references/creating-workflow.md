@@ -22,7 +22,8 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
    - Use descriptive commit messages
 
 3. **Run checks**
-   - Run CI checks locally; e.g., `npm run test:ci:local`
+   - Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar
+   - Run the appropriate local checks (lint, type-check, tests) for this project's toolchain
    - Fix and commit any issues until checks pass before pushing or creating the PR
 
 4. **Push the branch to origin**
