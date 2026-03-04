@@ -13,6 +13,27 @@ If work is not user-facing, run and show executable proof with user-impact trans
 For user-facing work, **launch the actual app and use the feature as a real user would** — navigating screens, clicking buttons, filling forms, observing results.
 Then give the user instructions for running it themselves.
 
+## Hard Gates (Non-Negotiable)
+
+1. **Scope lock before any validation**
+   - Start with a one-line scope statement:
+     - `UAT Scope: <ticket/PR scope only>`
+   - If work drifts outside scope, stop and restate scope before continuing.
+
+2. **User-facing UAT requires a live walkthrough first**
+   - Do not start with test suites.
+   - First demonstrate behavior in the running app (web/Electron/iOS/macOS) as a user would.
+   - Automated tests are supplementary evidence after the walkthrough.
+
+3. **No GO verdict without explicit human acceptance**
+   - Before user confirmation, recommendation must be:
+     - `Recommendation: Pending user sign-off`
+   - `GO` or `GO with follow-ups` is allowed only after explicit user acceptance (e.g. "accept", "approved", "looks good").
+
+4. **Do not claim acceptance completion unilaterally**
+   - If the user has not accepted, acceptance is not complete.
+   - Do not frame CI/test pass as user acceptance.
+
 ## Demo means "use the app", not "run tests"
 
 Running e2e tests is not a demo. Tests verify code correctness. A demo lets the user see the feature working in the real app, interactively, so they can judge whether the right thing was built.
@@ -24,6 +45,8 @@ For user-facing work, the sequence is always:
 4. **Show the result** — screenshot or describe what appeared on screen
 
 Only after the live demo, run tests if needed to confirm no regressions. Tests supplement the demo; they do not replace it.
+
+If the user cannot watch live and explicitly asks for asynchronous evidence, state that this is **evidence collection**, not final acceptance, and keep recommendation as `Pending user sign-off`.
 
 ## When to Use
 
@@ -62,6 +85,7 @@ digraph uat_flow {
 ### 1. Identify scope, mode, and platform
 
 - Confirm what behavior is being accepted.
+- Declare scope lock explicitly: `UAT Scope: ...`.
 - Declare `Mode`: `user-facing`, `non-user-facing`, or `mixed`.
 - For user-facing work, detect `Platform` to select the right demo tool:
 
@@ -93,6 +117,8 @@ Follow the appropriate playbook:
 - **Non-user-facing or CLI/API:** `./references/cli-api-demo-playbook.md`
 - **Mixed:** run user-facing demo first, then technical proof tied to the same outcome.
 
+For user-facing or mixed mode, include short narration of what is being done in-app while demonstrating (where you navigated, what you clicked, what changed on screen).
+
 ### 4. Capture evidence
 
 - Save screenshots/video for user-facing slices.
@@ -103,9 +129,21 @@ Follow the appropriate playbook:
 - Start with overview and scope bullets.
 - List each slice with explicit `Pass`/`Fail`.
 - Provide instructions to the user for running the same validation themselves.
-- End with `Recommendation`: `GO`, `GO with follow-ups`, or `NO-GO`.
+- End with one of:
+  - `Recommendation: Pending user sign-off` (default until explicit acceptance)
+  - `Recommendation: GO`
+  - `Recommendation: GO with follow-ups`
+  - `Recommendation: NO-GO`
 
-### 6. Update ticket (required on success)
+Then ask for explicit acceptance decision:
+- `Please reply: accept / reject`
+
+### 6. Update ticket (required)
+
+Two-phase ticket updates are required:
+
+1. **Before user acceptance:** post a status comment with `Pending user sign-off` and evidence.
+2. **After explicit user acceptance:** post final verdict (`GO` / `GO with follow-ups`) and close acceptance.
 
 If recommendation is `GO` or `GO with follow-ups`, post a ticket comment in the project system of record (check CLAUDE.md or project config; common systems: Linear, Jira, GitHub Issues) with:
 
@@ -124,9 +162,9 @@ Do not mark acceptance complete until this ticket update is posted.
 
 | Mode            | First step                                 | Evidence required                            | Done when                                 |
 | --------------- | ------------------------------------------ | -------------------------------------------- | ----------------------------------------- |
-| user-facing     | Run platform-appropriate demo (slice 1)    | Demo trace + screenshots/video + observed UI | User confirms pass/fail for all scenarios |
+| user-facing     | Run platform-appropriate live demo (slice 1) | Demo trace + screenshots/video + observed UI | User explicitly accepts/rejects |
 | non-user-facing | Run proof command(s)                       | Command output + impact translation          | Reproducible evidence reviewed            |
-| mixed           | User-facing demo first, then technical proof | Both demo evidence and technical proof       | Both layers accepted                      |
+| mixed           | User-facing live demo first, then technical proof | Both demo evidence and technical proof       | User explicitly accepts/rejects |
 
 ## Common Mistakes
 
@@ -136,6 +174,7 @@ Do not mark acceptance complete until this ticket update is posted.
 - Skipping a live demo for user-facing changes
 - Skipping non-UI demo because there is no frontend change
 - Declaring merge readiness before collecting explicit pass/fail signals
+- Declaring `GO` before explicit user acceptance
 - Using the wrong demo tool for the platform (e.g., agent-browser for an iOS app)
 
 ## Rationalization Table
