@@ -4,6 +4,15 @@ Launch the actual app and use the feature as a real user would. This is not runn
 
 Use the `agent-browser` skill (or `electron` skill for Electron apps) to control the running app.
 
+## Required Deliverable
+
+After completing validation for a user-facing slice, the final user response must include:
+
+- evidence from the run (screenshot/video/log excerpt), and
+- a `Manual Run Instructions` section with numbered in-app steps
+
+This is mandatory even when automated tests pass and the user did not explicitly ask for manual steps.
+
 ## Core Loop
 
 For each acceptance slice:

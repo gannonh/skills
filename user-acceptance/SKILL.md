@@ -34,6 +34,14 @@ Then give the user instructions for running it themselves.
    - If the user has not accepted, acceptance is not complete.
    - Do not frame CI/test pass as user acceptance.
 
+5. **Manual run guidance is mandatory for user-facing or mixed UAT**
+   - After validation, always provide a `Manual Run Instructions` section.
+   - This is required even when:
+     - the user did not ask for manual steps
+     - automated tests already passed
+     - screenshots/videos were already collected
+   - For user-facing or mixed mode, omission of manual run steps is a failed UAT response.
+
 ## Demo means "use the app", not "run tests"
 
 Running e2e tests is not a demo. Tests verify code correctness. A demo lets the user see the feature working in the real app, interactively, so they can judge whether the right thing was built.
@@ -47,6 +55,20 @@ For user-facing work, the sequence is always:
 Only after the live demo, run tests if needed to confirm no regressions. Tests supplement the demo; they do not replace it.
 
 If the user cannot watch live and explicitly asks for asynchronous evidence, state that this is **evidence collection**, not final acceptance, and keep recommendation as `Pending user sign-off`.
+
+## Output Contract (Must Follow)
+
+For `user-facing` and `mixed` mode responses, include these sections in order:
+
+1. `UAT Scope: ...`
+2. `Mode` and `Platform`
+3. `Slice-by-slice result` (`Pass`/`Fail`)
+4. `Evidence` (screenshots/video and/or logs)
+5. `Manual Run Instructions` (required; numbered user steps to run the feature manually)
+6. `Recommendation: Pending user sign-off` (until explicit acceptance)
+7. `Please reply: accept / reject`
+
+Do not replace section 5 with Playwright/CI commands. Manual means in-app user interactions.
 
 ## When to Use
 
@@ -129,6 +151,7 @@ For user-facing or mixed mode, include short narration of what is being done in-
 - Start with overview and scope bullets.
 - List each slice with explicit `Pass`/`Fail`.
 - Provide instructions to the user for running the same validation themselves.
+- For `user-facing` or `mixed` mode, include a dedicated `Manual Run Instructions` heading every time.
 - End with one of:
   - `Recommendation: Pending user sign-off` (default until explicit acceptance)
   - `Recommendation: GO`
@@ -169,6 +192,7 @@ Do not mark acceptance complete until this ticket update is posted.
 ## Common Mistakes
 
 - Running e2e or UI tests instead of launching the app and using the feature
+- Omitting manual user-run instructions after reporting automated validation results
 - Dumping a static checklist with no interaction
 - Reporting only test counts with no demonstration
 - Skipping a live demo for user-facing changes
@@ -191,6 +215,7 @@ Do not mark acceptance complete until this ticket update is posted.
 ## Red Flags - Stop and Correct
 
 - You are about to run a test suite instead of launching the app and using the feature.
+- You are about to send a user-facing UAT result without a `Manual Run Instructions` section.
 - You are about to send only a summary/checklist.
 - You cannot point to any observed behavior or executed proof.
 - You are treating CI green status as equivalent to acceptance.
