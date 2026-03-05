@@ -42,6 +42,17 @@ Then give the user instructions for running it themselves.
      - screenshots/videos were already collected
    - For user-facing or mixed mode, omission of manual run steps is a failed UAT response.
 
+6. **Manual instructions must be normal-user-path first**
+   - `Manual Run Instructions` must describe the same path a product user would take in the app.
+   - Do not require test harnesses, seeded fixtures, or synthetic state setup as the primary path.
+   - Forbidden in primary manual steps:
+     - `playwright`, `vitest`, `npm test`, CI commands
+     - `KATA_STATE_FILE=...` or any fixture/seed file dependency
+     - "inject", "seed", "mock event", "test-only flag"
+   - If normal path is genuinely blocked, provide:
+     - `Manual Run Instructions (Normal Path)` first (best-effort UI path), then
+     - `Fallback (Engineering Only)` second, clearly labeled as non-user path.
+
 ## Demo means "use the app", not "run tests"
 
 Running e2e tests is not a demo. Tests verify code correctness. A demo lets the user see the feature working in the real app, interactively, so they can judge whether the right thing was built.
@@ -69,6 +80,18 @@ For `user-facing` and `mixed` mode responses, include these sections in order:
 7. `Please reply: accept / reject`
 
 Do not replace section 5 with Playwright/CI commands. Manual means in-app user interactions.
+Section 5 must be normal-user-path first and must not depend on state seed files or automated test tooling.
+
+## Pre-Response Self-Check (Required)
+
+Before sending a user-facing/mixed UAT response, verify all are true:
+
+1. Response contains `Manual Run Instructions`.
+2. Instructions are UI-driven and executable by a normal user.
+3. No forbidden automation/test/seed commands appear in the primary manual steps.
+4. Steps include expected visible outcomes.
+
+If any check fails, rewrite before sending.
 
 ## When to Use
 
@@ -152,6 +175,7 @@ For user-facing or mixed mode, include short narration of what is being done in-
 - List each slice with explicit `Pass`/`Fail`.
 - Provide instructions to the user for running the same validation themselves.
 - For `user-facing` or `mixed` mode, include a dedicated `Manual Run Instructions` heading every time.
+- Manual steps must follow normal user path first; if fallback is needed, label it `Fallback (Engineering Only)`.
 - End with one of:
   - `Recommendation: Pending user sign-off` (default until explicit acceptance)
   - `Recommendation: GO`
@@ -193,6 +217,7 @@ Do not mark acceptance complete until this ticket update is posted.
 
 - Running e2e or UI tests instead of launching the app and using the feature
 - Omitting manual user-run instructions after reporting automated validation results
+- Using seeded state files or test-only setup as the primary manual path
 - Dumping a static checklist with no interaction
 - Reporting only test counts with no demonstration
 - Skipping a live demo for user-facing changes
@@ -216,6 +241,7 @@ Do not mark acceptance complete until this ticket update is posted.
 
 - You are about to run a test suite instead of launching the app and using the feature.
 - You are about to send a user-facing UAT result without a `Manual Run Instructions` section.
+- Your `Manual Run Instructions` include `KATA_STATE_FILE`, Playwright, or CI/test commands.
 - You are about to send only a summary/checklist.
 - You cannot point to any observed behavior or executed proof.
 - You are treating CI green status as equivalent to acceptance.

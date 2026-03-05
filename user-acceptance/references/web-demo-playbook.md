@@ -13,6 +13,10 @@ After completing validation for a user-facing slice, the final user response mus
 
 This is mandatory even when automated tests pass and the user did not explicitly ask for manual steps.
 
+Primary manual instructions must use normal product-user flow.
+Do not put test harness, seed state, or automation commands in primary manual steps.
+If a fallback is needed, label it `Fallback (Engineering Only)`.
+
 ## Core Loop
 
 For each acceptance slice:
@@ -74,5 +78,6 @@ agent-browser screenshot /tmp/uat-electron-scenario.png
 - Wait for user confirmation before moving to next scenario.
 - Ask at least one "does this feel right?" UX confidence question per walkthrough.
 - Provide instructions for the user to run the same demo themselves.
+- Write manual instructions as normal UI clicks/inputs first; keep any engineering fallback separate.
 - Prefer hands-on preview over abstract summary.
 - Capture screenshots at minimum; include recording when useful.
