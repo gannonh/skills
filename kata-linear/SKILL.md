@@ -1,30 +1,30 @@
 ---
 name: kata-linear
-description: "Linear ticket lifecycle for any project. Use when starting work on a Linear issue, ending work on an issue, or asking what to work on next. Triggers: start KAT-N, pick up, implement, finish, complete, done with, close, what's next, next ticket, next issue. Handles blocker validation, status transitions, context loading, branch creation, evidence gating, and chain promotion."
+description: Linear ticket lifecycle for any project. Use when starting work on a Linear issue, ending work on an issue, or asking what to work on next. Triggers include, start KAT-N, pick up, implement, finish, complete, done with, close, what's next, next ticket, next issue. Handles blocker validation, status transitions, context loading, branch creation, evidence gating, and chain promotion.
 ---
 
 # Linear Ticket Lifecycle
 
 This skill wraps the general `/linear` skill with structured start/next/end workflows.
-Always invoke `/linear` for the actual MCP calls.
+Always invoke the `/linear` skill for the actual MCP calls when using this skill.
 
 ## Determining the Mode
 
 Parse the user's request to determine which workflow to run:
 
-| User says                                                           | Mode      |
-| ------------------------------------------------------------------- | --------- |
-| "start KAT-N", "pick up KAT-N", "implement KAT-N", "work on KAT-N"  | **Start** |
-| "finish KAT-N", "complete KAT-N", "done with KAT-N", "close KAT-N"  | **End**   |
-| "what's next", "what should I work on", "next ticket", "next issue" | **Next**  |
+| User says                                                           | Mode         |
+| ------------------------------------------------------------------- | ------------ |
+| "start KAT-N", "pick up KAT-N", "implement KAT-N", "work on KAT-N"  | **Start**    |
+| "finish KAT-N", "complete KAT-N", "done with KAT-N", "close KAT-N"  | **Complete** |
+| "what's next", "what should I work on", "next ticket", "next issue" | **Next**     |
 
 If ambiguous, ask.
 
 ## Identifying the Project
 
-1. Check the current working directory's CLAUDE.md for a Linear project reference.
+1. Check the current working directory's AGENTS.md for a Linear project reference.
 2. If not found, call `list_projects` and ask the user which project to use.
-3. Cache the project name for the remainder of the session.
+3. Cache the project name for the remainder of the session and update AGENTS.md for future reference.
 
 ---
 
@@ -41,8 +41,8 @@ Find the next actionable issue.
 4. If multiple candidates, determine if they can be run concurrently in isolated worktrees in two ways:
    a. Re-check Linear tickets (scope + blockers); then
    b. Inspect the current code boundaries they would touch to see if there’s hidden coupling.
-5. Present unblocked issues as candidates, including concurency guidance/risks
-5. If the project has Linear documents (execution model, workflow contract), fetch them
+5. Present unblocked issues as candidates, including concurrency guidance/risks.
+6. If the project has Linear documents (execution model, workflow contract), fetch them
    with `list_documents` and `get_document` to understand pillar/phase ordering.
 
 ---
@@ -79,11 +79,11 @@ Present to the user:
 - Blocker status (all clear)
 - Context loaded (specs, mocks, relevant code)
 - Branch name created
-- Any project-specific workflow reminders from CLAUDE.md (e.g., TDD mandate)
+- Any project-specific workflow reminders from AGENTS.md (e.g., TDD mandate)
 
 ---
 
-## Mode: End
+## Mode: Complete
 
 ### Step 1 — Gather evidence
 
@@ -118,7 +118,7 @@ If evidence is insufficient, list what's missing and stop.
    - Acceptance coverage: [which criteria verified]
    - Screenshots/video: [if applicable]
    ```
-2. If a PR exists, add the same summary as a comment on the PR. 
+2. If a PR exists, add the same summary as a comment on the PR.
 
 ### Step 4 — Move to Done
 
