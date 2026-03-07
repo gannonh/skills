@@ -118,13 +118,9 @@ If evidence is insufficient, list what's missing and stop.
    - Acceptance coverage: [which criteria verified]
    - Screenshots/video: [if applicable]
    ```
-2. If a PR exists, add the same summary as a comment on the PR.
+2. Add the same summary as a comment on the PR.
 
-### Step 4 — Move to Done
-
-1. Call `update_issue` to set state to `Done`.
-
-### Step 5 — Promote next in chain
+### Step 4 — Promote next in chain
 
 1. Call `get_issue` with `includeRelations: true` on the completed issue.
 2. For each issue in the `blocks` list:
@@ -133,7 +129,9 @@ If evidence is insufficient, list what's missing and stop.
    c. If yes, call `update_issue` to move it to `Todo`.
    d. Report which issue was promoted.
 
-### Step 6 — Summarize
+(Note: the current ticket will automatically move to `Done` when the PR is merged).
+
+### Step 5 — Summarize
 
 Present:
 
