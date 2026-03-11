@@ -26,13 +26,17 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
    - Run the appropriate local checks (lint, type-check, tests) for this project's toolchain
    - Fix and commit any issues until checks pass before pushing or creating the PR
 
-4. **Push the branch to origin**
+4. **Capture session learnings**
+   - Run `/claude-md-management:revise-claude-md` to update CLAUDE.md with any conventions, gotchas, or patterns discovered during this session.
+   - Commit the CLAUDE.md changes before pushing.
+
+5. **Push the branch to origin**
 
    ```bash
    git push -u origin $(git branch --show-current)
    ```
 
-5. **Create a pull request** using the safe Python helper (never inline `--body`)
+6. **Create a pull request** using the safe Python helper (never inline `--body`)
    - Always use `<path-to-skill>/scripts/create_pr_safe.py` with a file-backed body to prevent shell interpolation corruption.
    - Use a single-quoted heredoc (`<<'EOF'`) so markdown content is treated as literal text.
 
@@ -54,12 +58,13 @@ Create a new branch (if needed), commit changes, push to origin, and open a PR.
      - verify the created body matches the source content
      - auto-repair with `gh pr edit --body-file` if mismatch is detected
 
-6. **Report back** with a link to the PR
+7. **Report back** with a link to the PR
 
 ## Success Criteria
 
 - [ ] Branch created (if needed)
 - [ ] Changes committed
+- [ ] Session learnings captured in CLAUDE.md via `/claude-md-management:revise-claude-md`
 - [ ] Branch pushed to origin
 - [ ] PR created and URL returned to user
 - [ ] PR body verified (and auto-repaired if needed)
