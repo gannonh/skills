@@ -34,7 +34,7 @@ You will analyze recently modified code and apply refinements that:
    - Prioritize "fewer lines" over readability (e.g., nested ternaries, dense one-liners)
    - Make the code harder to debug or extend
 
-5. **Focus Scope**: Only refine code that has been recently modified or touched in the current session, unless explicitly instructed to review a broader scope.
+5. **Focus Scope**: Only refine code that appears in the provided diff, unless explicitly instructed to review a broader scope. If reviewing a PR, focus on the changed files and lines.
 
 Your refinement process:
 

@@ -30,15 +30,16 @@ This skill handles the complete PR lifecycle. Based on context and user intent, 
 
 - User asks to "review PR", "check code quality", "run review"
 - PR exists and is open
-- Want to run code review agents before merge
+- Want a fresh code review against the PR diff using targeted reviewers
+- This workflow does NOT address existing review comments — it runs its own analysis
 
 → See `./references/reviewing-workflow.md`
 
 ### Use Addressing Workflow when:
 
 - User asks to "address comments", "fix review feedback", "respond to reviewer"
-- PR exists with unresolved review comments
-- User wants to respond to specific feedback without a full review sweep
+- PR exists with unresolved review comments from human reviewers or bots
+- User wants to respond to specific existing feedback without running a fresh review
 
 → See `./references/addressing-workflow.md`
 
@@ -55,6 +56,6 @@ This skill handles the complete PR lifecycle. Based on context and user intent, 
 | Intent              | Workflow   | Key Actions                                                  |
 | ------------------- | ---------- | ------------------------------------------------------------ |
 | "Create PR"         | Creating   | Branch → Commit → Push → `<path-to-skill>/scripts/create_pr_safe.py` |
-| "Review PR"         | Reviewing  | Identify PR → Run review agents → Fix issues → Update state |
+| "Review PR"         | Reviewing  | Gather context → Fetch diff → Scope & run reviewers → Present findings → Fix |
 | "Address comments"  | Addressing | Fetch comments → User selects → Fix → Reply → Push          |
 | "Merge PR"          | Merging    | CI checks → Confirm ready → `gh pr merge` → Checkout main   |

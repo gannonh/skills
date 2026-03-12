@@ -1,11 +1,11 @@
 # Reviewing Pull Requests
 
-Run comprehensive PR review and quality checks before merging.
+Run a comprehensive code review on a PR and help the user address the findings.
 
 ## Objective
 
-Ensure code quality, test coverage, and adherence to project standards.
-Output: All review issues addressed, PR ready for merge.
+Understand what the PR does, run targeted reviewers against the actual diff, present findings by severity, and fix what the user wants fixed.
+Output: Review findings addressed, PR quality improved, tests passing.
 
 ## Context
 
@@ -13,138 +13,197 @@ PR Number: $ARGUMENTS (auto-detect from current branch if not provided)
 
 ## Process
 
-Create a structured task list:
+- [ ] Step 1: Gather PR Context
+- [ ] Step 2: Fetch the Diff
+- [ ] Step 3: Check for Existing Review Comments
+- [ ] Step 4: Run Targeted Reviewers
+- [ ] Step 5: Present Aggregated Findings
+- [ ] Step 6: Apply Fixes
+- [ ] Step 7: Validate and Report
 
-- [ ] Step 1: Identify PR to Review
-- [ ] Step 2: Fetch Open Review Comments & Fix Issues
-- [ ] Step 3: Run PR Review & Fix Issues
-- [ ] Step 4: Run Quick Checks
-- [ ] Step 5: Present Next Steps
+### Step 1: Gather PR Context
 
-### Step 1: Identify PR to Review
-
-Get the PR number for the current branch:
+Get the PR number (from args or current branch):
 ```bash
 GH_PAGER= gh pr view --json number --jq '.number'
 ```
 
-Then get PR details:
+Then fetch full PR context — the reviewers need this to distinguish intentional changes from regressions:
 ```bash
-GH_PAGER= gh pr view --json number,title,state,headRefName,url --jq '"PR #\(.number): \(.title)\nState: \(.state)\nBranch: \(.headRefName)\nURL: \(.url)"'
+GH_PAGER= gh pr view --json number,title,body,state,headRefName,baseRefName,url,labels,commits \
+  --jq '{number, title, body, state, head: .headRefName, base: .baseRefName, url, labels: [.labels[].name], commits: [.commits[].messageHeadline]}'
 ```
 
-If PR is already merged or closed, inform user and exit.
+If the PR is merged or closed, inform the user and exit.
 
-### Step 2: Fetch Open Review Comments & Fix Issues
+Also check for linked issues — the PR body often references them:
+```bash
+GH_PAGER= gh pr view --json body --jq '.body' | grep -oE '(#[0-9]+|[A-Z]+-[0-9]+)' | sort -u
+```
 
-Run all `gh` commands with elevated network access.
+Read linked issue descriptions if any exist — they provide acceptance criteria the reviewers should know about.
 
-Prereq: ensure `gh` is authenticated (for example, run `gh auth login` once), then run `gh auth status` with escalated permissions (include workflow/repo scopes) so `gh` commands succeed. If sandboxing blocks `gh auth status`, rerun it with `sandbox_permissions=require_escalated`.
+### Step 2: Fetch the Diff
 
-#### 1: Inspect comments needing attention
-- Run `<path-to-skill>/scripts/fetch_comments.py` which will print out all the comments and review threads on the PR. 
+Get the actual PR diff — this is what the reviewers will examine:
+```bash
+GH_PAGER= gh pr diff
+```
 
-**NOTE: the script lives under the skill’s directory, not the current workspace.**
+Also get the list of changed files with stats for scoping decisions in Step 4:
+```bash
+GH_PAGER= gh pr diff --stat
+```
 
-#### 2: Present findings and ask the user (required gate)
-- Number all the review threads and comments and provide a short summary of what would be required to apply a fix for each.
-- **You MUST then ask the user:** "Which of these comments (by number) should I address? Reply with numbers, 'none', or 'all'."
-- Do not assume "none" or skip this question. Do not apply fixes or proceed to Step 3 until the user has answered.
+Save both to variables — you'll pass them to reviewers.
 
-#### 3: If user chooses comments
-- Apply fixes only for the comments the user selected (by number). If the user said "none", skip applying fixes.
-- Resolve or reply to those threads in the GitHub UI as you address them.
+### Step 3: Check for Existing Review Comments
 
-#### 4: Resolve/reply to comments
-- As you address comments, close them out in the GitHub UI and reply to reviewers with your changes and any questions for clarification.
-- For those comments not addressed (user said "none" or did not select them), reply to reviewers with your reasoning and ask for any clarification if needed.
+Run `<path-to-skill>/scripts/fetch_comments.py` to see if there are unresolved review threads.
 
-Notes:
-- If gh hits auth/rate issues mid-run, prompt the user to re-authenticate with `gh auth login`, then retry.
+If unresolved threads exist, briefly mention them to the user:
+> "There are N unresolved review threads from previous reviews. I'll focus on a fresh code review now — use the 'address comments' workflow afterward if you want to work through existing feedback."
 
+Do **not** address existing comments here — that's the Addressing workflow's job. Just acknowledge them so the user knows they exist.
 
-**STOP HERE: Only after the user has answered which comments to address and you have applied (or skipped) those fixes and resolved/replied in GitHub, proceed to Step 3.**
+### Step 4: Run Targeted Reviewers
 
-### Step 3: Run PR Review & Fix Issues
+Choose which reviewers to run based on the PR's scope. Not every PR needs all 6 reviewers — running irrelevant ones wastes time and produces noise.
 
-**This step MUST run every time.** Do not substitute a brief manual review or skip it. Run the full review using specialized instruction sets, then aggregate and present by severity before asking the user how to proceed.
+**Scoping heuristics:**
 
-Depending on your capabilities, run as:
+| Reviewer | Run when... | Skip when... |
+|----------|------------|--------------|
+| **code-reviewer** | Always | Never — this is the baseline |
+| **failure-finder** | PR touches error handling, adds try/catch, modifies API boundaries, or changes async code | Docs-only, config-only, or pure styling changes |
+| **pr-test-analyzer** | PR adds/modifies logic that should have tests | Docs, config, or trivial changes (renames, formatting) |
+| **code-simplifier** | PR adds 100+ lines of new code, or touches complex logic | Small PRs (<30 lines changed), or pure deletions |
+| **type-design-analyzer** | PR adds/modifies types, interfaces, or data models in typed languages | Untyped languages, or no type changes in diff |
+| **comment-analyzer** | PR adds/modifies comments or docstrings | No comment changes in diff |
 
-  1. **Agent Team** – parallel agents for each review type, then aggregate results
-  (or, if agent teams not supported)
-  1. **Sub-agents** – parallel instructions for each sub-agent, then aggregate results
-  (or, if neither supported)
-  1. **Sequential instructions** – run each review type one after another
+State which reviewers you're running and why you're skipping any.
 
-IMPORTANT:
+**For each reviewer, construct a task that includes:**
 
-- Claude Code: Run as agent Teams or Sub-agents
-- Codex: Run as Sub-agents
-- Cursor: Run as Sub-agents
+1. The PR context from Step 1 (title, description, linked issues)
+2. The full PR diff from Step 2
+3. The reviewer's instructions from its reference file
 
-1. Determine which to run based on the scope of the PR. The following are available (use at your discretion):
+**Example task prompt for a reviewer:**
 
-- **code-reviewer**: Code quality, bugs, logic errors → `./references/code-reviewer-instructions.md`
-- **code-simplifier**: Code complexity and duplication → `./references/code-simplifier-instructions.md`
-- **comment-analyzer**: Comment accuracy → `./references/comment-analyzer-instructions.md`
-- **failure-finder**: Error handling patterns → `./references/failure-finder-instructions.md`
-- **pr-test-analyzer**: Test coverage completeness → `./references/pr-test-analyzer-instructions.md`
-- **type-design-analyzer**: Type design quality → `./references/type-design-analyzer-instructions.md`
+```
+You are reviewing PR #42: "Add retry logic to API client"
 
-2. **Aggregate results** from all review types, then compile a list of issues categorized by severity and present to the user:
+PR Description:
+<paste PR body>
 
-   - **Critical issues** – Must fix immediately
-   - **Important issues** – Should fix before merge
-   - **Suggestions** – Consider fixing
+Linked issues: #38 (API calls fail silently on timeout)
 
-3. **You MUST ask the user:** "How would you like to proceed? Which issues (by severity or item) should I address?" Do not assume or skip this question. Do not apply fixes until the user has answered.
+Changed files:
+<paste diff stat>
 
-4. Address the comments and issues the user selected.
+Full diff:
+<paste diff>
 
-5. Close and reply to gh comments as you address them, so reviewers can track progress. If you encounter any issues that require clarification, ask the user for clarification.
+Review instructions:
+<paste contents of the reviewer's reference file>
 
-6. Commit your changes with a message like "fix: address PR review comments" and push to the branch.
+Focus your review on the PR diff. Flag only issues in changed code unless existing code creates a clear bug when combined with the changes.
+```
 
-**STOP HERE: Only after the user has answered which review issues to address and you have applied those fixes and resolved/replied in GitHub, proceed to Step 4.**
+Run the selected reviewers in parallel when possible (sub-agents, agent teams). Fall back to sequential if parallel isn't available. The important thing is that each reviewer sees the same diff and PR context.
 
-### Step 4: Run Quick Checks
+### Step 5: Present Aggregated Findings
 
-**If changes were made:**
+Collect all findings from the reviewers and deduplicate — different reviewers sometimes flag the same issue.
 
-Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then run:
+Present findings in a structured format:
 
-1. **Lint** changed files using the project's linter
-2. **Run the unit test suite** to confirm no regressions
+```
+## PR Review: #[number] — [title]
 
-Fix any failures before proceeding.
+### 🔴 Critical (must fix before merge)
+1. [reviewer-name] **file:line** — Description of the issue
+   → Suggested fix: ...
 
-### Step 5: Present Next Steps
+### 🟡 Important (should fix before merge)
+2. [reviewer-name] **file:line** — Description
+   → Suggested fix: ...
+3. ...
+
+### 💡 Suggestions (consider fixing)
+4. [reviewer-name] **file:line** — Description
+   → Suggested fix: ...
+
+### ✅ Strengths
+- [Notable things the PR does well]
+
+---
+Reviewers run: code-reviewer, failure-finder, pr-test-analyzer
+Reviewers skipped: code-simplifier (small PR), type-design-analyzer (no type changes), comment-analyzer (no comment changes)
+```
+
+**Ask the user:** "Which issues should I address? You can reply with numbers, severity levels (e.g. 'all critical and important'), 'all', or 'none'."
+
+Do not apply fixes until the user responds.
+
+### Step 6: Apply Fixes
+
+For each issue the user selected:
+
+1. Make the code change
+2. If the issue was also flagged in an existing review thread, resolve that thread with a reply explaining the fix
+
+Commit changes:
+```bash
+git add -A
+git commit -m "fix: address PR review findings"
+```
+
+### Step 7: Validate and Report
+
+Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then:
+
+1. **Lint** changed files
+2. **Run tests** to confirm no regressions
+3. Fix any failures, commit, and rerun until clean
+4. **Push** to the branch
 
 ```
 ✅ PR Review Complete
 
-PR #[PR_NUMBER]: [Title]
-Branch: [branch_name]
+PR #[number]: [title]
+Branch: [branch]
 
-Validation Results:
-- PR Review Toolkit: ✅ All issues addressed
-- CI Checks: ✅ Passing
+Review Results:
+- Critical: [N] found → [N] fixed
+- Important: [N] found → [N] fixed
+- Suggestions: [N] found → [N] fixed, [N] deferred
 
-Ready for merge when you are.
+Validation:
+- Lint: ✅
+- Tests: ✅
+
+[If unresolved review threads exist:]
+Note: [N] unresolved review threads from previous reviews remain.
+Run "address PR comments" to work through them.
 ```
 
 ## Success Criteria
 
-- [ ] PR identified and accessible
-- [ ] PR review issues addressed
-- [ ] All CI checks pass (lint, build, tests, coverage)
-- [ ] User knows next steps
+- [ ] PR context gathered (description, linked issues)
+- [ ] Diff fetched and passed to reviewers
+- [ ] Appropriate reviewers selected and run
+- [ ] Findings presented by severity
+- [ ] User chose which to fix
+- [ ] Selected fixes applied and validated
+- [ ] Tests pass, changes pushed
 
 ## Critical Rules
 
-- **Step 2 gate** – Always present numbered PR comment findings and ask which to address. Do not proceed to apply fixes or to Step 3 until the user has answered.
-- **Step 3 required** – Always run the full PR review (agent team, sub-agents, or sequential instruction sets). Do not substitute a brief manual review. Always present issues by severity, then ask how the user would like to proceed before addressing any.
-- **Re-run after fixes** – Confirm issues are resolved before proceeding
-- **Don't skip steps** – Each review type catches different issues
-- **Final validation required** – Confirm no regressions from fixes
+- **Always fetch the PR diff** — reviewers examine the diff, not the working tree
+- **Scope the reviewers** — don't run all 6 on every PR; choose based on what changed
+- **Don't address existing review comments here** — mention them, point to the Addressing workflow
+- **Present before fixing** — always show aggregated findings and wait for user direction
+- **Include PR context in every reviewer task** — title, description, and linked issues give reviewers the "why" behind changes
+- **Deduplicate across reviewers** — multiple reviewers flagging the same issue should appear once
