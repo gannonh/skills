@@ -38,8 +38,19 @@ SDK:
 3. Save stdout, stderr, and exit code.
 4. Save any generated files under `outputs/`.
 5. Run one trust-check command that confirms the output.
+6. For bugfixes, save a negative check that the old error or stale output is absent.
 
-Example shape:
+Prefer the bundled runner when practical because it records logs and exit codes in the manifest:
+
+```bash
+node <skill-dir>/scripts/init-evidence.mjs --target cli --scope "tasker JSON export"
+node <skill-dir>/scripts/run-capture-command.mjs --evidence <dir> --name export-json -- \
+  tasker export --format json --output <dir>/outputs/tasks.json
+node <skill-dir>/scripts/run-capture-command.mjs --evidence <dir> --name validate-json -- \
+  jq . <dir>/outputs/tasks.json
+```
+
+Manual fallback shape:
 
 ```bash
 mkdir -p uat-evidence/cli-<timestamp>/logs uat-evidence/cli-<timestamp>/outputs
@@ -69,6 +80,7 @@ Use `script`, VHS, or `pp-agent-capture` depending on what the app supports. Pre
 4. Save response body and status code.
 5. Run a follow-up GET/list/read when persistence or side effects matter.
 6. Save relevant logs.
+7. Record blocked credentials or unavailable services as blocked slices rather than passing them from tests alone.
 
 Example shape:
 
@@ -91,6 +103,7 @@ curl -sS -X POST http://localhost:8080/api/items \
 3. Call the changed API with representative inputs.
 4. Print structured output.
 5. Save command output and any generated files.
+6. Keep the example small and runnable so the human can copy it into their environment.
 
 Example shape:
 

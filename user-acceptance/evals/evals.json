@@ -58,6 +58,22 @@
         "The report names appropriate Electron evidence tooling such as electron, agent-browser, CDP, pp-agent-capture, screenshots, or video.",
         "The report does not mark Electron behavior as passed unless a real app window was exercised and evidence captured.",
         "The report includes Manual Run Instructions with normal desktop-app steps and expected visible outcomes.",
+        "The recommendation remains Pending user sign-off unless explicit user acceptance was provided.",
+        "For Electron/web bugfixes, the report includes negative evidence such as a saved log/source search showing the old crash or stale flag is absent."
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The Electron app was crashing on launch with `Unknown option: --cwd` from the Pi RPC subprocess. I pushed a fix. Please provide UAT evidence that the desktop app now launches and that the old crash is gone.",
+      "expected_output": "A UAT report for an Electron launch bugfix that runs the real app or an instrumented Electron app, captures visible evidence, saves launch logs, searches for the old --cwd crash text, includes manual desktop run instructions, and keeps recommendation pending sign-off.",
+      "files": [],
+      "expectations": [
+        "The report starts with or includes a clear UAT Scope for the Electron launch crash fix.",
+        "The report identifies the target as Electron.",
+        "The report includes visible Electron evidence such as video or screenshots, or states why visual capture was skipped.",
+        "The report saves launch logs or command output with exit code evidence.",
+        "The report includes negative evidence that `Unknown option: --cwd` or the old crash text is absent from current logs or active source surfaces.",
+        "The report includes Manual Run Instructions with normal desktop-app steps and expected visible outcomes.",
         "The recommendation remains Pending user sign-off unless explicit user acceptance was provided."
       ]
     }

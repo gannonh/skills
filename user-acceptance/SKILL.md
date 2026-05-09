@@ -88,6 +88,25 @@ Do not install tools that are unrelated to the target.
 
 ## Evidence workspace
 
+Use the bundled helpers when practical. Resolve script paths relative to this skill directory.
+
+```bash
+# Create the evidence directory and starter manifest.
+node <skill-dir>/scripts/init-evidence.mjs --target electron --scope "validated behavior"
+
+# Run commands while saving logs, exit codes, and manifest entries.
+node <skill-dir>/scripts/run-capture-command.mjs --evidence <dir> --name focused-vitest -- pnpm test
+
+# Capture a CDP-accessible web/Electron page when agent-browser screenshots fail.
+node <skill-dir>/scripts/cdp-capture-page.mjs --evidence <dir> --cdp http://127.0.0.1:9222 --title "Kata Desktop" --screenshot screenshots/start.png --text logs/start-text.txt
+
+# Generate and check final artifacts before responding.
+node <skill-dir>/scripts/write-report.mjs --evidence <dir>
+node <skill-dir>/scripts/verify-evidence.mjs --evidence <dir>
+```
+
+The helpers do not replace judgment. They prevent common evidence mistakes: missing exit codes, empty reports, invalid `evidence.json`, absent UI screenshots/video, and command output that was never saved.
+
 Write generated evidence under a repo-local folder:
 
 ```text
@@ -142,6 +161,9 @@ A minimal `evidence.json` should include:
 
 - Start the dev server, service, CLI, TUI, API, SDK fixture, or Electron app needed for the walkthrough.
 - Prefer real local behavior over mocks.
+- For web and Electron targets, check ports and existing processes before launch. Record any cleanup in `logs/`.
+- Use the user's normal product command for the product smoke path. If you need CDP, traces, or deterministic screenshots, run a second instrumented path and label it as such.
+- Pick free debug ports rather than assuming `9222`; if a port is occupied, save the listener evidence and choose another port.
 - If credentials, services, hardware, or permissions block proof, record the blocker and provide the closest reproducible plan. Do not mark blocked slices as passed.
 
 ### 3. Execute the feature path
@@ -158,9 +180,11 @@ For mixed work, run the user-facing path first, then the technical proof tied to
 - Save artifacts under `uat-evidence/<target>-<timestamp>/`.
 - Capture video for web/Electron/TUI when practical.
 - Capture screenshots at the start, key state changes, and final success state.
-- Capture command output with `tee` or saved logs.
+- Capture command output with `tee`, `script`, or `scripts/run-capture-command.mjs`; always save exit codes.
 - Save API/SDK JSON responses and generated output files.
-- Write `evidence.json` and `evidence.md`.
+- For bugfix UAT, capture negative evidence that the old failure is absent: search logs for the old error string, search active source/docs for removed flags or stale commands, and save zero-match outputs.
+- Classify failed checks. If a failing file or behavior changed in the branch, treat the slice as failed. If it is outside the branch diff, report it as an unrelated validation failure with file/error evidence.
+- Write `evidence.json` and `evidence.md`, then run `scripts/verify-evidence.mjs` before responding.
 
 ### 5. Report results
 
@@ -223,7 +247,12 @@ Before responding, verify:
 - Target is stated.
 - Each slice has pass/fail status.
 - Evidence artifacts exist or blockers are clearly labeled.
+- `evidence.json` is valid and `evidence.md` is non-empty.
 - Front-end evidence includes video or a stated reason video was skipped.
+- UI screenshots/video files exist and are readable.
+- Command logs include exit codes.
+- Old-bug negative evidence is saved when validating a fix.
+- Dev servers, Electron apps, or background processes launched for UAT are cleaned up or explicitly left running for the user.
 - Manual run instructions are included.
 - Recommendation remains `Pending user sign-off` unless the user has accepted.
 
