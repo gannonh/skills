@@ -28,6 +28,7 @@ You should endeavor to run this entire workflow autonomously, only engaging the 
 ### Step 3: Identify actionable issues to address
 
 - For each issue candidate, analyze against the codebase to distinguish actionable items from false positives or comments that do not require code changes (for example, questions, suggestions, or style comments).
+- Verify each finding against current code. Plan to fix only still-valid issues, skip the rest with a brief reason, keep changes minimal, and validate.
 
 ### Step 4: Apply fixes to all actionable issues & resolve/address comments
 
