@@ -24,11 +24,13 @@ PR Number: $ARGUMENTS (auto-detect from current branch if not provided)
 ### Step 1: Gather PR Context
 
 Get the PR number (from args or current branch):
+
 ```bash
 GH_PAGER= gh pr view --json number --jq '.number'
 ```
 
 Then fetch full PR context — the reviewers need this to distinguish intentional changes from regressions:
+
 ```bash
 GH_PAGER= gh pr view --json number,title,body,state,headRefName,baseRefName,url,labels,commits \
   --jq '{number, title, body, state, head: .headRefName, base: .baseRefName, url, labels: [.labels[].name], commits: [.commits[].messageHeadline]}'
@@ -37,6 +39,7 @@ GH_PAGER= gh pr view --json number,title,body,state,headRefName,baseRefName,url,
 If the PR is merged or closed, inform the user and exit.
 
 Also check for linked issues — the PR body often references them:
+
 ```bash
 GH_PAGER= gh pr view --json body --jq '.body' | grep -oE '(#[0-9]+|[A-Z]+-[0-9]+)' | sort -u
 ```
@@ -46,11 +49,13 @@ Read linked issue descriptions if any exist — they provide acceptance criteria
 ### Step 2: Fetch the Diff
 
 Get the actual PR diff — this is what the reviewers will examine:
+
 ```bash
 GH_PAGER= gh pr diff
 ```
 
 Also get the list of changed files with stats for scoping decisions in Step 4:
+
 ```bash
 GH_PAGER= gh pr diff --stat
 ```
@@ -72,14 +77,14 @@ Choose which reviewers to run based on the PR's scope. Not every PR needs all 6 
 
 **Scoping heuristics:**
 
-| Reviewer | Run when... | Skip when... |
-|----------|------------|--------------|
-| **code-reviewer** | Always | Never — this is the baseline |
-| **failure-finder** | PR touches error handling, adds try/catch, modifies API boundaries, or changes async code | Docs-only, config-only, or pure styling changes |
-| **pr-test-analyzer** | PR adds/modifies logic that should have tests | Docs, config, or trivial changes (renames, formatting) |
-| **code-simplifier** | PR adds 100+ lines of new code, or touches complex logic | Small PRs (<30 lines changed), or pure deletions |
-| **type-design-analyzer** | PR adds/modifies types, interfaces, or data models in typed languages | Untyped languages, or no type changes in diff |
-| **comment-analyzer** | PR adds/modifies comments or docstrings | No comment changes in diff |
+| Reviewer                 | Run when...                                                                               | Skip when...                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| **code-reviewer**        | Always                                                                                    | Never — this is the baseline                           |
+| **failure-finder**       | PR touches error handling, adds try/catch, modifies API boundaries, or changes async code | Docs-only, config-only, or pure styling changes        |
+| **pr-test-analyzer**     | PR adds/modifies logic that should have tests                                             | Docs, config, or trivial changes (renames, formatting) |
+| **code-simplifier**      | PR adds 100+ lines of new code, or touches complex logic                                  | Small PRs (<30 lines changed), or pure deletions       |
+| **type-design-analyzer** | PR adds/modifies types, interfaces, or data models in typed languages                     | Untyped languages, or no type changes in diff          |
+| **comment-analyzer**     | PR adds/modifies comments or docstrings                                                   | No comment changes in diff                             |
 
 State which reviewers you're running and why you're skipping any.
 
@@ -155,6 +160,7 @@ For each issue the user selected:
 2. If the issue was also flagged in an existing review thread, resolve that thread with a reply explaining the fix
 
 Commit changes:
+
 ```bash
 git add -A
 git commit -m "fix: address PR review findings"
@@ -162,7 +168,7 @@ git commit -m "fix: address PR review findings"
 
 ### Step 7: Validate and Report
 
-Discover the project's CI/test commands from CLAUDE.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then:
+Discover the project's CI/test commands from AGENTS.md, package.json, Makefile, CI config files (.github/workflows/), or similar. Then:
 
 1. **Lint** changed files
 2. **Run tests** to confirm no regressions
