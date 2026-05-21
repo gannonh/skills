@@ -1,17 +1,6 @@
 ---
 name: plan-build-verify
-description: >-
-  Use this skill for multi-step, spec-driven, or acceptance-gated
-  implementation work that should move through Plan, Build, and Verify phases.
-  Plan turns ideas or vague build requests into project-grounded Markdown specs
-  and implementation plans. Build executes an approved plan. Verify validates
-  completed work against a spec, Build report, and acceptance criteria. Default
-  to Plan for new feature, product, or architecture requests unless the user
-  explicitly points to an existing plan for implementation or asks for
-  verification/UAT. Use it for requests like "plan this", "write a spec",
-  "build an analytics dashboard", "execute this plan", "verify this work",
-  "run UAT", "ready to merge", or "check whether this is done"; for tiny edits,
-  ask whether the full workflow is desired.
+description: Use this skill for multi-step, spec-driven, or acceptance-gated implementation work that should move through Plan, Build, and Verify phases. Plan turns ideas or vague build requests into project-grounded Markdown specs and implementation plans. Build executes an approved plan. Verify validates completed work against a spec, Build report, and acceptance criteria. Default to Plan for new feature, product, or architecture requests unless the user explicitly points to an existing plan for implementation or asks for verification or UAT. Use it for requests like plan this, write a spec, build an analytics dashboard, execute this plan, verify this work, run UAT, ready to merge, or check whether this is done. For tiny edits, ask whether the full workflow is desired.
 ---
 
 # Plan Build Verify
@@ -26,11 +15,11 @@ Most work should move through Plan → Build → Verify. Default to **Plan** unl
 
 ## Phase contracts
 
-| Phase | Input | Output | Status |
-| --- | --- | --- | --- |
-| Plan | Idea, vague request, or new build request | Draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff, then Approved after explicit user approval | `Idea` → `Draft` → `Approved` |
-| Build | Approved spec, or explicit user override | Implemented tasks, commits, review results, Build completion report | `Approved` → `Implemented` |
-| Verify | Implemented spec plus completed work or Build report | Acceptance evidence and signoff recommendation | `Implemented` → `Verified` |
+| Phase  | Input                                                | Output                                                                                                  | Status                        |
+| ------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| Plan   | Idea, vague request, or new build request            | Draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff, then Approved after explicit user approval | `Idea` → `Draft` → `Approved` |
+| Build  | Approved spec, or explicit user override             | Implemented tasks, commits, review results, Build completion report                                     | `Approved` → `Implemented`    |
+| Verify | Implemented spec plus completed work or Build report | Acceptance evidence and signoff recommendation                                                          | `Implemented` → `Verified`    |
 
 Build must not start from a draft spec unless the user explicitly overrides the approval gate. Verify must not claim signoff without evidence.
 

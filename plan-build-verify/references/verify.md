@@ -15,9 +15,11 @@ If the user asks for UAT, signoff, merge readiness, or proof that work is comple
 
 ## Preferred workflow
 
-Use the `user-acceptance` skill when it is available. In harnesses that expose skills as slash commands, `/user-acceptance` is the adapter for that skill. Follow its instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
+Use the `user-acceptance` skill when it is available. Follow its instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
 
-If neither `user-acceptance` nor `/user-acceptance` is available, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
+When a spec is available, tell `user-acceptance` to include an explicit acceptance-criteria matrix in the final report. Each criterion should show the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note. This keeps Verify tied to the approved scope instead of only producing a general UAT summary.
+
+If `user-acceptance` is unavailable, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
 
 The `user-acceptance` skill is available here if it needs to be installed: <https://github.com/gannonh/skills/tree/main/user-acceptance>
 
