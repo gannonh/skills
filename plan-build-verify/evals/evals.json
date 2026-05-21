@@ -1,0 +1,53 @@
+{
+  "skill_name": "plan-build-verify",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "We need to add API-backed project creation to this React app. Right now /projects/new is a fixture-only placeholder. Please plan the work before implementation.",
+      "expected_output": "Routes to Plan, inspects project context, asks only blocking clarification, compares approaches, writes an approved-ready spec plus Build handoff under docs/specs/, and opens the spec in Roughdraft for review without implementing code.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "prompt": "I want to build a Slack integration so agents can post updates to a channel. Turn this into a plan we can hand to implementation agents.",
+      "expected_output": "Defaults to Plan despite the word build, identifies integration scope and credentials as key decisions, decomposes if needed, asks focused questions, and produces a docs/specs spec with Build handoff before implementation.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Can you scope a redesign of our command center dashboard? It should feel more useful for operators, but I’m not sure what should change yet.",
+      "expected_output": "Routes to Plan, uses focused one-question-at-a-time discovery for UX intent, proposes 2-3 approaches, writes a docs/specs spec with UX workflow, technical plan, testing, acceptance criteria, and Build handoff, then opens it in Roughdraft.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Execute this approved plan: docs/specs/2026-05-21-analytics-dashboard.md",
+      "expected_output": "Routes to Build, reads the approved spec, runs Build preflight, extracts tasks, follows a step-by-step Markdown workflow, requires /tdd for implementation tasks, and uses spec compliance plus code quality review gates.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Implement docs/specs/2026-05-21-billing-settings.md. It still says Status: Draft but I think it is close enough.",
+      "expected_output": "Routes to Build but pauses at the approval gate because the spec is Draft, asks for explicit user override or approval, and does not start implementation silently.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Run UAT on the new analytics dashboard and tell me if it is ready to merge.",
+      "expected_output": "Routes to Verify, uses /user-acceptance when available or the standalone Verify workflow, builds an acceptance matrix, runs relevant checks, records evidence, and returns a signoff recommendation.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Change the footer text from 'Made by Acme' to 'Built by Acme'.",
+      "expected_output": "Recognizes this as a tiny bounded edit, does not force the full Plan workflow by default, states the assumption, and asks whether the user wants the full Plan → Build → Verify process.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Build from the approved export plan, but make sure tests are done properly. I don't want testing instructions copied into this skill.",
+      "expected_output": "Routes to Build, delegates test-driven implementation to /tdd, stops if /tdd is unavailable, and does not rely on local embedded testing workflow files.",
+      "files": []
+    }
+  ]
+}
