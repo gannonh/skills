@@ -6,7 +6,7 @@ Verify is the third phase in Plan → Build → Verify. It produces acceptance e
 
 ## Required inputs
 
-- Approved spec path.
+- Spec path with status `Implemented`, or an approved spec plus Build completion evidence.
 - Completed implementation or branch to verify.
 - Build completion report when available.
 - Acceptance criteria from the spec.
@@ -15,21 +15,21 @@ If the user asks for UAT, signoff, merge readiness, or proof that work is comple
 
 ## Preferred workflow
 
-Use `/user-acceptance` when it is available. Follow its instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
+Use the `user-acceptance` skill when it is available. In harnesses that expose skills as slash commands, `/user-acceptance` is the adapter for that skill. Follow its instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
 
-If `/user-acceptance` is unavailable, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
+If neither `user-acceptance` nor `/user-acceptance` is available, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
 
-The `/user-acceptance` skill is available here if it needs to be installed: <https://github.com/gannonh/skills/tree/main/user-acceptance>
+The `user-acceptance` skill is available here if it needs to be installed: <https://github.com/gannonh/skills/tree/main/user-acceptance>
 
 ## Standalone Verify workflow
 
-Use this fallback only when `/user-acceptance` is unavailable and the user wants to continue.
+Use this fallback only when `user-acceptance` and `/user-acceptance` are unavailable and the user wants to continue.
 
 ### 1. Read source material
 
 Read:
 
-- Approved spec.
+- Implemented spec, or approved spec plus Build completion evidence.
 - Build completion report.
 - Relevant implementation diff.
 - Project instructions and verification commands.

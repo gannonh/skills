@@ -12,9 +12,9 @@ Build is the second phase in Plan → Build → Verify. It should start from an 
 
 ## Required dependency
 
-Implementation tasks must use `/tdd` before writing production code.
+Implementation tasks must use the `test-driven-development` skill before writing production code. In harnesses that expose skills as slash commands, `/tdd` is the adapter for that skill.
 
-If `/tdd` is unavailable, stop and alert the user. Do not substitute another TDD workflow.
+If neither `test-driven-development` nor `/tdd` is available, stop and alert the user. Do not substitute another TDD workflow.
 
 ## Build workflow
 
@@ -30,7 +30,7 @@ Before editing files:
 6. Identify the current branch. Do not start implementation on `main` or `master` without explicit user consent.
 7. Capture a base SHA with `git rev-parse HEAD`.
 8. Identify verification commands from the spec and repo scripts.
-9. Confirm required tools are available: todo tracking, `/tdd`, and subagent dispatch if using the subagent path.
+9. Confirm required tools are available: todo tracking, `test-driven-development` or `/tdd`, and subagent dispatch if using the subagent path.
 
 Stop and ask if the spec is unapproved, the worktree has unrelated changes, the branch is unsafe, tools are missing, or the plan has blocking questions.
 
@@ -44,7 +44,7 @@ Create todo items for all tasks when a todo tool is available. Keep exactly one 
 
 Prefer the subagent path when subagent dispatch is available and the current agent is acting as orchestrator.
 
-Use the single-agent path only when subagents are unavailable or the user explicitly asks you to work without them. Preserve the same gates: `/tdd`, self-review, spec compliance check, code quality check, tests, and completion report.
+Use the single-agent path only when subagents are unavailable or the user explicitly asks you to work without them. Preserve the same gates: `test-driven-development` or `/tdd`, self-review, spec compliance check, code quality check, tests, and completion report.
 
 ## Subagent path
 
@@ -61,7 +61,7 @@ Give the subagent:
 - Approved scope and non-goals.
 - Base SHA for the task.
 - Required verification commands.
-- Instruction to use `/tdd` before writing implementation code.
+- Instruction to use `test-driven-development` or `/tdd` before writing implementation code.
 
 Do not make the implementer read the plan file to discover its own task. Provide the needed context directly.
 
@@ -92,7 +92,7 @@ If the reviewer finds issues, send the task back to the implementer. Re-run spec
 
 ### 7. Run code quality review
 
-After spec compliance passes, dispatch a code quality reviewer using `references/code-quality-reviewer-prompt.md` and the local `references/code-reviewer.md` template.
+After spec compliance passes, dispatch a code quality reviewer using `references/code-quality-reviewer-prompt.md`. Prefer a compatible installed code-review skill when available; otherwise use the compact rubric in `references/code-reviewer.md`.
 
 Provide:
 
@@ -109,7 +109,7 @@ If the reviewer finds Critical or Important issues, send them back to the implem
 
 A task is complete only when:
 
-- `/tdd` was used or the user explicitly approved an exception.
+- `test-driven-development` or `/tdd` was used, or the user explicitly approved an exception.
 - Required tests and verification commands pass.
 - Spec compliance review passes.
 - Code quality review passes.
@@ -128,11 +128,11 @@ Use this path only when subagents are unavailable or disallowed.
 For each task:
 
 1. Read the task text and acceptance criteria.
-2. Load and follow `/tdd` before writing implementation code.
+2. Load and follow `test-driven-development` or `/tdd` before writing implementation code.
 3. Implement the smallest slice that satisfies the task.
 4. Run required verification commands.
 5. Perform a written spec compliance check against the task and non-goals.
-6. Perform a written code quality check using the concerns in `references/code-reviewer.md`.
+6. Perform a written code quality check using a compatible installed code-review skill or the compact rubric in `references/code-reviewer.md`.
 7. Fix issues and re-run checks until clean.
 8. Record evidence and deviations.
 9. Commit if project instructions or the user require commits.
@@ -205,14 +205,14 @@ Stop and ask when:
 - Blocking open questions remain.
 - The worktree contains unrelated changes.
 - The branch is `main` or `master` and the user has not approved direct implementation there.
-- `/tdd` is unavailable.
+- `test-driven-development` and `/tdd` are unavailable.
 - Required verification commands are unknown.
 - Reviewers find unresolved issues.
 - The plan is wrong or incomplete.
 
 Never:
 
-- Skip `/tdd` unless the user explicitly approves an exception.
+- Skip `test-driven-development` or `/tdd` unless the user explicitly approves an exception.
 - Skip spec compliance review.
 - Skip code quality review.
 - Start code quality review before spec compliance passes.

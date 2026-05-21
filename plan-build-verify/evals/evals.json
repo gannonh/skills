@@ -4,7 +4,7 @@
     {
       "id": 0,
       "prompt": "We need to add API-backed project creation to this React app. Right now /projects/new is a fixture-only placeholder. Please plan the work before implementation.",
-      "expected_output": "Routes to Plan, inspects project context, asks only blocking clarification, compares approaches, writes an approved-ready spec plus Build handoff under docs/specs/, and opens the spec in Roughdraft for review without implementing code.",
+      "expected_output": "Routes to Plan, inspects project context, asks only blocking clarification, compares approaches, writes a draft spec ready for approval plus Build handoff under docs/specs/, and opens the spec in Roughdraft for review without implementing code or marking it Approved before explicit user approval.",
       "files": []
     },
     {
@@ -22,7 +22,7 @@
     {
       "id": 3,
       "prompt": "Execute this approved plan: docs/specs/2026-05-21-analytics-dashboard.md",
-      "expected_output": "Routes to Build, reads the approved spec, runs Build preflight, extracts tasks, follows a step-by-step Markdown workflow, requires /tdd for implementation tasks, and uses spec compliance plus code quality review gates.",
+      "expected_output": "Routes to Build, reads the approved spec, runs Build preflight, extracts tasks, follows a step-by-step Markdown workflow, requires test-driven-development or /tdd for implementation tasks, and uses spec compliance plus code quality review gates.",
       "files": []
     },
     {
@@ -34,7 +34,7 @@
     {
       "id": 5,
       "prompt": "Run UAT on the new analytics dashboard and tell me if it is ready to merge.",
-      "expected_output": "Routes to Verify, uses /user-acceptance when available or the standalone Verify workflow, builds an acceptance matrix, runs relevant checks, records evidence, and returns a signoff recommendation.",
+      "expected_output": "Routes to Verify, uses user-acceptance or /user-acceptance when available or asks before using the standalone Verify workflow, builds an acceptance matrix, runs relevant checks, records evidence, and returns a signoff recommendation.",
       "files": []
     },
     {
@@ -46,7 +46,43 @@
     {
       "id": 7,
       "prompt": "Build from the approved export plan, but make sure tests are done properly. I don't want testing instructions copied into this skill.",
-      "expected_output": "Routes to Build, delegates test-driven implementation to /tdd, stops if /tdd is unavailable, and does not rely on local embedded testing workflow files.",
+      "expected_output": "Routes to Build, delegates test-driven implementation to test-driven-development or /tdd, stops if the dependency is unavailable, and does not rely on local embedded testing workflow files.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "Execute the approved export plan. It should be in the repo somewhere but I don't remember the filename.",
+      "expected_output": "Routes to Build but does not guess a spec path. Searches likely docs/specs or plans locations if appropriate, asks one focused question if multiple candidates or none are found, and does not implement until the approved plan is identified.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Verify docs/specs/2026-05-21-analytics-dashboard.md. The spec status is Implemented and the Build report is docs/specs/2026-05-21-analytics-dashboard-build-report.md.",
+      "expected_output": "Routes to Verify, accepts Implemented as the correct verification starting status, reads the Build report and acceptance criteria, gathers evidence, and does not require the spec to still be Approved.",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "Implement docs/specs/2026-05-21-billing-settings.md, but be careful because I have unrelated local edits in this worktree.",
+      "expected_output": "Routes to Build, runs git status during preflight, detects unrelated dirty worktree changes, stops to ask how to proceed, and does not edit over unrelated work silently.",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "I'm currently on main, but go ahead and implement docs/specs/2026-05-21-billing-settings.md directly.",
+      "expected_output": "Routes to Build, detects the main/master branch during preflight, stops for explicit consent before implementation on the protected branch, and does not start coding without that consent.",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "Plan a browser-based onboarding checklist for new workspace admins. If Roughdraft is not installed, don't install anything without asking me first.",
+      "expected_output": "Routes to Plan, writes the draft spec, checks whether Roughdraft is installed, asks before installing anything if missing, and offers ordinary Markdown review in chat as a fallback.",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "Execute docs/specs/2026-05-21-export-workflow.md, but this harness does not have test-driven-development or /tdd available.",
+      "expected_output": "Routes to Build, stops at dependency preflight because the required TDD workflow is unavailable, explains the missing dependency, and does not substitute a locally invented testing workflow.",
       "files": []
     }
   ]

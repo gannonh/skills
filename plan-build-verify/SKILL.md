@@ -1,6 +1,17 @@
 ---
 name: plan-build-verify
-description: Use this skill when the user wants to plan, build, or verify implementation work. It routes between three workflows: Plan turns ideas or vague build requests into approved docs/specs Markdown specs and implementation plans, Build executes an approved plan, and Verify validates completed work against a spec or plan. Default to Plan for new feature/product/architecture requests unless the user explicitly points to an existing plan for implementation or asks for verification/UAT. Use it for requests like “plan this”, “write a spec”, “build an analytics dashboard”, “execute this plan”, “verify this work”, “run UAT”, or “check whether this is done”.
+description: >-
+  Use this skill for multi-step, spec-driven, or acceptance-gated
+  implementation work that should move through Plan, Build, and Verify phases.
+  Plan turns ideas or vague build requests into project-grounded Markdown specs
+  and implementation plans. Build executes an approved plan. Verify validates
+  completed work against a spec, Build report, and acceptance criteria. Default
+  to Plan for new feature, product, or architecture requests unless the user
+  explicitly points to an existing plan for implementation or asks for
+  verification/UAT. Use it for requests like "plan this", "write a spec",
+  "build an analytics dashboard", "execute this plan", "verify this work",
+  "run UAT", "ready to merge", or "check whether this is done"; for tiny edits,
+  ask whether the full workflow is desired.
 ---
 
 # Plan Build Verify
@@ -17,9 +28,9 @@ Most work should move through Plan → Build → Verify. Default to **Plan** unl
 
 | Phase | Input | Output | Status |
 | --- | --- | --- | --- |
-| Plan | Idea, vague request, or new build request | Approved `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff | `Draft` → `Approved` |
+| Plan | Idea, vague request, or new build request | Draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff, then Approved after explicit user approval | `Idea` → `Draft` → `Approved` |
 | Build | Approved spec, or explicit user override | Implemented tasks, commits, review results, Build completion report | `Approved` → `Implemented` |
-| Verify | Completed implementation plus spec or Build report | Acceptance evidence and signoff recommendation | `Implemented` → `Verified` |
+| Verify | Implemented spec plus completed work or Build report | Acceptance evidence and signoff recommendation | `Implemented` → `Verified` |
 
 Build must not start from a draft spec unless the user explicitly overrides the approval gate. Verify must not claim signoff without evidence.
 
@@ -77,6 +88,12 @@ After selecting the workflow, read the corresponding reference file completely a
 - Verify: `references/verify.md`
 
 Only load the workflow you need. If the selected workflow's reference file is empty or incomplete, say so and ask the user whether to draft that workflow before proceeding.
+
+## Dependency names and slash-command adapters
+
+Some harnesses expose skills as slash commands. Treat `/tdd` as the `test-driven-development` skill and `/user-acceptance` as the `user-acceptance` skill when those slash commands are available.
+
+If a required dependency is unavailable, stop and tell the user what is missing rather than silently substituting another workflow. The only exception is Verify's standalone fallback, which requires explicit user approval.
 
 ## Shared principles
 

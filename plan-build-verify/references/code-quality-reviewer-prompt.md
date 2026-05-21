@@ -8,10 +8,10 @@ Only dispatch after spec compliance review passes.
 
 ```text
 Task tool (general-purpose):
-  Use the local template at references/code-reviewer.md
+  Prefer a compatible installed code-review skill when available. Otherwise use the compact local rubric at references/code-reviewer.md
 
   DESCRIPTION: [Task summary from implementer's report]
-  SPEC_PATH: [Approved spec path]
+  SPEC_PATH: [Spec path]
   TASK_ID: [Task ID]
   PLAN_OR_REQUIREMENTS: [Task text and acceptance criteria]
   BASE_SHA: [Commit before task]
@@ -20,7 +20,7 @@ Task tool (general-purpose):
   APPROVED_DEVIATIONS: [Approved deviations or "None"]
 ```
 
-In addition to the local code reviewer template, ask the reviewer to check:
+In addition to the selected reviewer instructions, ask the reviewer to check:
 
 - Does each changed file have one clear responsibility with a well-defined interface?
 - Are units decomposed so they can be understood and tested independently?

@@ -43,9 +43,9 @@ Task tool (general-purpose):
 
     ## Required development workflow
 
-    Use /tdd before writing production code.
+    Use the test-driven-development skill before writing production code. If this harness exposes it as a slash command, /tdd is the adapter for that skill.
 
-    If /tdd is unavailable, report BLOCKED and explain that the required TDD workflow is missing. Do not substitute another TDD workflow.
+    If neither test-driven-development nor /tdd is available, report BLOCKED and explain that the required TDD workflow is missing. Do not substitute another TDD workflow.
 
     ## Before you begin
 
@@ -57,7 +57,7 @@ Task tool (general-purpose):
 
     Once clear on requirements:
 
-    1. Use /tdd.
+    1. Use test-driven-development or /tdd.
     2. Implement exactly what the task specifies.
     3. Write or update tests through the TDD workflow.
     4. Run required verification commands.
@@ -83,7 +83,7 @@ Task tool (general-purpose):
     - You need credentials or destructive actions not approved in the spec.
     - You are unsure whether your approach satisfies the acceptance criteria.
     - The task involves restructuring not anticipated by the spec.
-    - /tdd is unavailable.
+    - test-driven-development and /tdd are unavailable.
 
     ## Self-review before reporting
 
@@ -91,7 +91,7 @@ Task tool (general-purpose):
 
     - Did I implement everything in the task and nothing outside it?
     - Did I preserve non-goals?
-    - Did I use /tdd?
+    - Did I use test-driven-development or /tdd?
     - Did tests verify behavior, not implementation details?
     - Did verification commands pass?
     - Are names clear and consistent with project language?
@@ -109,7 +109,7 @@ Task tool (general-purpose):
     - What changed:
     - Files changed:
     - Tests and verification run:
-    - /tdd usage summary:
+    - TDD skill usage summary:
     - Self-review findings:
     - Approved deviations used:
     - Concerns or blockers:

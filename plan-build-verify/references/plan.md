@@ -185,8 +185,10 @@ The user may refer to Roughdraft as `rd` in natural language. Treat `rd` as shor
 First check whether Roughdraft is installed:
 
 ```bash
-command -v roughdraft >/dev/null || npm i -g roughdraft
+command -v roughdraft >/dev/null
 ```
+
+If Roughdraft is missing, ask the user before installing anything. If the user declines installation or installation is not possible, ask whether to continue with ordinary Markdown review in the chat.
 
 Then open the spec with an absolute path:
 
