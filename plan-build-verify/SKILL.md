@@ -78,12 +78,6 @@ After selecting the workflow, read the corresponding reference file completely a
 
 Only load the workflow you need. If the selected workflow's reference file is empty or incomplete, say so and ask the user whether to draft that workflow before proceeding.
 
-## Dependency names and slash-command adapters
-
-Some harnesses expose skills as slash commands. Treat `/tdd` as the `test-driven-development` skill and `/user-acceptance` as the `user-acceptance` skill when those slash commands are available.
-
-If a required dependency is unavailable, stop and tell the user what is missing rather than silently substituting another workflow. The only exception is Verify's standalone fallback, which requires explicit user approval.
-
 ## Shared principles
 
 - Inspect the repo before making claims about project structure or commands.
