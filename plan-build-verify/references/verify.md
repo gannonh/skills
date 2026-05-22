@@ -4,7 +4,7 @@ Use this workflow to validate completed implementation against the approved spec
 
 Verify is the third phase in Plan → Build → Verify. It produces acceptance evidence and a signoff recommendation.
 
-## Required inputs
+## Step 1: Gather inputs
 
 - Spec path with status `Implemented`, or an approved spec plus Build completion evidence.
 - Completed implementation or branch to verify.
@@ -13,130 +13,21 @@ Verify is the third phase in Plan → Build → Verify. It produces acceptance e
 
 If the user asks for UAT, signoff, merge readiness, or proof that work is complete, start here.
 
-## Preferred workflow
+## Step 2: Verify against acceptance criteria
 
-Use the `user-acceptance` skill when it is available. Follow its instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
-
-When a spec is available, tell `user-acceptance` to include an explicit acceptance-criteria matrix in the final report. Each criterion should show the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note. This keeps Verify tied to the approved scope instead of only producing a general UAT summary.
+- Use the `user-acceptance` skill to verify the **Acceptance criteria** from the spec.
+- Follow `user-acceptance` instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
+- Use an explicit **acceptance-criteria matrix** in the final report.
+- Each criterion should show the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note -- This keeps Verify tied to the approved scope instead of only producing a general UAT summary.
 
 If `user-acceptance` is unavailable, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
 
 The `user-acceptance` skill is available here if it needs to be installed: <https://github.com/gannonh/skills/tree/main/user-acceptance>
 
-## Standalone Verify workflow
+## Step 3: Verify the report and fill in gaps
 
-Use this fallback only when `user-acceptance` and `/user-acceptance` are unavailable and the user wants to continue.
-
-### 1. Read source material
-
-Read:
-
-- Implemented spec, or approved spec plus Build completion evidence.
-- Build completion report.
-- Relevant implementation diff.
-- Project instructions and verification commands.
-
-Do not rely only on the implementer summary.
-
-### 2. Build an acceptance matrix
-
-Create a checklist from the spec's acceptance criteria.
-
-For each criterion, track:
-
-- Criterion.
-- Evidence required.
-- Verification method.
-- Result: Pass, Fail, Blocked, or Not tested.
-- Evidence path, command output, screenshot, URL, log, or notes.
-
-### 3. Run automated checks
-
-Run the verification commands from the spec and repo instructions.
-
-Examples:
-
-```bash
-pnpm typecheck
-pnpm build
-pnpm lint
-pnpm test
-pnpm test:e2e
-```
-
-Use only commands that apply to the current repo. Record exact commands and results.
-
-Do not claim tests pass if a command was skipped, unavailable, or failed.
-
-### 4. Inspect scope and implementation
-
-Compare the implementation to the approved scope:
-
-- Confirm required behavior exists.
-- Confirm non-goals were preserved.
-- Check for unapproved deviations.
-- Check relevant UI, API, data, migration, config, and docs changes.
-- Review tests for intent, not just coverage.
-
-### 5. Run manual or UAT checks
-
-When the work has user-visible behavior, run manual checks that match the acceptance criteria.
-
-Use browser automation, CLI commands, screenshots, logs, API calls, or terminal recordings when useful and available.
-
-Save evidence paths when artifacts are produced.
-
-### 6. Classify findings
-
-Classify issues as:
-
-- Blocker: prevents acceptance or risks data loss/security/regression.
-- Important: should be fixed before merge or release.
-- Minor: does not block acceptance but should be tracked.
-
-If evidence is missing, mark the item as Not tested or Blocked. Do not infer success.
-
-### 7. Produce the verification report
-
-Return a concise report:
-
-```markdown
-# Verification Report: <work item>
-
-## Verdict
-Pass | Pass with issues | Fail | Blocked
-
-## Summary
-<1-3 sentence result>
-
-## Acceptance matrix
-- [Pass/Fail/Blocked/Not tested] <criterion>: <evidence>
-
-## Commands run
-- `<command>`: <result>
-
-## Manual/UAT evidence
-- <artifact path, screenshot, URL, log, or note>
-
-## Issues
-### Blocker
-- <issue or None>
-
-### Important
-- <issue or None>
-
-### Minor
-- <issue or None>
-
-## Recommendation
-<Ready to merge/sign off, ready after fixes, or not ready>
-```
-
-### 8. Update status when appropriate
-
-If verification passes and the user accepts the result, update the spec status from `Implemented` to `Verified` when project instructions allow editing the spec.
-
-If verification fails, leave status unchanged and report what must be fixed.
+- Task a subagent to verify the `uat-evidence` against the spec's acceptance criteria
+- Fill in any gaps before presenting the final report to the user.
 
 ## Stop and ask
 

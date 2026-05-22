@@ -15,7 +15,7 @@ The spec includes the implementation plan and a Build handoff. Do not start impl
 Create and track tasks when a todo tool is available:
 
 1. Explore project context.
-2. Clarify intent and constraints.
+2. Align on intent and constraints.
 3. Propose approaches.
 4. Draft the spec and Build handoff.
 5. Self-review the spec.
@@ -38,24 +38,31 @@ Review the smallest useful set of files:
 
 If the request spans multiple independent systems, flag that early and propose a decomposition before refining details.
 
-## 2. Clarify through focused questions
+## 2. Align on intent and constraints
 
-Ask one question at a time, prefer multiple choice when it reduces friction, and focus on decisions that change the plan.
+After exploring project context, enter an alignment phase before drafting the spec. The purpose is to show the user how you are framing the work and give them a chance to correct assumptions before the plan hardens.
 
-Good questions uncover:
+Ask focused questions one at a time until you can clearly state:
 
-- The user problem and success criteria.
-- Scope boundaries and explicit non-goals.
-- UX or API expectations.
-- Data, persistence, integration, or migration constraints.
-- Compatibility and rollout requirements.
-- Testing and acceptance evidence.
+- The user's goal.
+- Success criteria.
+- Scope boundaries and non-goals.
+- Key UX, API, data, or integration constraints.
+- The main implementation choice the plan depends on.
 
-Do not interrogate the user for information the repo already answers. If only one reasonable path exists, state the assumption and proceed.
+Do not ask about facts the repo already answers. If no factual clarification is needed, ask an alignment question instead of inventing a weak question. Useful alignment questions confirm the agent's read of the task, expose assumptions, or ask the user to choose between viable directions.
+
+Examples:
+
+- `I think the core goal is X, with Y out of scope. Is that right?`
+- `The main choice seems to be A versus B. I recommend A because <reason>. Do you want to go with that?`
+- `I am assuming success means <observable outcome>. Should I plan around that?`
+
+Do not draft the spec until the user has responded to the alignment phase, unless the user explicitly asks to skip planning dialogue or the task is a tiny edit.
 
 ## 3. Propose approaches
 
-Before writing the spec, present 2-3 viable approaches with trade-offs and a recommendation.
+After the alignment phase, present 2-3 viable approaches with trade-offs and a recommendation when the implementation direction is not already fixed.
 
 Use this shape:
 
@@ -71,7 +78,7 @@ Alternative: <approach name>
 
 Recommend the option that gives the clearest implementation path with the least unnecessary scope. Avoid hybridizing approaches unless the combination has a clear reason.
 
-Ask the user to choose or approve the recommendation before drafting the full spec when the choice materially changes implementation.
+Ask the user to choose or approve the recommendation before drafting the full spec. If one approach is clearly best, still state the recommendation and wait for approval or redirection.
 
 ## 4. Write the spec and Build handoff
 
@@ -265,7 +272,7 @@ If the user is ready to build, transition to `references/build.md` and follow it
 
 Ask before proceeding when:
 
-- The user has not chosen between materially different approaches.
+- The user has not responded to the alignment phase or approved the recommended approach.
 - The request is too broad for one spec and needs decomposition.
 - Project docs or code conflict and the source of truth is unclear.
 - The plan would require credentials, paid services, destructive migrations, or irreversible actions.
