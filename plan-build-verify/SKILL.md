@@ -1,23 +1,25 @@
 ---
 name: plan-build-verify
-description: Use this skill for multi-step, spec-driven, or acceptance-gated implementation work that should move through Plan, Build, and Verify phases. Plan turns ideas or vague build requests into project-grounded Markdown specs and implementation plans. Build executes an approved plan. Verify validates completed work against a spec, Build report, and acceptance criteria. Default to Plan for new feature, product, or architecture requests unless the user explicitly points to an existing plan for implementation or asks for verification or UAT. Use it for requests like plan this, write a spec, build an analytics dashboard, execute this plan, verify this work, run UAT, ready to merge, or check whether this is done. For tiny edits, ask whether the full workflow is desired.
+description: Use this skill for multi-step, spec-driven, or acceptance-gated implementation work that should move through Plan, Build, and Verify phases. Plan is an interactive alignment workflow before spec-writing: inspect the repo, ask focused alignment questions one at a time, present or confirm the recommended direction, and wait for user approval before drafting the spec. Build executes an approved plan. Verify validates completed work against a spec, Build report, and acceptance criteria. Default to Plan for new feature, product, or architecture requests unless the user explicitly points to an existing plan for implementation or asks for verification or UAT. Use it for requests like plan this, write a spec, build an analytics dashboard, execute this plan, verify this work, run UAT, ready to merge, or check whether this is done. For tiny edits, ask whether the full workflow is desired.
 ---
 
 # Plan Build Verify
 
 Use this skill to route implementation work through a sequential path:
 
-1. **Plan**: turn an idea into a project-grounded spec and implementation plan.
+1. **Plan**: align with the user on intent, constraints, and approach before writing a project-grounded spec and implementation plan.
 2. **Build**: execute an approved spec or implementation plan.
 3. **Verify**: validate completed work against the spec, plan, and acceptance criteria.
 
 Most work should move through Plan → Build → Verify. Default to **Plan** unless the user explicitly directs you to execute an existing plan or verify completed work.
 
+When the selected phase is **Plan**, do not jump straight to a written spec. Plan starts with context exploration and user alignment. The spec records the agreed direction after the user has responded to the alignment phase and approved or redirected the recommended approach.
+
 ## Phase contracts
 
 | Phase  | Input                                                | Output                                                                                                  | Status                        |
 | ------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| Plan   | Idea, vague request, or new build request            | Draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff, then Approved after explicit user approval | `Idea` → `Draft` → `Approved` |
+| Plan   | Idea, vague request, or new build request            | Context exploration → alignment dialogue → approach approval → draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff → Approved after explicit user approval | `Idea` → `Aligned` → `Draft` → `Approved` |
 | Build  | Approved spec, or explicit user override             | Implemented tasks, commits, review results, Build completion report                                     | `Approved` → `Implemented`    |
 | Verify | Implemented spec plus completed work or Build report | Acceptance evidence and signoff recommendation                                                          | `Implemented` → `Verified`    |
 
@@ -32,7 +34,7 @@ Use **Plan** when:
 - The user asks to plan, scope, design, spec, shape, or prepare work.
 - The user asks to build a new feature, product surface, integration, or architecture change without pointing to an approved plan.
 - There is no approved spec or implementation plan for the requested work.
-- The safest next step is writing a Markdown spec before coding.
+- The safest next step is interactive alignment and a Markdown spec before coding.
 
 Examples that start with Plan:
 
@@ -70,7 +72,9 @@ If the phase remains ambiguous after applying these rules, ask one focused quest
 
 ## Load the workflow instructions
 
-After selecting the workflow, read the corresponding reference file completely and follow it:
+After selecting the workflow, read the corresponding reference file completely and follow it. For Plan, the first reference step after context exploration is alignment. If you are about to draft a spec before the user has answered an alignment question or approved a recommended direction, stop and ask instead.
+
+Reference files:
 
 - Plan: `references/plan.md`
 - Build: `references/build.md`
@@ -82,7 +86,8 @@ Only load the workflow you need. If the selected workflow's reference file is em
 
 - Inspect the repo before making claims about project structure or commands.
 - Use a todo list when the work has multiple steps.
-- Ask one question at a time when clarification is needed.
+- In Plan, ask focused alignment questions one at a time before drafting the spec. If no factual clarification is needed, ask the user to confirm your framing, assumptions, success criteria, or recommended direction.
+- In Plan, propose 2-3 approaches before settling when more than one viable direction exists. If one approach is clearly best, state the recommendation and wait for approval or redirection.
 - Prefer small, verifiable phases over broad unverified changes.
 - Keep scope tied to the selected spec, plan, or acceptance criteria.
 - Surface uncertainty instead of filling gaps with guesses.

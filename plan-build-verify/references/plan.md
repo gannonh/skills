@@ -12,7 +12,7 @@ The spec includes the implementation plan and a Build handoff. Do not start impl
 
 ## Workflow
 
-Create and track tasks when a todo tool is available:
+When a todo tool is available, create a task for each item and complete them in order. The order matters because alignment and approach approval happen before spec-writing:
 
 1. Explore project context.
 2. Align on intent and constraints.
@@ -42,13 +42,15 @@ If the request spans multiple independent systems, flag that early and propose a
 
 After exploring project context, enter an alignment phase before drafting the spec. The purpose is to show the user how you are framing the work and give them a chance to correct assumptions before the plan hardens.
 
-Ask focused questions one at a time until you can clearly state:
+Continue the alignment dialogue one focused question at a time until you can clearly state:
 
 - The user's goal.
 - Success criteria.
 - Scope boundaries and non-goals.
 - Key UX, API, data, or integration constraints.
 - The main implementation choice the plan depends on.
+
+This is a loop with an exit condition, not a one-question minimum. Ask the next question when the user's answer reveals another decision that could change scope, architecture, UX, data, integration, rollout, or acceptance.
 
 Do not ask about facts the repo already answers. If no factual clarification is needed, ask an alignment question instead of inventing a weak question. Useful alignment questions confirm the agent's read of the task, expose assumptions, or ask the user to choose between viable directions.
 
@@ -62,7 +64,7 @@ Do not draft the spec until the user has responded to the alignment phase, unles
 
 ## 3. Propose approaches
 
-After the alignment phase, present 2-3 viable approaches with trade-offs and a recommendation when the implementation direction is not already fixed.
+After the alignment phase, present 2-3 viable approaches with trade-offs and a recommendation before drafting the spec. If the user has already fixed the implementation direction or only one viable approach exists, present that direction as the recommendation and ask for approval or redirection before drafting.
 
 Use this shape:
 
