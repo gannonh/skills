@@ -1,292 +1,149 @@
 # Plan Workflow
 
-Use this workflow to turn an idea into an approved spec and implementation plan that another agent or future session can execute with minimal guessing.
+Help turn ideas into fully formed design specs through natural collaborative dialogue.
 
-The result is a durable Markdown spec in the local project at:
+Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.
 
-```text
-docs/specs/YYYY-MM-DD-<topic>.md
-```
-
-The spec includes the implementation plan and a Build handoff. Do not start implementation until the user approves the written spec, unless the user explicitly asks to skip planning.
-
-## Workflow
-
-When a todo tool is available, create a task for each item and complete them in order. The order matters because alignment and approach approval happen before spec-writing:
-
-1. Explore project context.
-2. Align on intent and constraints.
-3. Propose approaches.
-4. Draft the spec and Build handoff.
-5. Self-review the spec.
-6. Open the spec in Roughdraft for user review.
-7. Resolve Roughdraft comments.
-8. Record approval in the spec.
-9. Ask whether to continue to Build.
-
-## 1. Explore project context
-
-Inspect the current project before asking detailed questions. Avoid asking about facts already visible in the repo.
-
-Review the smallest useful set of files:
-
-- `README.md`, `AGENTS.md`, `CLAUDE.md`, or equivalent project instructions.
-- Existing docs under `docs/`, especially `docs/specs/`, `docs/plans/`, `docs/adr/`, and roadmaps.
-- Existing code paths related to the request.
-- Package scripts and test commands when implementation is likely.
-- Recent commits if they clarify direction.
-
-If the request spans multiple independent systems, flag that early and propose a decomposition before refining details.
-
-## 2. Align on intent and constraints
-
-After exploring project context, enter an alignment phase before drafting the spec. The purpose is to show the user how you are framing the work and give them a chance to correct assumptions before the plan hardens.
-
-Continue the alignment dialogue one focused question at a time until you can clearly state:
-
-- The user's goal.
-- Success criteria.
-- Scope boundaries and non-goals.
-- Key UX, API, data, or integration constraints.
-- The main implementation choice the plan depends on.
-
-This is a loop with an exit condition, not a one-question minimum. Ask the next question when the user's answer reveals another decision that could change scope, architecture, UX, data, integration, rollout, or acceptance.
-
-Do not ask about facts the repo already answers. If no factual clarification is needed, ask an alignment question instead of inventing a weak question. Useful alignment questions confirm the agent's read of the task, expose assumptions, or ask the user to choose between viable directions.
-
-Examples:
-
-- `I think the core goal is X, with Y out of scope. Is that right?`
-- `The main choice seems to be A versus B. I recommend A because <reason>. Do you want to go with that?`
-- `I am assuming success means <observable outcome>. Should I plan around that?`
-
-Do not draft the spec until the user has responded to the alignment phase, unless the user explicitly asks to skip planning dialogue or the task is a tiny edit.
-
-## 3. Propose approaches
-
-After the alignment phase, present 2-3 viable approaches with trade-offs and a recommendation before drafting the spec. If the user has already fixed the implementation direction or only one viable approach exists, present that direction as the recommendation and ask for approval or redirection before drafting.
-
-Use this shape:
-
-```markdown
-Recommended: <approach name>
-- Why: <short reason>
-- Trade-offs: <short caveats>
-
-Alternative: <approach name>
-- Why it might fit: <short reason>
-- Trade-offs: <short caveats>
-```
-
-Recommend the option that gives the clearest implementation path with the least unnecessary scope. Avoid hybridizing approaches unless the combination has a clear reason.
-
-Ask the user to choose or approve the recommendation before drafting the full spec. If one approach is clearly best, still state the recommendation and wait for approval or redirection.
-
-## 4. Write the spec and Build handoff
-
-Create `docs/specs/` if it does not exist. Name the file with the current date and a short slug:
+The result is a durable Markdown design spec in the local project at:
 
 ```text
 docs/specs/YYYY-MM-DD-<topic>.md
 ```
 
-Use this structure unless the repo has a stronger existing spec format:
+## Checklist
 
-```markdown
-# <Feature or Change> Spec
+You MUST create a task for each of these items and complete them in order:
 
-## Status
-Draft
+1. **Explore project context** — check files, docs, recent commits
+2. **Offer visual companion** (if topic will involve visual questions) — this is its own message, not combined with a clarifying question. See the Visual Companion section below.
+3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
+4. **Propose 2-3 approaches** — with trade-offs and your recommendation
+5. **Present design** — in sections scaled to their complexity, get user approval after each section
+6. **Write design spec** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit
+7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
+8. **User reviews written spec** — ask user to review the spec file before proceeding
+9. **Transition to Build phase** — ask the user if they would like to advance to the Build phase (`./build.md`).
 
-## Goal
-<What outcome this work should produce.>
+## Process Flow
 
-## Background
-<Project context and why this is needed.>
+```dot
+digraph brainstorming {
+    "Explore project context" [shape=box];
+    "Visual questions ahead?" [shape=diamond];
+    "Offer Visual Companion\n(own message, no other content)" [shape=box];
+    "Ask clarifying questions" [shape=box];
+    "Propose 2-3 approaches" [shape=box];
+    "Present design sections" [shape=box];
+    "User approves design?" [shape=diamond];
+    "Write design spec" [shape=box];
+    "Spec self-review\n(fix inline)" [shape=box];
+    "User reviews spec?" [shape=diamond];
+    "Advance to Build phase" [shape=doublecircle];
 
-## Requirements
-- <Observable requirement>
-
-## Non-goals
-- <Explicitly excluded work>
-
-## Proposed approach
-<The selected approach and why it fits.>
-
-## User experience / workflow
-<Relevant screens, commands, API flows, or behavior.>
-
-## Technical design
-<Components, modules, routes, data model, integrations, and boundaries.>
-
-## Data and API changes
-<Schema, DTO, endpoint, config, migration, or storage changes. Use “None” if none.>
-
-## Error handling and edge cases
-<Failure modes and expected behavior.>
-
-## Test strategy
-<Unit, integration, e2e, manual acceptance, fixtures, mocks.>
-
-## Implementation plan
-### Phase 1: <name>
-- [ ] <Task with files or modules involved>
-- [ ] <Verification for this phase>
-
-### Phase 2: <name>
-- [ ] <Task with files or modules involved>
-- [ ] <Verification for this phase>
-
-## Acceptance criteria
-- [ ] <User-visible or testable outcome>
-
-## Build handoff
-- Spec path: <docs/specs/YYYY-MM-DD-<topic>.md>
-- Approved scope: <What Build may change>
-- Non-goals: <What Build must not change>
-- Ordered task list: <Task IDs or phase list>
-- Verification commands: <Commands Build must run>
-- Required fixtures or test data: <Fixtures, mocks, accounts, credentials, or “None”>
-- Known risks: <Risks Build must watch for>
-- Blocking open questions: <Questions that block Build, or “None”>
-
-## Open questions
-- <Only unresolved questions that do not block Build. Use “None” if none.>
+    "Ask clarifying questions" -> "Propose 2-3 approaches";
+    "Propose 2-3 approaches" -> "Present design sections";
+    "Present design sections" -> "User approves design?";
+    "User approves design?" -> "Present design sections" [label="no, revise"];
+    "User approves design?" -> "Write design spec" [label="yes"];
+    "Write design spec" -> "Spec self-review\n(fix inline)";
+    "Spec self-review\n(fix inline)" -> "User reviews design spec?";
+    "User reviews design spec?" -> "Write spec" [label="changes requested"];
+    "User reviews design spec?" -> "Advance to Build phase" [label="approved"];
+}
 ```
 
-### Implementation plan quality bar
+**The terminal state is advancing to Build phase.** Do NOT invoke any other implementation skill. The ONLY workflow you invoke after Plan is Build.
 
-Make the plan executable by another agent:
+## The Process
 
-- Order tasks by dependency.
-- Prefer vertical slices over broad horizontal layers when possible.
-- Name likely files or directories, but do not invent exact APIs before checking the repo or installed docs.
-- Include verification commands and expected outcomes.
-- Include test data, mocks, or fixtures when needed.
-- Call out migration, rollout, and cleanup steps.
-- Mark out-of-scope work clearly.
-- Avoid large pasted implementation code. Use concise examples only when they remove ambiguity.
+**Understanding the idea:**
 
-Build must not start while `Blocking open questions` contains anything other than `None`, unless the user explicitly overrides that gate.
+- Check out the current project state first (files, docs, recent commits)
+- Before asking detailed questions, assess scope: if the request describes multiple independent subsystems (e.g., "build a platform with chat, file storage, billing, and analytics"), flag this immediately. Don't spend questions refining details of a project that needs to be decomposed first.
+- If the project is too large for a single spec, help the user decompose into a high level roadmap with sub-projects: what are the independent pieces, how do they relate, what order should they be built? Then brainstorm the first sub-project. Each sub-project gets its own spec.
+- For appropriately-scoped projects, ask questions one at a time to refine the idea
+- Prefer multiple choice questions when possible, but open-ended is fine too
+- Only one question per message - if a topic needs more exploration, break it into multiple questions
+- Focus on understanding: purpose, constraints, success criteria
 
-## 5. Self-review before asking the user
+**Exploring approaches:**
 
-After writing the spec, read it again and fix issues inline.
+- Propose 2-3 different approaches with trade-offs
+- Present options conversationally with your recommendation and reasoning
+- Lead with your recommended option and explain why
 
-Check for:
+**Presenting the design:**
 
-- Placeholders such as `TBD`, `TODO`, or vague “handle errors” language.
-- Internal contradictions between requirements, design, and plan.
-- Scope creep or tasks unrelated to the goal.
-- Ambiguous terms that two implementers could read differently.
-- Missing verification for important behavior.
-- Plan steps that depend on unverified library APIs.
-- Missing or incomplete Build handoff fields.
+- Once you believe you understand what you're building, present the design
+- Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
+- Ask after each section whether it looks right so far
+- Cover: architecture, components, acceptance criteria,data flow, error handling, testing
+- Be ready to go back and clarify if something doesn't make sense
 
-If a question remains open, make it explicit and explain whether implementation can proceed without answering it.
+**Design for isolation and clarity:**
 
-## 6. Open the spec in Roughdraft
+- Break the system into smaller units that each have one clear purpose, communicate through well-defined interfaces, and can be understood and tested independently
+- For each unit, you should be able to answer: what does it do, how do you use it, and what does it depend on?
+- Can someone understand what a unit does without reading its internals? Can you change the internals without breaking consumers? If not, the boundaries need work.
+- Smaller, well-bounded units are also easier for you to work with - you reason better about code you can hold in context at once, and your edits are more reliable when files are focused. When a file grows large, that's often a signal that it's doing too much.
 
-After the self-review passes, open the written Markdown spec in Roughdraft before asking the user to review it.
+**Working in existing codebases:**
 
-The user may refer to Roughdraft as `rd` in natural language. Treat `rd` as shorthand for Roughdraft, but do not create or modify any shell alias, executable, symlink, or command named `rd`.
+- Explore the current structure before proposing changes. Follow existing patterns.
+- Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
+- Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
-First check whether Roughdraft is installed:
+## After the Design
 
-```bash
-command -v roughdraft >/dev/null
-```
+**Documentation:**
 
-If Roughdraft is missing, ask the user before installing anything. If the user declines installation or installation is not possible, ask whether to continue with ordinary Markdown review in the chat.
+- Write the validated design spec to `docs/specs/YYYY-MM-DD-<topic>-design.md`
+  - (User preferences for spec location override this default)
+- Make the spec implementation-ready. It should capture the agreed design, constraints, sequencing, implementation phases, risks, and verification guidance so the Build phase can proceed without re-planning.
+- Use the section names, format, and level of detail below as guidance, not a rigid template. Omit sections that do not fit the work. Add sections when they make the spec easier to review or execute.
+- Consider sections like:
+  - `Goal` - the outcome and source of truth.
+  - `Reference mocks`, `References`, or `Source of truth` - links to roadmap sections, screenshots, prior specs, designs, or examples.
+  - `Current state` or `Verified current state` - what already exists, what is working, and what gaps remain.
+  - `Constraints` and `Out of scope` - explicit boundaries, non-goals, and governing rules.
+  - `Architecture` - component relationships, boundaries, data flow, and a Mermaid diagram when relationships matter.
+  - `Implementation phases` - ordered phases with the approach, likely files, and acceptance tie-ins for each phase.
+  - `Sequencing` - dependency order, parallelizable work, and rollout notes.
+  - `Verification` or `Testing and acceptance` - unit, integration, manual, UAT, and command-level checks.
+  - `Risks and mitigations` - specific risks with practical mitigations.
+  - `Key files` or `Suggested file map` - likely files or areas affected, without inventing unverified APIs.
+  - `Explicitly deferred work` - related work intentionally left out.
+  - `Build handoff` - approved scope, non-goals, ordered phases, required verification, fixtures, risks, and blocking questions.
+- Keep implementation detail at the task-shaping level. Include phases, likely files, and acceptance checks; avoid large pasted code blocks or exact APIs that have not been verified in the repo.
+- Commit the design spec to git
 
-Then open the spec with an absolute path:
+**Spec Self-Review:**
+After writing the spec document, look at it with fresh eyes:
 
-```bash
-roughdraft open "/absolute/path/to/docs/specs/YYYY-MM-DD-<topic>.md"
-```
+1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
+2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
+3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
+4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
 
-Roughdraft is currently a single-file Markdown viewer/editor. Open one `.md` file at a time.
+Fix any issues inline. No need to re-review — just fix and move on.
 
-If Roughdraft is not running, `roughdraft open` starts it automatically. Leave the command running. Do not interrupt, kill, background, detach, or treat the waiting process as cleanup. The wait is intentional: Roughdraft exits the command after the user clicks Done Reviewing, and that exit is the signal to resume.
+**User Review Gate:**
+After the spec review loop passes, ask the user to review the written spec before proceeding:
 
-After `roughdraft open` exits, read the Markdown file from disk and respond to any CriticMarkup comments or suggested changes. If the user requested changes, edit the spec, run the self-review again, and reopen it in Roughdraft.
+> "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes."
 
-Use a concise message before the command if useful:
+Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
-```markdown
-Spec written to `docs/specs/YYYY-MM-DD-<topic>.md`. Opening it in Roughdraft for review now.
-```
+**Build phase:**
 
-### Roughdraft CriticMarkup
+- ask the user if they would like to advance to the Build phase (`./build.md`).
+- Do NOT invoke any other skill. writing-plans is the next step.
 
-Use Roughdraft-flavored CriticMarkup when reading or writing inline review feedback in Markdown. The base markers are:
+## Key Principles
 
-```text
-Comment: {>>comment<<}
-Insertion: {++new text++}
-Deletion: {--old text--}
-Substitution: {~~old text~>new text~~}
-Highlight: {==text==}
-```
-
-When adding a new comment or suggested change, use the extended Roughdraft format with an attribute block, such as `{id="c1" by="AI" at="2026-04-28T12:00:00.000Z"}`. Generate a stable document-local id, such as `c1`, `c2` for comments and `s1`, `s2` for suggestions. Set `by` to your agent or author label, set `at` to the current ISO timestamp, and set `re` when replying to an existing comment or suggestion.
-
-Preserve existing Roughdraft attribute blocks unless intentionally removing the associated comment or suggestion. Common attributes are `id`, `by`, `at`, and `re`.
-
-Anchored comments usually look like:
-
-```text
-{==selected text==}{>>Comment text<<}{id="c1" by="AI" at="2026-04-28T12:00:00.000Z"}
-```
-
-Suggested changes usually look like:
-
-```text
-{++new text++}{id="s1" by="AI" at="2026-04-28T12:10:00.000Z"}
-{~~old text~>new text~~}{id="s2" by="AI" at="2026-04-28T12:11:00.000Z"}
-```
-
-Replies usually look like:
-
-```text
-{>>Reply text<<}{id="c2" by="AI" at="2026-04-28T12:05:00.000Z" re="c1"}
-```
-
-Use `roughdraft help` and `roughdraft help criticmarkup` for local command and syntax details when needed.
-
-## 7. Record approval
-
-After the user approves the spec:
-
-1. Update `## Status` from `Draft` to `Approved`.
-2. Ensure `Blocking open questions` is `None`, unless the user explicitly approved proceeding with listed questions.
-3. Note approval in the response with the spec path.
-
-Do not mark a spec approved just because it was written. Approval requires explicit user confirmation after review.
-
-## 8. Transition to Build
-
-After final, explicit plan approval, ask the user if they would like to move to the Build phase.
-
-If the user is ready to build, transition to `references/build.md` and follow it for implementation.
-
-## Stop and ask
-
-Ask before proceeding when:
-
-- The user has not responded to the alignment phase or approved the recommended approach.
-- The request is too broad for one spec and needs decomposition.
-- Project docs or code conflict and the source of truth is unclear.
-- The plan would require credentials, paid services, destructive migrations, or irreversible actions.
-- The user appears to want implementation immediately but key requirements are still unknown.
-
-## Examples
-
-Input: “Plan the next milestone for adding API-backed threads.”
-Output: Inspect repo context, ask focused questions, compare approaches, then write `docs/specs/YYYY-MM-DD-api-backed-threads.md` with requirements, design, implementation phases, tests, acceptance criteria, and Build handoff.
-
-Input: “Build a billing settings page.”
-Output: Use this workflow first because the request needs product and technical decisions. Clarify billing provider, user roles, states, and success criteria before writing the spec and plan.
-
-Input: “Make a tiny copy change in the footer.”
-Output: Do not over-plan. State the assumption and ask whether the user wants the full workflow. If they just want the edit, proceed without this workflow’s full process.
+- **One question at a time** - Don't overwhelm with multiple questions
+- **Multiple choice preferred** - Easier to answer than open-ended when possible
+- **YAGNI ruthlessly** - Remove unnecessary features from all designs
+- **Explore alternatives** - Always propose 2-3 approaches before settling
+- **Incremental validation** - Present design, get approval before moving on
+- **Be flexible** - Go back and clarify when something doesn't make sense
