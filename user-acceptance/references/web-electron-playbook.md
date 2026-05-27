@@ -9,7 +9,6 @@ Use the actual app and capture what a human would see. Tests can supplement this
 - Use the bundled `scripts/cdp-capture-page.mjs` when `agent-browser screenshot` hangs or cannot select the right target.
 - Use `playwright` when the repo already uses Playwright, when traces are useful, or when `agent-browser` cannot complete the flow.
 - Use `chrome-cdp` only when the user explicitly approved inspection of an already-open Chrome page.
-- Use `pp-agent-capture` for app-window or browser-window recordings, screenshots, GIFs, and evidence bundles, especially for Electron or TUI-like visual states. On macOS, `screencapture -v` is an acceptable fallback when `pp-agent-capture` is unavailable.
 
 If the needed skill or CLI is missing, install it with `npx agents install <skill-name>`, then follow that skill's installation instructions. Do not rely on `agent-browser skills get ...` unless the installed CLI confirms that command exists.
 
@@ -82,8 +81,6 @@ agent-browser --cdp 9322 tab list --json > <dir>/logs/cdp-tabs.json
 agent-browser --cdp 9322 tab 1 --json
 node <skill-dir>/scripts/cdp-capture-page.mjs --evidence <dir> --cdp http://127.0.0.1:9322 --title "Kata Desktop" --screenshot screenshots/01-start.png --text logs/01-start-text.txt
 ```
-
-For video evidence, use `pp-agent-capture` when available. On macOS, `screencapture -v -V <seconds> -x -m <dir>/recordings/<name>.mov` can capture a short fallback recording. If display recording is unavailable or too broad, say so and rely on screenshot plus DOM/text evidence.
 
 ## Manual instructions
 

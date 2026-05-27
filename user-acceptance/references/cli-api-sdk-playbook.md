@@ -65,12 +65,11 @@ jq . uat-evidence/cli-<timestamp>/outputs/result.json > uat-evidence/cli-<timest
 ## TUI workflow
 
 1. Start the TUI with a deterministic fixture or normal local state.
-2. Capture the terminal window with `pp-agent-capture` when available.
-3. Exercise the changed keyboard or mouse flow.
-4. Capture the final state and any written files.
-5. Record exact keystrokes in `evidence.md` so the user can replay them.
+2. Exercise the changed keyboard or mouse flow.
+3. Capture the final state and any written files.
+4. Record exact keystrokes in `evidence.md` so the user can replay them.
 
-Use `script`, VHS, or `pp-agent-capture` depending on what the app supports. Prefer video/GIF when the visual layout is part of the acceptance criteria.
+Use `script`, VHS, or computer use (if available) depending on what the app supports. Prefer video/GIF when the visual layout is part of the acceptance criteria.
 
 ## API workflow
 
