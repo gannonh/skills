@@ -69,7 +69,7 @@ jq . uat-evidence/cli-<timestamp>/outputs/result.json > uat-evidence/cli-<timest
 3. Capture the final state and any written files.
 4. Record exact keystrokes in `evidence.md` so the user can replay them.
 
-Use `script`, VHS, or computer use (if available) depending on what the app supports. Prefer video/GIF when the visual layout is part of the acceptance criteria.
+Use `script`, VHS, or `/computer-use` skill (if available) depending on what the app supports. Prefer video/GIF when the visual layout is part of the acceptance criteria.
 
 ## API workflow
 

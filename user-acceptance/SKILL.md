@@ -63,11 +63,11 @@ Load and use the best available skill or CLI for the target. If a required skill
 | Target | Preferred tools | Evidence to capture |
 | --- | --- | --- |
 | Web app | `agent-browser`; `playwright` when the repo already uses Playwright or traces are useful; `chrome-cdp` only for an already-open Chrome page with user approval | Video, screenshots, DOM/accessibility snapshots, console/network notes |
-| CLI app | Shell commands, `script`, generated output files; computer use (if available) for terminal video/GIF when visual proof helps | Terminal transcript, exit codes, output files, JSON, screenshots/video for interactive flows |
-| TUI app | computer use (if available) for terminal recording or screenshots; terminal transcript where possible | Video/GIF, screenshots, transcript, config/output files |
+| CLI app | Shell commands, `script`, generated output files; `/computer-use` skill (if available) for terminal video/GIF when visual proof helps | Terminal transcript, exit codes, output files, JSON, screenshots/video for interactive flows |
+| TUI app | `/computer-use` skill (if available) for terminal recording or screenshots; terminal transcript where possible | Video/GIF, screenshots, transcript, config/output files |
 | API | `curl`, HTTP client, repo scripts, logs | Request/response JSON, status codes, logs, saved payloads |
 | SDK | Minimal runnable example in the target language, repo examples/tests only as supplement | Source snippet, command output, generated files, logs |
-| Electron app | `electron` skill and `agent-browser` CDP automation; computer use (if available) for app-window recording | Window video, screenshots, accessibility snapshots, logs |
+| Electron app | `electron` skill and `agent-browser` CDP automation; `/computer-use` skill (if available) for app-window recording | Window video, screenshots, accessibility snapshots, logs |
 
 Installation checks:
 
