@@ -28,18 +28,23 @@ The parent agent owns orchestration, acceptance, commits, and final reporting. E
    - the branch diff against that base
 3. If the working tree contains unrelated user changes that are clearly outside the feature branch, stop and ask how to handle them.
 4. Identify the harness's general-purpose subagent mechanism, such as a delegate, worker, task, or general-purpose agent. Use the generic subagent available in the current environment rather than a harness-specific recipe.
-5. If subagents or the required referenced skills are unavailable, stop and report the missing capability. Do not emulate this workflow entirely in the parent session.
+5. Resolve the full absolute `SKILL.md` path for each dependency: `simplify` and `strict-quality-review`.
+6. If subagents or either dependency skill file is unavailable, stop and report the missing capability. Do not emulate this workflow entirely in the parent session.
 
 ## Phase 1: `simplify` subagent
 
-Spawn a subagent and point it at the `simplify` skill.
+Spawn a subagent and give it the full absolute path to the `simplify` skill file. Do not inline, summarize, or reinterpret the skill content for the subagent.
 
-Use this prompt for the phase 1 subagent:
+Use this prompt for the phase 1 subagent, replacing `<SIMPLIFY_SKILL_PATH>` with the resolved absolute path to the `simplify` `SKILL.md` file:
 
 ```text
 Finalize phase 1 for the current feature branch.
 
-Use the `simplify` skill on the current branch diff. Refine recently modified code for clarity, consistency, and maintainability while preserving behavior.
+First read the `simplify` skill file at this exact path:
+
+<SIMPLIFY_SKILL_PATH>
+
+Then follow that skill's instructions on the current branch diff. Refine recently modified code for clarity, consistency, and maintainability while preserving behavior.
 
 Scope:
 - Current branch changes against the repository base branch.
@@ -73,14 +78,18 @@ Commit guidance:
 
 ## Phase 2: strict quality review subagent
 
-Spawn a subagent and point it at the `strict-quality-review` skill. This subagent audits the post-simplify branch and applies fixes for accepted findings.
+Spawn a separate subagent and give it the full absolute path to the `strict-quality-review` skill file. Do not inline, summarize, or reinterpret the skill content for the subagent. This subagent audits the post-`simplify` branch and applies fixes for accepted findings.
 
-Use this prompt for the phase 2 subagent:
+Use this prompt for the phase 2 subagent, replacing `<STRICT_QUALITY_REVIEW_SKILL_PATH>` with the resolved absolute path to the `strict-quality-review` `SKILL.md` file:
 
 ```text
 Finalize phase 2 for the current feature branch.
 
-Use the `strict-quality-review` skill on the current branch diff after the `simplify` phase. Perform a strict maintainability review focused on abstraction quality, file growth, spaghetti-condition growth, type boundaries, canonical helpers, modularity, and code-judo simplifications.
+First read the `strict-quality-review` skill file at this exact path:
+
+<STRICT_QUALITY_REVIEW_SKILL_PATH>
+
+Then follow that skill's instructions on the current branch diff after the `simplify` phase. Perform a strict maintainability review focused on abstraction quality, file growth, spaghetti-condition growth, type boundaries, canonical helpers, modularity, and code-judo simplifications.
 
 Scope:
 - Current branch changes against the repository base branch.
@@ -152,4 +161,4 @@ This skill depends on these companion skills:
 - `simplify`
 - `strict-quality-review`
 
-Before starting phase work, verify both skills are available in the current system. If either skill is unavailable, stop, alert the user which dependency is missing, and ask for next steps.
+Before starting phase work, verify both skills are available in the current system and resolve each one to a full absolute `SKILL.md` path. Pass that path to the relevant subagent and instruct the subagent to read the file first. If either skill file is unavailable, stop, alert the user which dependency is missing, and ask for next steps.
