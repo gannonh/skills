@@ -10,6 +10,8 @@ The result is a durable Markdown design spec in the local project at:
 docs/specs/YYYY-MM-DD-<topic>.md
 ```
 
+Every written spec must include an explicit `## Acceptance criteria` section. Build and Verify depend on this section, so treat it as the spec's approval checklist, not optional supporting detail.
+
 ## Checklist
 
 You MUST create a task for each of these items and complete them in order:
@@ -17,11 +19,12 @@ You MUST create a task for each of these items and complete them in order:
 1. **Explore project context** — check files, docs, recent commits
 2. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 3. **Propose 2-3 approaches** — with trade-offs and your recommendation
-4. **Present design** — in sections scaled to their complexity, get user approval after each section
-5. **Write design spec** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit
-6. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
-7. **User reviews written spec** — ask user to review the spec file before proceeding
-8. **Transition to Build phase** — ask the user if they would like to advance to the Build phase (`./build.md`).
+4. **Define acceptance criteria** — agree on observable pass/fail outcomes before writing the spec
+5. **Present design** — in sections scaled to their complexity, get user approval after each section
+6. **Write design spec** — save to `docs/specs/YYYY-MM-DD-<topic>-design.md` and commit
+7. **Spec self-review** — quick inline check for required acceptance criteria, placeholders, contradictions, ambiguity, scope (see below)
+8. **User reviews written spec** — ask user to review the spec file before proceeding
+9. **Transition to Build phase** — ask the user if they would like to advance to the Build phase (`./build.md`).
 
 ## Process Flow
 
@@ -30,6 +33,7 @@ digraph brainstorming {
     "Explore project context" [shape=box];
     "Ask clarifying questions" [shape=box];
     "Propose 2-3 approaches" [shape=box];
+    "Define acceptance criteria" [shape=box];
     "Present design sections" [shape=box];
     "User approves design?" [shape=diamond];
     "Write design spec" [shape=box];
@@ -38,14 +42,15 @@ digraph brainstorming {
     "Advance to Build phase" [shape=doublecircle];
 
     "Ask clarifying questions" -> "Propose 2-3 approaches";
-    "Propose 2-3 approaches" -> "Present design sections";
+    "Propose 2-3 approaches" -> "Define acceptance criteria";
+    "Define acceptance criteria" -> "Present design sections";
     "Present design sections" -> "User approves design?";
     "User approves design?" -> "Present design sections" [label="no, revise"];
     "User approves design?" -> "Write design spec" [label="yes"];
     "Write design spec" -> "Spec self-review\n(fix inline)";
-    "Spec self-review\n(fix inline)" -> "User reviews design spec?";
-    "User reviews design spec?" -> "Write spec" [label="changes requested"];
-    "User reviews design spec?" -> "Advance to Build phase" [label="approved"];
+    "Spec self-review\n(fix inline)" -> "User reviews spec?";
+    "User reviews spec?" -> "Write design spec" [label="changes requested"];
+    "User reviews spec?" -> "Advance to Build phase" [label="approved"];
 }
 ```
 
@@ -62,6 +67,7 @@ digraph brainstorming {
 - Prefer multiple choice questions when possible, but open-ended is fine too
 - Only one question per message - if a topic needs more exploration, break it into multiple questions
 - Focus on understanding: purpose, constraints, success criteria
+- Convert success criteria into concrete acceptance criteria before drafting the spec. If the user gives vague outcomes such as "works well" or "feels fast", ask enough follow-up to make them observable.
 
 **Exploring approaches:**
 
@@ -74,7 +80,8 @@ digraph brainstorming {
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
 - Ask after each section whether it looks right so far
-- Cover: architecture, components, acceptance criteria,data flow, error handling, testing
+- Cover: architecture, components, acceptance criteria, data flow, error handling, testing
+- Present acceptance criteria as their own design section and ask the user to approve or revise them before writing the spec.
 - Be ready to go back and clarify if something doesn't make sense
 
 **Design for isolation and clarity:**
@@ -98,11 +105,13 @@ digraph brainstorming {
   - (User preferences for spec location override this default)
 - Make the spec implementation-ready. It should capture the agreed design, constraints, sequencing, implementation phases, risks, and verification guidance so the Build phase can proceed without re-planning.
 - Use the section names, format, and level of detail below as guidance, not a rigid template. Omit sections that do not fit the work. Add sections when they make the spec easier to review or execute.
+- Exception: `## Acceptance criteria` is mandatory. Do not omit, rename, or bury it under Testing/Verification. A spec without this exact section heading is invalid and must be fixed before commit, user review, or approval.
 - Consider sections like:
   - `Goal` - the outcome and source of truth.
   - `Reference mocks`, `References`, or `Source of truth` - links to roadmap sections, screenshots, prior specs, designs, or examples.
   - `Current state` or `Verified current state` - what already exists, what is working, and what gaps remain.
   - `Constraints` and `Out of scope` - explicit boundaries, non-goals, and governing rules.
+  - `Acceptance criteria` - numbered or checklist-style pass/fail outcomes that define when the work is complete.
   - `Architecture` - component relationships, boundaries, data flow, and a Mermaid diagram when relationships matter.
   - `Implementation phases` - ordered phases with the approach, likely files, and acceptance tie-ins for each phase.
   - `Sequencing` - dependency order, parallelizable work, and rollout notes.
@@ -114,13 +123,31 @@ digraph brainstorming {
 - Keep implementation detail at the task-shaping level. Include phases, likely files, and acceptance checks; avoid large pasted code blocks or exact APIs that have not been verified in the repo.
 - Commit the design spec to git
 
+**Acceptance Criteria Section:**
+
+The written spec must include this exact heading:
+
+```markdown
+## Acceptance criteria
+```
+
+Under it, include a numbered list or checklist. Each criterion must be:
+
+- observable by a reviewer, test, command, screenshot, API response, or manual UAT step
+- specific enough to produce a clear Pass/Fail/Blocked result during Verify
+- tied to user-visible behavior, required system behavior, safety constraints, or approved non-goals
+- free of vague language such as "fast", "easy", "robust", or "works" unless paired with an observable threshold or example
+
+If acceptance criteria are genuinely unknown, stop and ask the user. Do not write a spec with missing, placeholder, or implied criteria.
+
 **Spec Self-Review:**
 After writing the spec document, look at it with fresh eyes:
 
-1. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
-2. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
-3. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
-4. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
+1. **Acceptance criteria gate:** Does the spec include an exact `## Acceptance criteria` heading with numbered or checklist-style criteria? Does each item have a clear verification path and pass/fail meaning? If not, fix this first.
+2. **Placeholder scan:** Any "TBD", "TODO", incomplete sections, or vague requirements? Fix them.
+3. **Internal consistency:** Do any sections contradict each other? Does the architecture match the feature descriptions?
+4. **Scope check:** Is this focused enough for a single implementation plan, or does it need decomposition?
+5. **Ambiguity check:** Could any requirement be interpreted two different ways? If so, pick one and make it explicit.
 
 Fix any issues inline. No need to re-review — just fix and move on.
 

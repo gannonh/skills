@@ -7,6 +7,7 @@ Build is the second phase in Plan → Build → Verify. It should start from an 
 ## Required inputs
 
 - Approved spec path, usually `docs/specs/YYYY-MM-DD-<topic>.md`.
+- `## Acceptance criteria` section with observable pass/fail outcomes.
 - Build handoff section with scope, non-goals, ordered tasks, verification commands, and blocking open questions.
 - Explicit user approval if the spec status is not `Approved`.
 
@@ -24,13 +25,14 @@ Before editing files:
 
 1. Read the approved spec completely.
 2. Confirm `## Status` is `Approved`, or confirm the user explicitly overrode the approval gate.
-3. Confirm `Blocking open questions` is `None`, or confirm the user explicitly approved proceeding with listed questions.
-4. Inspect repo instructions such as `AGENTS.md`, `CLAUDE.md`, and README command sections.
-5. Check worktree state with `git status --short --branch`.
-6. Identify the current branch. Do not start implementation on `main` or `master` without explicit user consent.
-7. Capture a base SHA with `git rev-parse HEAD`.
-8. Identify verification commands from the spec and repo scripts.
-9. Confirm required tools are available: todo tracking, `test-driven-development` or `/tdd`, and subagent dispatch if using the subagent path.
+3. Confirm the spec contains `## Acceptance criteria` with concrete criteria. If missing or ambiguous, stop and return to Plan to fix the spec.
+4. Confirm `Blocking open questions` is `None`, or confirm the user explicitly approved proceeding with listed questions.
+5. Inspect repo instructions such as `AGENTS.md`, `CLAUDE.md`, and README command sections.
+6. Check worktree state with `git status --short --branch`.
+7. Identify the current branch. Do not start implementation on `main` or `master` without explicit user consent.
+8. Capture a base SHA with `git rev-parse HEAD`.
+9. Identify verification commands from the spec and repo scripts.
+10. Confirm required tools are available: todo tracking, `test-driven-development` or `/tdd`, and subagent dispatch if using the subagent path.
 
 Stop and ask if the spec is unapproved, the worktree has unrelated changes, the branch is unsafe, tools are missing, or the plan has blocking questions.
 
@@ -206,6 +208,7 @@ Stop and ask when:
 - The worktree contains unrelated changes.
 - The branch is `main` or `master` and the user has not approved direct implementation there.
 - `test-driven-development` and `/tdd` are unavailable.
+- Acceptance criteria are missing, vague, or not testable.
 - Required verification commands are unknown.
 - Reviewers find unresolved issues.
 - The plan is wrong or incomplete.

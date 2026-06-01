@@ -7,7 +7,7 @@ description: Use this skill for multi-step, spec-driven, or acceptance-gated imp
 
 Use this skill to route implementation work through a sequential path:
 
-1. **Plan**: align with the user on intent, constraints, and approach before writing a project-grounded spec and implementation plan.
+1. **Plan**: align with the user on intent, constraints, approach, and acceptance criteria before writing a project-grounded spec and implementation plan.
 2. **Build**: execute an approved spec or implementation plan.
 3. **Verify**: validate completed work against the spec, plan, and acceptance criteria.
 
@@ -19,7 +19,7 @@ When the selected phase is **Plan**, do not jump straight to a written spec. Pla
 
 | Phase  | Input                                                | Output                                                                                                                                                             | Status                                    |
 | ------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
-| Plan   | Idea, vague request, or new build request            | Context exploration → alignment dialogue → approach approval → draft `docs/specs/YYYY-MM-DD-<topic>.md` with Build handoff → Approved after explicit user approval | `Idea` → `Aligned` → `Draft` → `Approved` |
+| Plan   | Idea, vague request, or new build request            | Context exploration → alignment dialogue → approach approval → draft `docs/specs/YYYY-MM-DD-<topic>.md` with mandatory `## Acceptance criteria` and Build handoff → Approved after explicit user approval | `Idea` → `Aligned` → `Draft` → `Approved` |
 | Build  | Approved spec, or explicit user override             | Implemented tasks, commits, review results, Build completion report                                                                                                | `Approved` → `Implemented`                |
 | Verify | Implemented spec plus completed work or Build report | Acceptance evidence and signoff recommendation                                                                                                                     | `Implemented` → `Verified`                |
 
@@ -86,8 +86,9 @@ Only load the workflow you need. If the selected workflow's reference file is em
 
 - Inspect the repo before making claims about project structure or commands.
 - Use a todo list when the work has multiple steps.
-- In Plan, ask focused alignment questions one at a time before drafting the spec. If no factual clarification is needed, ask the user to confirm your framing, assumptions, success criteria, or recommended direction.
+- In Plan, ask focused alignment questions one at a time before drafting the spec. If no factual clarification is needed, ask the user to confirm your framing, assumptions, acceptance criteria, success criteria, or recommended direction.
 - In Plan, propose 2-3 approaches before settling when more than one viable direction exists. If one approach is clearly best, state the recommendation and wait for approval or redirection.
 - Prefer small, verifiable phases over broad unverified changes.
 - Keep scope tied to the selected spec, plan, or acceptance criteria.
+- A Plan spec is incomplete unless it has an exact `## Acceptance criteria` section with observable pass/fail criteria that Build can implement and Verify can test.
 - Surface uncertainty instead of filling gaps with guesses.
