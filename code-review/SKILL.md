@@ -144,7 +144,7 @@ CodeRabbit and Greptile can be selected as single reviewers or panel members:
 <path-to-code-review-skill>/scripts/autoreview --engine greptile --mode branch --base origin/main
 ```
 
-CodeRabbit uses `coderabbit review --agent --no-color`, supports local dirty review,
+CodeRabbit uses `coderabbit review --agent`, supports local dirty review,
 branch review, and `--mode commit --commit HEAD`. Additional `--prompt`,
 `--prompt-file`, and `--dataset` content is passed through as a temporary
 CodeRabbit config file. Greptile uses `greptile review --json --no-color` and

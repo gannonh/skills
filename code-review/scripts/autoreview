@@ -643,7 +643,7 @@ def run_coderabbit(args: argparse.Namespace, repo: Path, prompt: str) -> str:
 
     target = getattr(args, "review_target", None)
     target_ref = getattr(args, "review_target_ref", None)
-    cmd = [resolve_command(args.coderabbit_bin, repo), "review", "--agent", "--no-color"]
+    cmd = [resolve_command(args.coderabbit_bin, repo), "review", "--agent"]
     if target == "local":
         cmd.extend(["--type", "uncommitted"])
     elif target == "branch":
