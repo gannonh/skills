@@ -1,9 +1,9 @@
 ---
-name: autoreview
-description: "Auto Review closeout. Codex review is the default when no engine is set and is the recommended reviewer."
+name: code-review
+description: "Structured code review closeout. Codex review is the default when no engine is set and is the recommended reviewer. Use this for code-review, autoreview, second-model review, CodeRabbit, Greptile, Codex review, Claude review, PR review, and final quality/security review requests."
 ---
 
-# Auto Review
+# Code Review
 
 Run the bundled structured review helper as a closeout check. This is code review, not Guardian `auto_review` approval routing.
 
@@ -11,7 +11,7 @@ Codex review is the default when no engine is set. It usually delivers the best 
 
 Use when:
 
-- user asks for Codex review / Claude review / autoreview / second-model review
+- user asks for code-review / autoreview / Codex review / Claude review / CodeRabbit review / Greptile review / second-model review
 - after non-trivial code edits, before final/commit/ship
 - reviewing a local branch or PR branch after fixes
 
@@ -85,7 +85,7 @@ Committed single change:
 or with the helper:
 
 ```bash
-/Users/steipete/Projects/agent-scripts/skills/autoreview/scripts/autoreview --mode commit --commit HEAD
+/Users/steipete/Projects/agent-scripts/skills/code-review/scripts/autoreview --mode commit --commit HEAD
 ```
 
 Use commit review for already-landed or already-pushed work on `main`. Reviewing
@@ -137,6 +137,19 @@ Codex maps thinking to `model_reasoning_effort` and accepts `low`, `medium`,
 `high`, or `xhigh`. Claude maps thinking to `--effort` and also accepts `max`.
 Engines without a real thinking knob reject `--thinking`.
 
+CodeRabbit and Greptile can be selected as single reviewers or panel members:
+
+```bash
+<autoreview-helper> --engine coderabbit --mode branch --base origin/main
+<autoreview-helper> --engine greptile --mode branch --base origin/main
+```
+
+CodeRabbit uses `coderabbit review --agent --no-color`, supports local dirty review,
+branch review, and `--mode commit --commit HEAD`. Additional `--prompt`,
+`--prompt-file`, and `--dataset` content is passed through as a temporary
+CodeRabbit config file. Greptile uses `greptile review --json --no-color` and
+supports branch review only.
+
 ## Context Efficiency
 
 Run the helper directly so target selection, engine choice, structured validation, and exit status all stay in one path. If output is noisy, summarize the completed helper output after it returns; do not ask another agent or reviewer to rerun the review.
@@ -146,41 +159,41 @@ Run the helper directly so target selection, engine choice, structured validatio
 OpenClaw repo-local helper:
 
 ```bash
-.agents/skills/autoreview/scripts/autoreview --help
+.agents/skills/code-review/scripts/autoreview --help
 ```
 
 `agent-scripts` checkout helper:
 
 ```bash
-skills/autoreview/scripts/autoreview --help
+skills/code-review/scripts/autoreview --help
 ```
 
 On native Windows, invoke the extensionless Python helper through Python:
 
 ```powershell
-python skills\autoreview\scripts\autoreview --help
+python skills\code-review\scripts\autoreview --help
 ```
 
 The smoke harness has thin shell wrappers over a shared Python implementation:
 
 ```bash
-skills/autoreview/scripts/test-review-harness --fixture benign --engine codex
+skills/code-review/scripts/test-review-harness --fixture benign --engine codex
 ```
 
 ```powershell
-skills\autoreview\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
+skills\code-review\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
 ```
 
 Global helper from `agent-scripts`:
 
 ```bash
-~/.codex/skills/agent-scripts/autoreview/scripts/autoreview --help
+~/.codex/skills/agent-scripts/code-review/scripts/autoreview --help
 ```
 
 If installed from `agent-scripts`, path is:
 
 ```bash
-/Users/steipete/Projects/agent-scripts/skills/autoreview/scripts/autoreview --help
+/Users/steipete/Projects/agent-scripts/skills/code-review/scripts/autoreview --help
 ```
 
 The helper:
@@ -189,7 +202,7 @@ The helper:
 - accepts `--mode uncommitted` as an alias for `--mode local`
 - otherwise uses current PR base if `gh pr view` works
 - otherwise uses `origin/main` for non-main branches
-- supports `--engine codex`, `claude`, `droid`, and `copilot`; default is `AUTOREVIEW_ENGINE` or `codex`; Codex should remain the default when nothing is set
+- supports `--engine codex`, `claude`, `droid`, `copilot`, `coderabbit`, and `greptile`; default is `AUTOREVIEW_ENGINE` or `codex`; Codex should remain the default when nothing is set
 - resolves bare `git`, `gh`, reviewer, and PowerShell shell commands from absolute `PATH` entries only, never from the reviewed checkout; explicit relative `--*-bin` paths are resolved from the reviewed repository root
 - use `--mode commit --commit <ref>` for already-committed work, especially clean `main` after landing
 - should be left in `--mode auto` or forced to `--mode branch` for PR/branch work; do not force `--mode local` after committing

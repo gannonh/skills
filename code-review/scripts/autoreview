@@ -17,12 +17,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 
-ENGINES = ("codex", "claude", "droid", "copilot")
+ENGINES = ("codex", "claude", "droid", "copilot", "coderabbit", "greptile")
 THINKING_LEVELS_BY_ENGINE = {
     "codex": {"low", "medium", "high", "xhigh"},
     "claude": {"low", "medium", "high", "xhigh", "max"},
     "droid": set(),
     "copilot": set(),
+    "coderabbit": set(),
+    "greptile": set(),
 }
 
 
@@ -452,7 +454,7 @@ def build_prompt(repo: Path, target: str, target_ref: str | None, bundle: str, e
         {json.dumps(SCHEMA, indent=2)}
         - Do not modify files.
         - Do not invoke nested reviewers or review tools.
-        - Forbidden nested review commands include: codex review, autoreview, claude review, oracle review.
+        - Forbidden nested review commands include: codex review, autoreview, claude review, oracle review, coderabbit review, greptile review.
         - You may use read-only tools and web search to inspect files, dependency contracts, upstream docs, current behavior, and security implications.
         - Shell commands, if available, must be read-only inspection commands. Do not run tests, formatters, package installs, generators, network mutation commands, git mutation commands, or commands that write files.
         - Report only actionable defects introduced or exposed by this change.
@@ -627,6 +629,355 @@ def run_copilot(args: argparse.Namespace, repo: Path, prompt: str) -> str:
     if result.returncode != 0:
         raise SystemExit(f"copilot engine failed ({result.returncode})\n{result.stderr or result.stdout}")
     return result.stdout
+
+
+def run_coderabbit(args: argparse.Namespace, repo: Path, prompt: str) -> str:
+    if args.model:
+        raise SystemExit("--model is not supported by the coderabbit engine")
+    if args.thinking:
+        raise SystemExit("--thinking is not supported by the coderabbit engine")
+    if not args.tools:
+        raise SystemExit("--no-tools is not supported by the coderabbit engine")
+    if not args.web_search:
+        raise SystemExit("--no-web-search is not supported by the coderabbit engine")
+
+    target = getattr(args, "review_target", None)
+    target_ref = getattr(args, "review_target_ref", None)
+    cmd = [resolve_command(args.coderabbit_bin, repo), "review", "--agent", "--no-color"]
+    if target == "local":
+        cmd.extend(["--type", "uncommitted"])
+    elif target == "branch":
+        cmd.extend(["--type", "all"])
+        if target_ref:
+            cmd.extend(["--base", external_base_ref(target_ref)])
+    elif target == "commit":
+        ensure_head_commit(args, repo, "coderabbit")
+        base_commit = git(repo, "rev-parse", f"{args.commit}^", check=False).strip()
+        if not base_commit:
+            raise SystemExit("coderabbit commit review requires a non-root HEAD commit")
+        cmd.extend(["--type", "committed", "--base-commit", base_commit])
+    else:
+        raise SystemExit("coderabbit engine requires a resolved review target")
+
+    with tempfile.TemporaryDirectory(prefix="autoreview-coderabbit.") as tempdir:
+        config_path = write_coderabbit_config(args, Path(tempdir))
+        if config_path:
+            cmd.extend(["--config", str(config_path)])
+        result = run_with_heartbeat(cmd, repo, label="coderabbit", stream_output=args.stream_engine_output)
+    if result.returncode != 0:
+        raise SystemExit(f"coderabbit engine failed ({result.returncode})\n{result.stderr or result.stdout}")
+    return json.dumps(normalize_external_report("coderabbit", result.stdout, repo))
+
+
+def run_greptile(args: argparse.Namespace, repo: Path, prompt: str) -> str:
+    if args.model:
+        raise SystemExit("--model is not supported by the greptile engine")
+    if args.thinking:
+        raise SystemExit("--thinking is not supported by the greptile engine")
+    if not args.tools:
+        raise SystemExit("--no-tools is not supported by the greptile engine")
+    if not args.web_search:
+        raise SystemExit("--no-web-search is not supported by the greptile engine")
+    if args.prompt or args.prompt_file or args.dataset:
+        raise SystemExit("--prompt, --prompt-file, and --dataset are not supported by the greptile engine")
+
+    target = getattr(args, "review_target", None)
+    target_ref = getattr(args, "review_target_ref", None)
+    if target != "branch":
+        raise SystemExit("greptile engine supports branch review only; use --mode branch --base <branch>")
+    cmd = [resolve_command(args.greptile_bin, repo), "review", "--json", "--no-color"]
+    if target_ref:
+        cmd.extend(["--branch", external_base_ref(target_ref)])
+    result = run_with_heartbeat(cmd, repo, label="greptile", stream_output=args.stream_engine_output)
+    if result.returncode != 0:
+        raise SystemExit(f"greptile engine failed ({result.returncode})\n{result.stderr or result.stdout}")
+    return json.dumps(normalize_external_report("greptile", result.stdout, repo))
+
+
+def write_coderabbit_config(args: argparse.Namespace, directory: Path) -> Path | None:
+    chunks: list[str] = []
+    for value in args.prompt or []:
+        chunks.append(value)
+    for path in args.prompt_file or []:
+        chunks.append(Path(path).read_text())
+    for spec in args.dataset or []:
+        path = Path(spec)
+        if path.is_dir():
+            raise SystemExit(f"--dataset must be a file, got directory: {path}")
+        chunks.append(f"# Dataset: {path}\n{read_text(path)}")
+    if not chunks:
+        return None
+    config_path = directory / "coderabbit-autoreview-instructions.md"
+    config_path.write_text("Additional instructions for this CodeRabbit review:\n\n" + "\n\n".join(chunks))
+    return config_path
+
+
+def external_base_ref(ref: str) -> str:
+    if ref.startswith("refs/remotes/origin/"):
+        return ref.removeprefix("refs/remotes/origin/")
+    if ref.startswith("origin/"):
+        return ref.removeprefix("origin/")
+    return ref
+
+
+def ensure_head_commit(args: argparse.Namespace, repo: Path, engine: str) -> None:
+    requested = git(repo, "rev-parse", args.commit, check=False).strip()
+    head = git(repo, "rev-parse", "HEAD", check=False).strip()
+    if not requested or requested != head:
+        raise SystemExit(f"{engine} commit review supports only --commit HEAD in the current checkout")
+
+
+def normalize_external_report(engine: str, text: str, repo: Path) -> dict[str, Any]:
+    parsed = parse_external_output(text)
+    if parsed is None:
+        if looks_like_clean_external_output(text):
+            return clean_external_report(engine)
+        raise SystemExit(f"{engine} engine returned non-JSON output:\n{text[:2000]}")
+    if is_autoreview_report(parsed):
+        return parsed
+
+    findings: list[dict[str, Any]] = []
+    seen: set[tuple[str, int, str]] = set()
+    for item in external_finding_items(parsed):
+        finding = normalize_external_finding(item, repo)
+        if not finding:
+            continue
+        location = finding["code_location"]
+        key = (location["file_path"], location["line"], finding["title"])
+        if key in seen:
+            continue
+        seen.add(key)
+        findings.append(finding)
+
+    if not findings:
+        return clean_external_report(engine)
+    return {
+        "findings": findings,
+        "overall_correctness": "patch is incorrect",
+        "overall_explanation": f"{engine} reported {len(findings)} actionable finding(s).",
+        "overall_confidence": 0.8,
+    }
+
+
+def parse_external_output(text: str) -> Any | None:
+    parsed = parse_json_candidate(text)
+    if parsed is not None:
+        return parsed
+    candidates: list[Any] = []
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        candidates.append(event)
+        if isinstance(event, dict):
+            for key in ("result", "content", "message", "text"):
+                value = event.get(key)
+                if isinstance(value, str):
+                    nested = parse_json_candidate(value)
+                    if nested is not None:
+                        candidates.append(nested)
+            data = event.get("data")
+            if isinstance(data, dict):
+                candidates.append(data)
+                content = data.get("content")
+                if isinstance(content, str):
+                    nested = parse_json_candidate(content)
+                    if nested is not None:
+                        candidates.append(nested)
+    for candidate in reversed(candidates):
+        if isinstance(candidate, (dict, list)):
+            return candidate
+    return None
+
+
+def is_autoreview_report(value: Any) -> bool:
+    if not isinstance(value, dict):
+        return False
+    required = {"findings", "overall_correctness", "overall_explanation", "overall_confidence"}
+    if not required.issubset(value):
+        return False
+    return all(isinstance(finding, dict) and "code_location" in finding for finding in value.get("findings", []))
+
+
+def external_finding_items(value: Any) -> list[dict[str, Any]]:
+    if isinstance(value, list):
+        return [item for item in value if isinstance(item, dict)]
+    if not isinstance(value, dict):
+        return []
+    items: list[dict[str, Any]] = []
+    for key in ("findings", "comments", "issues", "results", "reviews", "review_comments", "violations", "suggestions"):
+        child = value.get(key)
+        if isinstance(child, list):
+            items.extend(item for item in child if isinstance(item, dict))
+    if items:
+        return items
+    if external_location(value) and external_body(value):
+        return [value]
+    for child in value.values():
+        if isinstance(child, (dict, list)):
+            items.extend(external_finding_items(child))
+    return items
+
+
+def normalize_external_finding(item: dict[str, Any], repo: Path) -> dict[str, Any] | None:
+    location = external_location(item)
+    body = external_body(item)
+    if not location or not body:
+        return None
+    raw_path, line = location
+    file_path = normalize_external_path(raw_path, repo)
+    title = external_title(item, body)
+    return {
+        "title": bounded_field(title, 140),
+        "body": bounded_field(body, 2000),
+        "priority": external_priority(item),
+        "confidence": external_confidence(item),
+        "category": external_category(item, f"{title}\n{body}"),
+        "code_location": {"file_path": file_path, "line": line},
+    }
+
+
+def external_location(item: dict[str, Any]) -> tuple[str, int] | None:
+    sources: list[Any] = [item]
+    for key in ("code_location", "location", "position", "range", "source", "primary_location"):
+        value = item.get(key)
+        if isinstance(value, dict):
+            sources.append(value)
+    for key in ("locations", "positions"):
+        value = item.get(key)
+        if isinstance(value, list) and value and isinstance(value[0], dict):
+            sources.append(value[0])
+    for source in list(sources):
+        if isinstance(source, dict):
+            for key in ("start", "end"):
+                value = source.get(key)
+                if isinstance(value, dict):
+                    sources.append(value)
+    for source in sources:
+        path = find_first_value(source, {"file_path", "filepath", "file", "path", "filename", "relative_path"})
+        line = find_first_value(source, {"line", "start_line", "line_number", "linenumber", "startline"})
+        if isinstance(path, str):
+            line_number = coerce_line(line)
+            return path, line_number or 1
+    return None
+
+
+def external_body(item: dict[str, Any]) -> str:
+    value = find_first_value(item, {"body", "message", "comment", "description", "text", "content", "review_comment", "suggestion"})
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    return ""
+
+
+def external_title(item: dict[str, Any], body: str) -> str:
+    value = find_first_value(item, {"title", "summary", "rule", "check_name", "type"})
+    if isinstance(value, str) and value.strip():
+        return value.strip()
+    first_line = body.strip().splitlines()[0] if body.strip() else "Review finding"
+    return first_line[:140]
+
+
+def external_priority(item: dict[str, Any]) -> str:
+    value = find_first_value(item, {"priority", "severity", "level", "risk"})
+    text = str(value or "").lower()
+    if text in {"p0", "p1", "p2", "p3"}:
+        return text.upper()
+    if any(word in text for word in ("critical", "blocker")):
+        return "P0"
+    if any(word in text for word in ("high", "error", "major")):
+        return "P1"
+    if any(word in text for word in ("medium", "warning", "warn")):
+        return "P2"
+    return "P3" if any(word in text for word in ("low", "info", "minor", "nit")) else "P2"
+
+
+def external_confidence(item: dict[str, Any]) -> float:
+    value = find_first_value(item, {"confidence", "confidence_score"})
+    if number_in_range(value):
+        return float(value)
+    if isinstance(value, str):
+        try:
+            parsed = float(value)
+        except ValueError:
+            return 0.8
+        if 0 <= parsed <= 1:
+            return parsed
+    return 0.8
+
+
+def external_category(item: dict[str, Any], text: str) -> str:
+    value = find_first_value(item, {"category", "type", "kind"})
+    raw = str(value or "").lower()
+    haystack = f"{raw}\n{text}".lower()
+    if any(word in haystack for word in ("security", "vulnerab", "injection", "secret", "credential", "auth", "xss", "csrf", "traversal")):
+        return "security"
+    if "regression" in haystack:
+        return "regression"
+    if "test" in haystack:
+        return "test_gap"
+    if any(word in haystack for word in ("maintain", "style", "readability", "refactor")):
+        return "maintainability"
+    return "bug"
+
+
+def find_first_value(value: Any, keys: set[str]) -> Any:
+    if isinstance(value, dict):
+        lowered = {str(key).lower(): child for key, child in value.items()}
+        for key in keys:
+            if key in lowered:
+                return lowered[key]
+        for child in value.values():
+            found = find_first_value(child, keys)
+            if found is not None:
+                return found
+    elif isinstance(value, list):
+        for child in value:
+            found = find_first_value(child, keys)
+            if found is not None:
+                return found
+    return None
+
+
+def coerce_line(value: Any) -> int | None:
+    if isinstance(value, int) and value >= 1:
+        return value
+    if isinstance(value, str) and value.isdigit():
+        parsed = int(value)
+        return parsed if parsed >= 1 else None
+    return None
+
+
+def normalize_external_path(path: str, repo: Path) -> str:
+    raw = path.removeprefix("file://").strip()
+    candidate = Path(raw)
+    if candidate.is_absolute():
+        try:
+            return str(candidate.resolve().relative_to(repo.resolve()))
+        except ValueError:
+            return candidate.name
+    while raw.startswith("./"):
+        raw = raw[2:]
+    if raw.startswith("a/") or raw.startswith("b/"):
+        raw = raw[2:]
+    return raw
+
+
+def looks_like_clean_external_output(text: str) -> bool:
+    lower = text.lower()
+    return any(phrase in lower for phrase in ("no issues", "no findings", "no actionable", "looks good", "no problems found"))
+
+
+def clean_external_report(engine: str) -> dict[str, Any]:
+    return {
+        "findings": [],
+        "overall_correctness": "patch is correct",
+        "overall_explanation": f"{engine} reported no actionable findings.",
+        "overall_confidence": 0.8,
+    }
 
 
 class CodexStreamDisplay:
@@ -979,13 +1330,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reviewers", help="Comma-separated review panel, e.g. codex,claude or codex:gpt-5:high.")
     parser.add_argument("--panel", action="store_true", help="Run a Codex/Claude review panel unless --engine changes the first reviewer.")
     parser.add_argument("--model", action="append", help="Model for all reviewers or engine=model. Repeatable.")
-    parser.add_argument("--thinking", action="append", help="Thinking/effort for all reviewers or engine=level. Repeatable. Codex: low, medium, high, xhigh. Claude: low, medium, high, xhigh, max.")
+    parser.add_argument("--thinking", action="append", help="Thinking/effort for all reviewers or engine=level. Repeatable. Codex: low, medium, high, xhigh. Claude: low, medium, high, xhigh, max. Other engines do not support thinking.")
     parser.add_argument("--allow-partial-panel", action="store_true", help="Continue panel output when one reviewer fails.")
     parser.add_argument("--codex-bin", default=os.environ.get("CODEX_BIN", "codex"))
     parser.add_argument("--claude-bin", default=os.environ.get("CLAUDE_BIN", "claude"))
     parser.add_argument("--droid-bin", default=os.environ.get("DROID_BIN", "droid"))
     parser.add_argument("--copilot-bin", default=os.environ.get("COPILOT_BIN", "copilot"))
-    parser.add_argument("--no-tools", dest="tools", action="store_false", default=True, help="Disable tools for engines that support it. Codex and copilot reject no-tools review.")
+    parser.add_argument("--coderabbit-bin", default=os.environ.get("CODERABBIT_BIN", "coderabbit"))
+    parser.add_argument("--greptile-bin", default=os.environ.get("GREPTILE_BIN", "greptile"))
+    parser.add_argument("--no-tools", dest="tools", action="store_false", default=True, help="Disable tools for engines that support it. Codex, copilot, coderabbit, and greptile reject no-tools review.")
     parser.add_argument("--no-web-search", dest="web_search", action="store_false", default=True)
     parser.add_argument(
         "--claude-allowed-tools",
@@ -1030,6 +1383,10 @@ def run_engine(args: argparse.Namespace, repo: Path, prompt: str) -> str:
         return run_droid(args, repo, prompt)
     if args.engine == "copilot":
         return run_copilot(args, repo, prompt)
+    if args.engine == "coderabbit":
+        return run_coderabbit(args, repo, prompt)
+    if args.engine == "greptile":
+        return run_greptile(args, repo, prompt)
     raise SystemExit(f"unsupported engine: {args.engine}")
 
 
@@ -1185,6 +1542,9 @@ def main() -> int:
     reviewers = reviewer_args(args)
     repo = repo_root()
     target, target_ref = choose_target(repo, args.mode, args.base)
+    for reviewer in reviewers:
+        reviewer.review_target = target
+        reviewer.review_target_ref = target_ref
     print(f"autoreview target: {target}")
     print(f"branch: {current_branch(repo)}")
     if len(reviewers) == 1 and not args.reviewers and not args.panel:
