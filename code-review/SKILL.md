@@ -44,10 +44,16 @@ Use when:
 
 ## Pick Target
 
+In examples, `<path-to-code-review-skill>` means the absolute path to this skill directory. The bundled helper is:
+
+```bash
+<path-to-code-review-skill>/scripts/autoreview
+```
+
 Dirty local work:
 
 ```bash
-<autoreview-helper> --mode local
+<path-to-code-review-skill>/scripts/autoreview --mode local
 ```
 
 Use this only when the patch is actually unstaged/staged/untracked in the
@@ -60,32 +66,26 @@ only proves there is no local patch.
 Branch/PR work:
 
 ```bash
-<autoreview-helper> --mode branch --base origin/main
+<path-to-code-review-skill>/scripts/autoreview --mode branch --base origin/main
 ```
 
 Optional review context is first-class:
 
 ```bash
-<autoreview-helper> --mode branch --base origin/main --prompt-file /tmp/review-notes.md --dataset /tmp/evidence.json
+<path-to-code-review-skill>/scripts/autoreview --mode branch --base origin/main --prompt-file /tmp/review-notes.md --dataset /tmp/evidence.json
 ```
 
 If an open PR exists, use its actual base:
 
 ```bash
 base=$(gh pr view --json baseRefName --jq .baseRefName)
-<autoreview-helper> --mode branch --base "origin/$base"
+<path-to-code-review-skill>/scripts/autoreview --mode branch --base "origin/$base"
 ```
 
 Committed single change:
 
 ```bash
-<autoreview-helper> --mode commit --commit HEAD
-```
-
-or with the helper:
-
-```bash
-/Users/steipete/Projects/agent-scripts/skills/code-review/scripts/autoreview --mode commit --commit HEAD
+<path-to-code-review-skill>/scripts/autoreview --mode commit --commit HEAD
 ```
 
 Use commit review for already-landed or already-pushed work on `main`. Reviewing
@@ -98,7 +98,7 @@ with `--base`.
 Format first if formatting can change line locations. Then it is OK to run tests and review in parallel:
 
 ```bash
-scripts/autoreview --parallel-tests "<focused test command>"
+<path-to-code-review-skill>/scripts/autoreview --parallel-tests "<focused test command>"
 ```
 
 On Windows, the default `--parallel-tests` shell preserves the platform `cmd.exe`
@@ -112,25 +112,25 @@ Tradeoff: tests may force code changes that stale the review. If tests or review
 Run multiple reviewers against one frozen bundle:
 
 ```bash
-<autoreview-helper> --reviewers codex,claude
+<path-to-code-review-skill>/scripts/autoreview --reviewers codex,claude
 ```
 
 `--panel` is shorthand for Codex plus Claude unless `--engine` changes the first reviewer:
 
 ```bash
-<autoreview-helper> --panel
+<path-to-code-review-skill>/scripts/autoreview --panel
 ```
 
 Set reviewer models and thinking/effort explicitly:
 
 ```bash
-<autoreview-helper> --reviewers codex,claude --model codex=gpt-5.1 --thinking codex=high --model claude=sonnet --thinking claude=max
+<path-to-code-review-skill>/scripts/autoreview --reviewers codex,claude --model codex=gpt-5.1 --thinking codex=high --model claude=sonnet --thinking claude=max
 ```
 
 Inline syntax is also supported:
 
 ```bash
-<autoreview-helper> --reviewers codex:gpt-5.1:high,claude:sonnet:max
+<path-to-code-review-skill>/scripts/autoreview --reviewers codex:gpt-5.1:high,claude:sonnet:max
 ```
 
 Codex maps thinking to `model_reasoning_effort` and accepts `low`, `medium`,
@@ -140,8 +140,8 @@ Engines without a real thinking knob reject `--thinking`.
 CodeRabbit and Greptile can be selected as single reviewers or panel members:
 
 ```bash
-<autoreview-helper> --engine coderabbit --mode branch --base origin/main
-<autoreview-helper> --engine greptile --mode branch --base origin/main
+<path-to-code-review-skill>/scripts/autoreview --engine coderabbit --mode branch --base origin/main
+<path-to-code-review-skill>/scripts/autoreview --engine greptile --mode branch --base origin/main
 ```
 
 CodeRabbit uses `coderabbit review --agent --no-color`, supports local dirty review,
@@ -156,44 +156,32 @@ Run the helper directly so target selection, engine choice, structured validatio
 
 ## Helper
 
-OpenClaw repo-local helper:
+Resolve `<path-to-code-review-skill>` to the directory containing this `SKILL.md`, then invoke bundled scripts from that directory:
 
 ```bash
-.agents/skills/code-review/scripts/autoreview --help
+<path-to-code-review-skill>/scripts/autoreview --help
 ```
 
-`agent-scripts` checkout helper:
+For this checkout:
 
 ```bash
-skills/code-review/scripts/autoreview --help
+/Users/gannonhall/dev/skills/code-review/scripts/autoreview --help
 ```
 
 On native Windows, invoke the extensionless Python helper through Python:
 
 ```powershell
-python skills\code-review\scripts\autoreview --help
+python <path-to-code-review-skill>\scripts\autoreview --help
 ```
 
 The smoke harness has thin shell wrappers over a shared Python implementation:
 
 ```bash
-skills/code-review/scripts/test-review-harness --fixture benign --engine codex
+<path-to-code-review-skill>/scripts/test-review-harness --fixture benign --engine codex
 ```
 
 ```powershell
-skills\code-review\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
-```
-
-Global helper from `agent-scripts`:
-
-```bash
-~/.codex/skills/agent-scripts/code-review/scripts/autoreview --help
-```
-
-If installed from `agent-scripts`, path is:
-
-```bash
-/Users/steipete/Projects/agent-scripts/skills/code-review/scripts/autoreview --help
+<path-to-code-review-skill>\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
 ```
 
 The helper:
