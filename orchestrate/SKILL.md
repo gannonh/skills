@@ -1,6 +1,6 @@
 ---
 name: orchestrate
-description: Act as the lead orchestrator for complex coding work. Use this skill when the user asks to orchestrate, delegate, run agents or workers, fan out work, use parallel agents, coordinate sub-agents, create worktrees, execute a broad plan, verify a feature, or manage multi-step implementation where independent investigation, implementation, review, or verification could improve speed, quality, or confidence. Prefer this skill for substantial cross-file or acceptance-gated work even when the user does not explicitly say "orchestrator".
+description: Act as the lead orchestrator for complex coding work. Use this skill when the user asks to orchestrate, delegate, run agents or workers, fan out work, use parallel agents, coordinate sub-agents, dispatch cloud agents, create worktrees, execute a broad plan, verify a feature, or manage multi-step implementation where independent investigation, implementation, review, or verification could improve speed, quality, or confidence. Prefer this skill for substantial cross-file or acceptance-gated work even when the user does not explicitly say "orchestrate".
 ---
 
 # Orchestrate
@@ -17,7 +17,7 @@ Use delegation when it improves speed, quality, or confidence. Do not delegate w
 4. Decide the execution pattern before modifying code.
 5. Keep the final feature branch coherent. Do not open a PR until explicitly asked.
 
-If Orca's `orchestration` skill is available, use it for agent-to-agent coordination, worker dispatch, dependencies, gates, and worker messages. If it is unavailable, use the current harness's native subagent, task, or delegation mechanism.
+If Orca's `orchestration` skill is available, use it for agent-to-agent coordination, worker dispatch, dependencies, gates, and worker messages. If the harness supports dispatching work to cloud agents, consider cloud agents alongside local subagents and worktrees. If those are unavailable, use the current harness's native subagent, task, or delegation mechanism.
 
 ## Choose the execution pattern
 
@@ -28,6 +28,7 @@ Pick the simplest pattern that can meet the goal.
 - **Parallel workers**: Use when independent tracks can proceed at the same time, such as separate modules, research angles, test design, or review passes.
 - **Child agents**: Use for bounded investigation, implementation, review, verification, documentation, or cleanup tasks that benefit from a focused context.
 - **Separate worktrees**: Use when parallel implementation or risky exploration could create file conflicts, pollute the main working tree, or make rollback harder.
+- **Cloud agents**: Use when the harness supports remote or cloud worker dispatch and the task can run independently with a clear context bundle, acceptance criteria, and evidence contract.
 
 Prefer a smaller number of high-signal workers over a large swarm. Each worker needs a crisp remit and a clear output contract.
 
@@ -40,6 +41,7 @@ Delegate when at least one of these is true:
 - The work requires repository research across multiple areas.
 - Verification benefits from an agent that did not implement the change.
 - Isolation in a separate worktree reduces conflict, rollback, or experiment risk.
+- A supported cloud agent can safely take an independent work packet and return reviewable evidence.
 
 Do not delegate when:
 
@@ -97,6 +99,20 @@ Stop and escalate if:
 Output:
 Return a concise report with summary, files changed or inspected, validation, risks, and recommended next steps.
 ```
+
+## Use cloud agents when supported
+
+Some harnesses can dispatch work to remote or cloud agents. Use them when they improve throughput, provide a clean execution environment, or allow long-running independent work without blocking the parent session.
+
+Before dispatching cloud work:
+
+1. Confirm the harness supports cloud agent dispatch.
+2. Package enough context for the worker to succeed without access to the parent conversation.
+3. Include branch, repository, file, command, environment, and secret-handling constraints.
+4. Require evidence that can be reviewed from the parent session, such as diffs, logs, test output, screenshots, or links to produced artifacts.
+5. State whether the cloud worker may push commits, open branches, or only report findings.
+
+Do not send secrets, credentials, private data, or broad permissions unless the user and harness explicitly authorize that workflow.
 
 ## Manage worktrees deliberately
 
