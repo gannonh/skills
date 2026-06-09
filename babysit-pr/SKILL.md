@@ -28,16 +28,18 @@ Accept any of the following:
 3. Inspect the `actions` list in the JSON response.
 4. If `diagnose_ci_failure` is present, inspect failed run logs and classify the failure.
 5. If the failure is likely caused by the current branch, patch code locally, commit, and push. Do not patch random flaky tests, CI infrastructure, dependency outages, runner issues, or other failures that are unrelated to the branch.
-6. If `process_review_comment` is present, inspect surfaced published review items and decide whether to address them.
-7. If a review item is actionable and correct, patch code locally, commit, push, and then resolve the associated review thread only when allowed by the GitHub state mutation policy below.
-8. Do not post replies to human-authored review comments/threads unless the user explicitly confirms the exact response. If a human review item is non-actionable, already addressed, or not valid, surface the item and recommended response to the user instead of replying on GitHub.
-9. If the failure is likely flaky/unrelated and `retry_failed_checks` is present, rerun failed jobs with `--retry-failed-now`.
-10. If both actionable review feedback and `retry_failed_checks` are present, prioritize review feedback first; a new commit will retrigger CI, so avoid rerunning flaky checks on the old SHA unless you intentionally defer the review change.
-11. On every loop, look for newly surfaced review feedback before acting on CI failures or mergeability state, then verify mergeability / merge-conflict status (for example via `gh pr view`) alongside CI.
-12. After any push or rerun action, immediately return to step 1 and continue polling on the updated SHA/state.
-13. If you had been using `--watch` before pausing to patch/commit/push, relaunch `--watch` yourself in the same turn immediately after the push (do not wait for the user to re-invoke the skill).
-14. Repeat polling until `stop_pr_closed` appears or a user-help-required blocker is reached. A green + review-clean + mergeable PR is a progress milestone, not a reason to stop the watcher while the PR is still open.
-15. Maintain terminal/session ownership: while babysitting is active, keep consuming watcher output in the same turn; do not leave a detached `--watch` process running and then end the turn as if monitoring were complete.
+6. If `process_review_comment` is present, build a review-feedback ledger before editing: enumerate every surfaced published review item, group related comments into issue candidates, capture author/path/line/thread URL, and write a one-line reviewer ask for each candidate.
+7. Triage each issue candidate against the current code. Classify it as `fix`, `already-addressed`, `false-positive`, `question/needs-user-response`, or `unsafe-to-change`. A classification needs evidence from the code, tests, PR diff, or GitHub thread state.
+8. For each `fix` candidate, patch code locally, validate, commit, push, and then resolve the associated review thread only when allowed by the GitHub state mutation policy below. Do not leave an actionable comment merely summarized.
+9. For each `already-addressed`, `false-positive`, or `unsafe-to-change` candidate, record the rationale in the ledger and prepare a concise reviewer-facing explanation. Post or resolve only when allowed by the GitHub state mutation policy; otherwise surface the exact suggested response to the user.
+10. Do not post replies to human-authored review comments/threads unless the user explicitly confirms the exact response, except for thread-resolution comments that are explicitly allowed by the GitHub state mutation policy below.
+11. If the failure is likely flaky/unrelated and `retry_failed_checks` is present, rerun failed jobs with `--retry-failed-now`.
+12. If both actionable review feedback and `retry_failed_checks` are present, prioritize review feedback first; a new commit will retrigger CI, so avoid rerunning flaky checks on the old SHA unless you intentionally defer the review change.
+13. On every loop, look for newly surfaced review feedback before acting on CI failures or mergeability state, then verify mergeability / merge-conflict status (for example via `gh pr view`) alongside CI.
+14. After any push or rerun action, immediately return to step 1 and continue polling on the updated SHA/state.
+15. If you had been using `--watch` before pausing to patch/commit/push, relaunch `--watch` yourself in the same turn immediately after the push (do not wait for the user to re-invoke the skill).
+16. Repeat polling until `stop_pr_closed` appears or a user-help-required blocker is reached. A green + review-clean + mergeable PR is a progress milestone, not a reason to stop the watcher while the PR is still open.
+17. Maintain terminal/session ownership: while babysitting is active, keep consuming watcher output in the same turn; do not leave a detached `--watch` process running and then end the turn as if monitoring were complete.
 
 ## Commands
 
@@ -64,6 +66,16 @@ python3 <path-to-agent-skills-directory>/babysit-pr/scripts/gh_pr_watch.py --pr 
 ```bash
 python3 <path-to-agent-skills-directory>/babysit-pr/scripts/gh_pr_watch.py --pr <number-or-url> --once
 ```
+
+### Full review-thread inventory
+
+When review handling needs complete thread state, use GraphQL directly or, if the sibling skill is available, run:
+
+```bash
+python3 <path-to-agent-skills-directory>/address-pr-comments/scripts/fetch_comments.py > /tmp/pr-comments.json
+```
+
+Use this inventory to confirm resolved/outdated state, see all comments in a thread, and avoid missing existing review feedback that predates the watcher state file.
 
 ## CI Failure Classification
 Use `gh` commands to inspect failed runs before deciding to rerun.
@@ -100,18 +112,31 @@ It intentionally surfaces Codex reviewer bot feedback (for example comments/revi
 For safety, the watcher only auto-surfaces trusted human review authors (for example repo OWNER/MEMBER/COLLABORATOR, plus the authenticated operator) and approved review bots such as Codex.
 On a fresh watcher state file, existing unaddressed published review feedback may be surfaced immediately (not only comments that arrive after monitoring starts). This is intentional so already-open review comments are not missed.
 
+When review feedback appears, treat comment handling as a closeout loop, not a notification:
+
+1. Inventory comments. Enumerate each surfaced review item and, when needed, fetch the full thread so you can see resolved/outdated state and follow-up replies.
+2. Group comments into issue candidates. Multiple inline comments can be one issue; one review body can contain several issues.
+3. For every candidate, write a ledger entry with: `id`, `source` (author/url/path/line), `reviewer ask`, `classification`, `evidence`, `action`, and `GitHub disposition`.
+4. Verify against current code before deciding. Review comments often reference old lines, stale diffs, generated files, or behavior already changed by a later commit.
+5. Fix all actionable and correct candidates. Prefer a targeted regression test when the comment describes behavior that can recur.
+6. For false positives, stale comments, already-fixed issues, or requests you should not implement, record the exact rationale. If a GitHub reply is needed, draft a concise response and follow the state mutation policy instead of silently ignoring the comment.
+7. Re-read the thread after changes and checks so you can confirm whether each candidate is fixed, intentionally skipped with rationale, or blocked on user input.
+
 When you agree with a comment and it is actionable:
 
 1. Patch code locally.
-2. Commit with `codex: address PR review feedback (#<n>)`.
-3. Push to the PR head branch.
-4. After the push succeeds, resolve the associated GitHub review thread only when allowed by the GitHub state mutation policy below.
-5. Resume watching on the new SHA immediately (do not stop after reporting the push).
-6. If monitoring was running in `--watch` mode, restart `--watch` immediately after the push in the same turn; do not wait for the user to ask again.
+2. Validate the fix with the smallest relevant test/check.
+3. Commit with `codex: address PR review feedback (#<n>)`.
+4. Push to the PR head branch.
+5. After the push succeeds, resolve the associated GitHub review thread only when allowed by the GitHub state mutation policy below.
+6. Resume watching on the new SHA immediately (do not stop after reporting the push).
+7. If monitoring was running in `--watch` mode, restart `--watch` immediately after the push in the same turn; do not wait for the user to ask again.
 
 Do not post replies to human-authored GitHub review comments/threads automatically. If you disagree with a human comment, believe it is non-actionable/already addressed, or need to answer a question, report the item to the user with a suggested response and wait for explicit confirmation before posting anything on GitHub. If the user approves a response, prefix it with `[codex]` so it is clear the response is automated and not from the human user.
 If the watcher later surfaces your own approved reply because the authenticated operator is treated as a trusted review author, treat that self-authored item as already handled and do not reply again.
-If a code review comment/thread is already marked as resolved in GitHub, treat it as non-actionable and safely ignore it unless new unresolved follow-up feedback appears.
+If a code review comment/thread is already marked as resolved in GitHub, mark it `already-addressed` in the ledger and safely ignore it unless new unresolved follow-up feedback appears.
+
+Do not drop a review item from the closeout just because you believe it is noise. False positives and stale comments still need an explicit ledger rationale, and, when allowed, a resolution or reviewer-facing explanation so the PR does not appear ignored.
 
 ## GitHub State Mutation Policy
 
@@ -120,9 +145,11 @@ You can read any PR state you need for monitoring. Writes must comply with this 
 You can push PRs to update the code under review or to force CI re-runs as described above.
 
 You can resolve review comment threads from the human who requested babysitting or from the Codex
-review bot. When resolving, leave a comment prefixed with `[from Codex]: ` and explain what changes
-you made and which commit includes them. Don't touch review threads if other humans other than the
-user who requested babysitting have participated.
+review bot. When resolving a fixed thread, leave a comment prefixed with `[from Codex]: ` and explain
+what changes you made and which commit includes them. When resolving a false-positive, stale, or
+already-addressed thread that this policy lets you touch, leave a comment prefixed with `[from Codex]: `
+that gives the evidence-backed rationale for not changing code. Don't touch review threads if other
+humans other than the user who requested babysitting have participated.
 
 Before making any changes, fetch the PR state yourself instead of relying on the PR watcher script's
 output.
@@ -162,7 +189,7 @@ Use this loop in a live Codex session:
 3. First check whether the PR is now merged or otherwise closed; if so, report that terminal state and stop polling immediately.
 4. Check CI summary, new review items, and mergeability/conflict status.
 5. Diagnose CI failures and classify branch-related vs flaky/unrelated. If the overall run is still pending but `failed_jobs` already includes a failed job, fetch that job's logs and diagnose immediately instead of waiting for the whole workflow run to finish. Patch only when the failure is branch-related.
-6. For each surfaced review item from another author, patch/commit/push if it is actionable, then resolve it only when allowed by the GitHub state mutation policy above. If it is non-actionable, already addressed, or requires a written answer, surface it to the user with a suggested response instead of posting automatically. If a later snapshot surfaces your own approved reply, treat it as informational and continue without responding again.
+6. For surfaced review items from another author, run the review-feedback ledger loop: enumerate candidates, verify each against current code, fix actionable issues, validate, push, and resolve only when allowed by the GitHub state mutation policy above. If a candidate is non-actionable, already addressed, stale, a false positive, or requires a written answer, keep it in the ledger with evidence and surface the suggested response to the user instead of posting automatically. If a later snapshot surfaces your own approved reply, treat it as informational and continue without responding again.
 7. Process actionable review comments before flaky reruns when both are present; if a review fix requires a commit, push it and skip rerunning failed checks on the old SHA.
 8. Retry failed checks only when `retry_failed_checks` is present and you are not about to replace the current SHA with a review/CI fix commit. Do not make code changes for unrelated flakes or infrastructure failures just to get CI green.
 9. If you pushed a commit, resolved an eligible review thread, or triggered a rerun, report the action briefly and continue polling (do not stop). If a human review comment needs a written GitHub response, stop and ask for confirmation before posting.
@@ -214,6 +241,7 @@ Provide concise progress updates while monitoring and a final summary that inclu
 - CI status summary
 - Mergeability / conflict status
 - Fixes pushed
+- Review-feedback ledger summary, including fixed comments and skipped comments with rationale
 - Flaky retry cycles used
 - Remaining unresolved failures or review comments
 
