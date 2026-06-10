@@ -17,12 +17,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 
-ENGINES = ("codex", "claude", "droid", "copilot", "coderabbit", "greptile")
+ENGINES = ("codex", "claude", "droid", "copilot", "cursor", "coderabbit", "greptile")
+CURSOR_MODEL = "composer-2.5"
 THINKING_LEVELS_BY_ENGINE = {
     "codex": {"low", "medium", "high", "xhigh"},
     "claude": {"low", "medium", "high", "xhigh", "max"},
     "droid": set(),
     "copilot": set(),
+    "cursor": set(),
     "coderabbit": set(),
     "greptile": set(),
 }
@@ -454,7 +456,7 @@ def build_prompt(repo: Path, target: str, target_ref: str | None, bundle: str, e
         {json.dumps(SCHEMA, indent=2)}
         - Do not modify files.
         - Do not invoke nested reviewers or review tools.
-        - Forbidden nested review commands include: codex review, autoreview, claude review, oracle review, coderabbit review, greptile review.
+        - Forbidden nested review commands include: codex review, autoreview, claude review, oracle review, cursor-agent, coderabbit review, greptile review.
         - You may use read-only tools and web search to inspect files, dependency contracts, upstream docs, current behavior, and security implications.
         - Shell commands, if available, must be read-only inspection commands. Do not run tests, formatters, package installs, generators, network mutation commands, git mutation commands, or commands that write files.
         - Report only actionable defects introduced or exposed by this change.
@@ -629,6 +631,42 @@ def run_copilot(args: argparse.Namespace, repo: Path, prompt: str) -> str:
     if result.returncode != 0:
         raise SystemExit(f"copilot engine failed ({result.returncode})\n{result.stderr or result.stdout}")
     return result.stdout
+
+
+def run_cursor(args: argparse.Namespace, repo: Path, prompt: str) -> str:
+    if args.model and args.model != CURSOR_MODEL:
+        raise SystemExit(f"--model is not supported by the cursor engine; cursor is pinned to {CURSOR_MODEL}")
+    if args.thinking:
+        raise SystemExit(f"--thinking is not supported by the cursor engine; {CURSOR_MODEL} does not expose a thinking setting")
+    if not args.tools:
+        raise SystemExit("--no-tools is not supported by the cursor engine")
+    if not args.web_search:
+        raise SystemExit("--no-web-search is not supported by the cursor engine")
+    cmd = [
+        resolve_command(args.cursor_bin, repo),
+        "--print",
+        "--mode",
+        "ask",
+        "--trust",
+        "--sandbox",
+        "enabled",
+        "--workspace",
+        str(repo),
+        "--output-format",
+        "json",
+        "--model",
+        CURSOR_MODEL,
+    ]
+    result = run_with_heartbeat(
+        cmd,
+        repo,
+        input_text=prompt,
+        label="cursor",
+        stream_output=args.stream_engine_output,
+    )
+    if result.returncode != 0:
+        raise SystemExit(f"cursor engine failed ({result.returncode})\n{result.stderr or result.stdout}")
+    return normalize_cursor_output(result.stdout)
 
 
 def run_coderabbit(args: argparse.Namespace, repo: Path, prompt: str) -> str:
@@ -1117,6 +1155,26 @@ def claude_allowed_tools(args: argparse.Namespace) -> str:
     return ",".join(tools)
 
 
+def normalize_cursor_output(text: str) -> str:
+    stripped = text.strip()
+    if not stripped:
+        return text
+    try:
+        parsed = json.loads(stripped)
+    except json.JSONDecodeError:
+        candidate = parse_review_json_from_text(stripped)
+        return json.dumps(candidate) if candidate else text
+    if isinstance(parsed, dict) and isinstance(parsed.get("result"), str):
+        result_text = parsed["result"]
+        candidate = parse_json_candidate(result_text)
+        if isinstance(candidate, dict) and "findings" in candidate:
+            return json.dumps(candidate)
+        candidate = parse_review_json_from_text(result_text)
+        if candidate:
+            return json.dumps(candidate)
+    return text
+
+
 def extract_json(text: str) -> dict[str, Any]:
     stripped = text.strip()
     if not stripped:
@@ -1137,6 +1195,9 @@ def extract_json(text: str) -> dict[str, Any]:
         return parsed["structured_output"]
     if isinstance(parsed, dict) and isinstance(parsed.get("result"), str):
         result_json = parse_json_candidate(parsed["result"])
+        if isinstance(result_json, dict) and "findings" in result_json:
+            return result_json
+        result_json = parse_review_json_from_text(parsed["result"])
         if isinstance(result_json, dict) and "findings" in result_json:
             return result_json
         raise SystemExit(f"review engine result was not structured JSON:\n{parsed['result'][:2000]}")
@@ -1174,6 +1235,20 @@ def extract_json_from_jsonl(text: str) -> dict[str, Any] | None:
                 return candidate
             continue
         parsed = parse_json_candidate(candidate)
+        if isinstance(parsed, dict) and "findings" in parsed:
+            return parsed
+    return None
+
+
+def parse_review_json_from_text(text: str) -> dict[str, Any] | None:
+    decoder = json.JSONDecoder()
+    for index, char in enumerate(text):
+        if char != "{":
+            continue
+        try:
+            parsed, _end = decoder.raw_decode(text[index:])
+        except json.JSONDecodeError:
+            continue
         if isinstance(parsed, dict) and "findings" in parsed:
             return parsed
     return None
@@ -1336,9 +1411,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--claude-bin", default=os.environ.get("CLAUDE_BIN", "claude"))
     parser.add_argument("--droid-bin", default=os.environ.get("DROID_BIN", "droid"))
     parser.add_argument("--copilot-bin", default=os.environ.get("COPILOT_BIN", "copilot"))
+    parser.add_argument("--cursor-bin", default=os.environ.get("CURSOR_AGENT_BIN", "cursor-agent"))
     parser.add_argument("--coderabbit-bin", default=os.environ.get("CODERABBIT_BIN", "coderabbit"))
     parser.add_argument("--greptile-bin", default=os.environ.get("GREPTILE_BIN", "greptile"))
-    parser.add_argument("--no-tools", dest="tools", action="store_false", default=True, help="Disable tools for engines that support it. Codex, copilot, coderabbit, and greptile reject no-tools review.")
+    parser.add_argument("--no-tools", dest="tools", action="store_false", default=True, help="Disable tools for engines that support it. Codex, copilot, cursor, coderabbit, and greptile reject no-tools review.")
     parser.add_argument("--no-web-search", dest="web_search", action="store_false", default=True)
     parser.add_argument(
         "--claude-allowed-tools",
@@ -1383,6 +1459,8 @@ def run_engine(args: argparse.Namespace, repo: Path, prompt: str) -> str:
         return run_droid(args, repo, prompt)
     if args.engine == "copilot":
         return run_copilot(args, repo, prompt)
+    if args.engine == "cursor":
+        return run_cursor(args, repo, prompt)
     if args.engine == "coderabbit":
         return run_coderabbit(args, repo, prompt)
     if args.engine == "greptile":

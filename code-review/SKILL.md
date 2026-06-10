@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: "Structured code review closeout. Codex review is the default when no engine is set and is the recommended reviewer. Use this for code-review, autoreview, second-model review, CodeRabbit, Greptile, Codex review, Claude review, PR review, and final quality/security review requests."
+description: "Structured code review closeout. Codex review is the default when no engine is set and is the recommended reviewer. Use this for code-review, autoreview, second-model review, CodeRabbit, Greptile, Cursor, Codex review, Claude review, PR review, and final quality/security review requests."
 ---
 
 # Code Review
@@ -11,7 +11,7 @@ Codex review is the default when no engine is set. It usually delivers the best 
 
 Use when:
 
-- user asks for code-review / autoreview / Codex review / Claude review / CodeRabbit review / Greptile review / second-model review
+- user asks for code-review / autoreview / Codex review / Claude review / Cursor review / CodeRabbit review / Greptile review / second-model review
 - after non-trivial code edits, before final/commit/ship
 - reviewing a local branch or PR branch after fixes
 
@@ -137,18 +137,22 @@ Codex maps thinking to `model_reasoning_effort` and accepts `low`, `medium`,
 `high`, or `xhigh`. Claude maps thinking to `--effort` and also accepts `max`.
 Engines without a real thinking knob reject `--thinking`.
 
-CodeRabbit and Greptile can be selected as single reviewers or panel members:
+Cursor, CodeRabbit, and Greptile can be selected as single reviewers or panel members:
 
 ```bash
+<path-to-code-review-skill>/scripts/autoreview --engine cursor --mode branch --base origin/main
 <path-to-code-review-skill>/scripts/autoreview --engine coderabbit --mode branch --base origin/main
 <path-to-code-review-skill>/scripts/autoreview --engine greptile --mode branch --base origin/main
 ```
 
-CodeRabbit uses `coderabbit review --agent`, supports local dirty review,
-branch review, and `--mode commit --commit HEAD`. Additional `--prompt`,
-`--prompt-file`, and `--dataset` content is passed through as a temporary
-CodeRabbit config file. Greptile uses `greptile review --json --no-color` and
-supports branch review only.
+Cursor uses `cursor-agent --print --mode ask --sandbox enabled` and is pinned to
+`composer-2.5`. `composer-2.5` does not expose a Cursor thinking setting, so
+`--thinking` is rejected for Cursor. `--model` is rejected unless it is the pinned
+`composer-2.5` value. CodeRabbit uses `coderabbit review --agent`, supports local
+dirty review, branch review, and `--mode commit --commit HEAD`. Additional
+`--prompt`, `--prompt-file`, and `--dataset` content is passed through as a
+temporary CodeRabbit config file. Greptile uses `greptile review --json --no-color`
+and supports branch review only.
 
 ## Context Efficiency
 
@@ -190,7 +194,7 @@ The helper:
 - accepts `--mode uncommitted` as an alias for `--mode local`
 - otherwise uses current PR base if `gh pr view` works
 - otherwise uses `origin/main` for non-main branches
-- supports `--engine codex`, `claude`, `droid`, `copilot`, `coderabbit`, and `greptile`; default is `AUTOREVIEW_ENGINE` or `codex`; Codex should remain the default when nothing is set
+- supports `--engine codex`, `claude`, `droid`, `copilot`, `cursor`, `coderabbit`, and `greptile`; default is `AUTOREVIEW_ENGINE` or `codex`; Codex should remain the default when nothing is set
 - resolves bare `git`, `gh`, reviewer, and PowerShell shell commands from absolute `PATH` entries only, never from the reviewed checkout; explicit relative `--*-bin` paths are resolved from the reviewed repository root
 - use `--mode commit --commit <ref>` for already-committed work, especially clean `main` after landing
 - should be left in `--mode auto` or forced to `--mode branch` for PR/branch work; do not force `--mode local` after committing
