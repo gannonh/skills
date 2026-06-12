@@ -29,21 +29,25 @@ The parent agent owns orchestration, acceptance, commits, and final reporting. E
    - the branch diff against that base
 3. If the working tree contains unrelated user changes that are clearly outside the feature branch, stop and ask how to handle them.
 4. Identify the harness's general-purpose subagent mechanism, such as a delegate, worker, task, or general-purpose agent. Use the generic subagent available in the current environment rather than a harness-specific recipe.
-5. Resolve the full absolute `SKILL.md` path for each dependency: `simplify`, `strict-quality-review`, and `update-docs`.
-6. If subagents or any dependency skill file is unavailable, stop and report the missing capability. Do not emulate this workflow entirely in the parent session.
+5. Set `<path-to-skills-directory>` to the directory that contains the companion skill folders.
+6. Verify these skill files exist:
+   - `<path-to-skills-directory>/simplify/SKILL.md`
+   - `<path-to-skills-directory>/strict-quality-review/SKILL.md`
+   - `<path-to-skills-directory>/update-docs/SKILL.md`
+7. If subagents or any dependency skill file is unavailable, stop and report the missing capability. Do not emulate this workflow entirely in the parent session.
 
 ## Phase 1: `simplify` subagent
 
-Spawn a subagent and give it the full absolute path to the `simplify` skill file. Do not inline, summarize, or reinterpret the skill content for the subagent.
+Spawn a subagent and give it the `simplify` skill file path. Do not inline, summarize, or reinterpret the skill content for the subagent.
 
-Use this prompt for the phase 1 subagent, replacing `<SIMPLIFY_SKILL_PATH>` with the resolved absolute path to the `simplify` `SKILL.md` file:
+Use this prompt for the phase 1 subagent:
 
 ```text
 Finalize phase 1 for the current feature branch.
 
 First read the `simplify` skill file at this exact path:
 
-<SIMPLIFY_SKILL_PATH>
+<path-to-skills-directory>/simplify/SKILL.md
 
 Then follow that skill's instructions on the current branch diff. Refine recently modified code for clarity, consistency, and maintainability while preserving behavior.
 
@@ -79,16 +83,16 @@ Commit guidance:
 
 ## Phase 2: strict quality review subagent
 
-Spawn a separate subagent and give it the full absolute path to the `strict-quality-review` skill file. Do not inline, summarize, or reinterpret the skill content for the subagent. This subagent audits the post-`simplify` branch and applies fixes for accepted findings.
+Spawn a separate subagent and give it the `strict-quality-review` skill file path. Do not inline, summarize, or reinterpret the skill content for the subagent. This subagent audits the post-`simplify` branch and applies fixes for accepted findings.
 
-Use this prompt for the phase 2 subagent, replacing `<STRICT_QUALITY_REVIEW_SKILL_PATH>` with the resolved absolute path to the `strict-quality-review` `SKILL.md` file:
+Use this prompt for the phase 2 subagent:
 
 ```text
 Finalize phase 2 for the current feature branch.
 
 First read the `strict-quality-review` skill file at this exact path:
 
-<STRICT_QUALITY_REVIEW_SKILL_PATH>
+<path-to-skills-directory>/strict-quality-review/SKILL.md
 
 Then follow that skill's instructions on the current branch diff after the `simplify` phase. Perform a strict maintainability review focused on abstraction quality, file growth, spaghetti-condition growth, type boundaries, canonical helpers, modularity, and code-judo simplifications.
 
@@ -125,16 +129,16 @@ Commit guidance:
 
 ## Phase 3: update docs subagent
 
-Spawn a separate subagent and give it the full absolute path to the `update-docs` skill file. Do not inline, summarize, or reinterpret the skill content for the subagent. This subagent updates relevant project documentation after the cleanup and review passes.
+Spawn a separate subagent and give it the `update-docs` skill file path. Do not inline, summarize, or reinterpret the skill content for the subagent. This subagent updates relevant project documentation after the cleanup and review passes.
 
-Use this prompt for the phase 3 subagent, replacing `<UPDATE_DOCS_SKILL_PATH>` with the resolved absolute path to the `update-docs` `SKILL.md` file:
+Use this prompt for the phase 3 subagent:
 
 ```text
 Finalize phase 3 for the current feature branch.
 
 First read the `update-docs` skill file at this exact path:
 
-<UPDATE_DOCS_SKILL_PATH>
+<path-to-skills-directory>/update-docs/SKILL.md
 
 Then follow that skill's instructions for the current branch diff after the `simplify` and `strict-quality-review` phases. Update repository documentation so it reflects the finalized branch changes.
 
@@ -211,4 +215,10 @@ This skill depends on these companion skills:
 - `strict-quality-review`
 - `update-docs`
 
-Before starting phase work, verify all three skills are available in the current system and resolve each one to a full absolute `SKILL.md` path. Pass that path to the relevant subagent and instruct the subagent to read the file first. If any skill file is unavailable, stop, alert the user which dependency is missing, and ask for next steps.
+Before starting phase work, set `<path-to-skills-directory>` to the directory that contains the companion skill folders. Verify these files exist and pass the matching path to each subagent:
+
+- `<path-to-skills-directory>/simplify/SKILL.md`
+- `<path-to-skills-directory>/strict-quality-review/SKILL.md`
+- `<path-to-skills-directory>/update-docs/SKILL.md`
+
+If any skill file is unavailable, stop, alert the user which dependency is missing, and ask for next steps.
