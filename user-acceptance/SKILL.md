@@ -1,6 +1,6 @@
 ---
 name: user-acceptance
-description: Use when finishing a ticket, feature branch, or pull request and the user asks to validate, demo, verify, sign off, show that it works, run UAT, provide acceptance evidence, or decide whether work is ready to merge. This skill gathers tangible evidence that completed work functions as intended, with videos, screenshots, terminal recordings, JSON responses, output files, logs, and a concise human test guide. Use for web apps, CLI and TUI apps, APIs and SDKs, and native Electron apps. Trigger on phrases like "UAT", "verify", "show me it works", "demo this", "walk me through", "ready to merge", "can we merge?", "acceptance test", "validate the changes", "sign off", or any request for proof that a feature branch or PR works.
+description: Use when finishing a ticket, feature branch, or pull request and the user asks to validate, demo, verify, sign off, show that it works, run UAT, provide acceptance evidence, or decide whether work is ready to merge. This skill gathers tangible evidence that completed work functions as intended, with videos, screenshots, terminal recordings, JSON responses, output files, logs, and a concise human test guide. Use for web apps, CLI and TUI apps, APIs and SDKs, and native apps including Electron-type apps. Trigger on phrases like "UAT", "verify", "show me it works", "demo this", "walk me through", "ready to merge", "can we merge?", "acceptance test", "validate the changes", "sign off", or any request for proof that a feature branch or PR works.
 ---
 
 # User Acceptance Evidence
@@ -11,10 +11,10 @@ When this skill triggers, gather real evidence that the feature branch, ticket, 
 
 Acceptance evidence should be experiential and reproducible:
 
-- For front ends, capture video when practical, then screenshots.
+- For UI changes, capture video when practical, then screenshots at meaningful checkpoints. Video captures timing, transitions, focus, and end-to-end flow.
 - For CLI and TUI apps, capture terminal transcripts, screenshots, recordings, generated files, and exit codes.
 - For APIs and SDKs, capture requests, responses, output files, logs, and small runnable examples.
-- For Electron apps, drive the real desktop app and capture visual evidence from the app window.
+- For native apps, including Electron-type apps, strongly prefer `/computer-use` when available to drive the real app window and validate acceptance criteria through normal user-visible behavior.
 
 Automated tests can supplement UAT, but they do not replace an in-app walkthrough, command run, API call, or SDK example.
 
@@ -25,7 +25,7 @@ Use this skill for:
 1. Web apps
 2. CLI and TUI apps
 3. APIs and SDKs
-4. Native Electron apps
+4. Native apps, including Electron-type apps
 
 If the requested target is outside this list, ask whether to proceed with a best-effort evidence plan.
 
@@ -39,9 +39,10 @@ If the requested target is outside this list, ask whether to proceed with a best
    - Do not recommend merge based only on summaries, static code review, or green tests.
    - Exercise the changed behavior and save artifacts.
 
-3. **Visible evidence for front ends**
-   - For web and Electron work, capture video when practical.
-   - If video is not practical, capture screenshots at meaningful checkpoints and state why video was skipped.
+3. **Video-first visible evidence for UI changes**
+   - For web, TUI, and native app work, capture video when practical, especially when the change affects interaction, layout, transitions, state changes, or error handling.
+   - Also capture screenshots at meaningful checkpoints so reviewers can inspect static states.
+   - If video is not practical, state why it was skipped.
 
 4. **Manual run instructions are mandatory**
    - Always include steps the human can run themselves.
@@ -56,6 +57,11 @@ If the requested target is outside this list, ask whether to proceed with a best
    - Evidence collection supports acceptance.
    - The human grants acceptance.
 
+7. **Adversarial evidence review**
+   - When subagents are available, ask at least one adversarial reviewer to compare the gathered evidence against the spec, acceptance criteria, requirements, PR description, or ticket.
+   - The reviewer must provide `Pass` or `Fail` for each criterion and cite the artifact path or log line that supports the judgment.
+   - If subagents are unavailable, perform the same review inline and label it `Inline adversarial review`.
+
 ## Tool selection
 
 Load and use the best available skill or CLI for the target. If a required skill or CLI is unavailable, install it with `npx agents install <skill-name>`, then follow that skill's installation instructions for its underlying CLI.
@@ -67,7 +73,7 @@ Load and use the best available skill or CLI for the target. If a required skill
 | TUI app | `/computer-use` skill (if available) for terminal recording or screenshots; terminal transcript where possible | Video/GIF, screenshots, transcript, config/output files |
 | API | `curl`, HTTP client, repo scripts, logs | Request/response JSON, status codes, logs, saved payloads |
 | SDK | Minimal runnable example in the target language, repo examples/tests only as supplement | Source snippet, command output, generated files, logs |
-| Electron app | `electron` skill and `agent-browser` CDP automation; `/computer-use` skill (if available) for app-window recording | Window video, screenshots, accessibility snapshots, logs |
+| Native app, including Electron-type | `/computer-use` skill if available for app-window driving, interaction, accessibility inspection, screenshots, and recording; `agent_browser` Electron/CDP automation when the app exposes useful browser automation or CDP proof is needed | Window video, screenshots, accessibility snapshots, logs |
 
 Installation checks:
 
@@ -125,7 +131,7 @@ A minimal `evidence.json` should include:
 ```json
 {
   "scope": "validated behavior",
-  "target": "web|cli|tui|api|sdk|electron",
+  "target": "web|cli|tui|api|sdk|native|electron",
   "timestamp": "ISO-8601",
   "git_commit": "short sha",
   "artifacts": [
@@ -146,15 +152,15 @@ A minimal `evidence.json` should include:
 
 - Inspect branch diff, PR description, ticket, README, package scripts, and app entry points as needed.
 - Declare `UAT Scope: ...`.
-- Declare `Target: web | cli | tui | api | sdk | electron | mixed`.
+- Declare `Target: web | cli | tui | api | sdk | native | electron | mixed`.
 - Break the scope into 2 to 5 acceptance slices.
 - Define visible pass/fail criteria for each slice.
 
 ### 2. Prepare the app or service
 
-- Start the dev server, service, CLI, TUI, API, SDK fixture, or Electron app needed for the walkthrough.
+- Start the dev server, service, CLI, TUI, API, SDK fixture, or native/Electron-type app needed for the walkthrough.
 - Prefer real local behavior over mocks.
-- For web and Electron targets, check ports and existing processes before launch. Record any cleanup in `logs/`.
+- For web and native/Electron-type targets, check ports and existing processes before launch. Record any cleanup in `logs/`.
 - Use the user's normal product command for the product smoke path. If you need CDP, traces, or deterministic screenshots, run a second instrumented path and label it as such.
 - Pick free debug ports rather than assuming `9222`; if a port is occupied, save the listener evidence and choose another port.
 - If credentials, services, hardware, or permissions block proof, record the blocker and provide the closest reproducible plan. Do not mark blocked slices as passed.
@@ -163,15 +169,18 @@ A minimal `evidence.json` should include:
 
 Use the matching playbook:
 
-- Web and Electron: `references/web-electron-playbook.md`
+- Web app UI flows: `references/web-playbook.md`
+- Native/Electron-type UI flows: `references/native-electron-playbook.md`
 - CLI, TUI, API, and SDK: `references/cli-api-sdk-playbook.md`
+
+For native/Electron-type app-window validation, strongly prefer `/computer-use` if available so the evidence reflects the real desktop surface a user sees.
 
 For mixed work, run the user-facing path first, then the technical proof tied to the same outcome.
 
 ### 4. Capture durable evidence
 
 - Save artifacts under `uat-evidence/<target>-<timestamp>/`.
-- Capture video for web/Electron/TUI when practical.
+- Capture video for web, native/Electron-type, and TUI when practical.
 - Capture screenshots at the start, key state changes, and final success state.
 - Capture command output with `tee`, `script`, or `scripts/run-capture-command.mjs`; always save exit codes.
 - Save API/SDK JSON responses and generated output files.
@@ -179,7 +188,14 @@ For mixed work, run the user-facing path first, then the technical proof tied to
 - Classify failed checks. If a failing file or behavior changed in the branch, treat the slice as failed. If it is outside the branch diff, report it as an unrelated validation failure with file/error evidence.
 - Write `evidence.json` and `evidence.md`, then run `scripts/verify-evidence.mjs` before responding.
 
-### 5. Report results
+### 5. Run adversarial evidence review
+
+- Provide the spec, acceptance criteria, requirements, PR description, or ticket plus the saved artifacts to an adversarial review subagent when available.
+- Ask the reviewer to decide `Pass` or `Fail` for each criterion and cite exact evidence paths.
+- Treat missing, ambiguous, or inaccessible artifacts as failures for the affected criteria.
+- If a reviewer flags a gap, collect more evidence or mark the slice failed before reporting.
+
+### 6. Report results
 
 Use this order:
 
@@ -187,9 +203,10 @@ Use this order:
 2. `Target: ...`
 3. `Slice-by-slice result`
 4. `Evidence`
-5. `Manual Run Instructions`
-6. `Recommendation: Pending user sign-off`
-7. `Please reply: accept / reject`
+5. `Adversarial Review`
+6. `Manual Run Instructions`
+7. `Recommendation: Pending user sign-off`
+8. `Please reply: accept / reject`
 
 Keep the report concise. Link to artifact paths and explain what each artifact proves.
 
@@ -199,13 +216,16 @@ For every UAT response, include:
 
 ```markdown
 UAT Scope: <scope>
-Target: <web|cli|tui|api|sdk|electron|mixed>
+Target: <web|cli|tui|api|sdk|native|electron|mixed>
 
 Slice-by-slice result:
 - Pass/Fail: <slice> - <one-line evidence summary>
 
 Evidence:
 - <artifact path> - <what it proves>
+
+Adversarial Review:
+- Pass/Fail: <criterion> - <artifact-backed reason>
 
 Manual Run Instructions:
 1. <human step or command>
@@ -241,11 +261,13 @@ Before responding, verify:
 - Each slice has pass/fail status.
 - Evidence artifacts exist or blockers are clearly labeled.
 - `evidence.json` is valid and `evidence.md` is non-empty.
-- Front-end evidence includes video or a stated reason video was skipped.
+- UI evidence includes video plus screenshots when practical, or a stated reason video was skipped.
 - UI screenshots/video files exist and are readable.
+- Native app validation used `/computer-use` when available, or explains why another tool was used.
+- Adversarial review checked every criterion against evidence and produced pass/fail judgments.
 - Command logs include exit codes.
 - Old-bug negative evidence is saved when validating a fix.
-- Dev servers, Electron apps, or background processes launched for UAT are cleaned up or explicitly left running for the user.
+- Dev servers, native/Electron-type apps, or background processes launched for UAT are cleaned up or explicitly left running for the user.
 - Manual run instructions are included.
 - Recommendation remains `Pending user sign-off` unless the user has accepted.
 
@@ -253,7 +275,7 @@ Before responding, verify:
 
 - Running only tests and calling it UAT.
 - Reporting a code summary without artifacts.
-- Skipping video or screenshots for a front end without explanation.
+- Skipping video or screenshots for UI work without explanation.
 - Providing Playwright or test commands as the primary manual UI path.
 - Forgetting TUI visual evidence.
 - Omitting API request and response files.
