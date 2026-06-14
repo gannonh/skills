@@ -4,13 +4,13 @@
     {
       "id": 1,
       "prompt": "Use /okf init on this repo. It has docs/plans/payments-redesign.md, docs/architecture.md, adr/0001-use-postgres.md, README.md, and AGENTS.md. Reorganize the existing docs into an OKF bundle under ./docs, keep root files that tooling expects in place, and add instructions to AGENTS.md for future agents.",
-      "expected_output": "Creates an OKF-compliant ./docs bundle with specs and adrs sections, preserves root README/AGENTS files, adds frontmatter to concept docs, writes index/log files, and adds AGENTS.md instructions for reading and maintaining the OKF bundle.",
+      "expected_output": "Creates an OKF-compliant ./docs bundle with specs and adrs sections, preserves root README/AGENTS files, adds frontmatter to concept docs, writes index/log files, creates Markdown cross-links between related concepts, and adds AGENTS.md instructions for reading and maintaining the OKF bundle.",
       "files": []
     },
     {
       "id": 2,
       "prompt": "We are at the end of a feature branch that added SSO login, changed the auth boundary, and added a migration. Use /okf update so future agents understand what changed. The repo already has docs/index.md, docs/specs/index.md, and docs/adrs/index.md.",
-      "expected_output": "Reads the current OKF map, updates relevant specs and roadmap entries, adds or updates an ADR for the auth boundary decision, updates migration or runbook docs if useful, and records concise newest-first log entries.",
+      "expected_output": "Reads the current OKF map, updates relevant specs and roadmap entries, adds or updates an ADR for the auth boundary decision, refreshes Markdown cross-links between related concepts, updates migration or runbook docs if useful, and records concise newest-first log entries.",
       "files": []
     },
     {

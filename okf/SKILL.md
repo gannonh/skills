@@ -89,6 +89,24 @@ Use type names that explain what the document is, for example:
 - `Domain Concept`
 - `Research Note`
 
+## Cross-linking
+
+OKF uses standard Markdown links between concepts to express relationships. Create and maintain these cross-links deliberately so agents can traverse related knowledge.
+
+Use cross-links for durable relationships such as:
+
+- specs that implement or supersede other specs
+- ADRs that decide, constrain, or supersede specs and architecture notes
+- runbooks that operate systems described by architecture or reference concepts
+- guides that explain concepts in `domains/`, `reference/`, or `architecture/`
+- roadmap items that point to their current spec, ADR, or delivery notes
+
+Prefer bundle-relative absolute links, such as `/specs/auth-redesign.md`, when linking within the OKF bundle. Use relative links only when they are clearer and stable.
+
+Add links in both directions when both concepts benefit from traversal. For example, a spec should link to the ADR that constrains it, and the ADR should link back to the affected spec or architecture concept.
+
+Do not invent relationships. If a link target is plausible but unsupported by the repo or user context, leave it out or ask for clarification.
+
 `index.md` files normally contain no frontmatter. The bundle-root `./docs/index.md` may include frontmatter only when declaring the OKF version, for example:
 
 ```yaml
@@ -122,6 +140,7 @@ Use this workflow when the repo does not already have a coherent OKF bundle or t
    - Add missing frontmatter to non-reserved Markdown files under `./docs`.
    - Convert plans and specs into `./docs/specs/`.
    - Convert ADRs into `./docs/adrs/`.
+   - Create cross-links between related specs, ADRs, guides, runbooks, reference docs, architecture notes, and roadmap entries.
    - Use bundle-relative links from the docs root when stable, such as `/specs/my-plan.md`.
    - Fix links affected by moves when practical.
 
@@ -172,10 +191,11 @@ Use this workflow near the end of a session, feature branch, or PR.
    - Update specs when scope, status, acceptance criteria, rollout, or implementation details changed.
    - Update runbooks, guides, or reference docs when operators or future agents need the information.
 
-4. Maintain navigation.
+4. Maintain navigation and cross-links.
    - Update affected `index.md` files so readers can discover new or changed concepts.
    - Keep `./docs/specs/index.md` current as the roadmap.
-   - Add links between related specs, ADRs, guides, and concepts.
+   - Add or refresh cross-links between related specs, ADRs, guides, runbooks, reference docs, architecture notes, and roadmap entries.
+   - Add reciprocal links when both documents benefit from traversal.
 
 5. Maintain logs.
    - Add a newest-first entry to the nearest relevant `log.md` files.
@@ -201,10 +221,11 @@ Adapt this snippet during `/okf init`:
 This repository maintains an [OKF](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) bundle at `./docs`.
 
 - Read `./docs/index.md` before substantial work to understand the current documentation map.
-- Follow links into relevant specs, ADRs, runbooks, guides, and domain docs before changing related code.
+- Follow cross-links into relevant specs, ADRs, runbooks, guides, architecture notes, reference docs, and domain docs before changing related code.
 - Keep `./docs/specs/index.md` current as the roadmap for active, planned, blocked, and completed work.
 - Add or update ADRs in `./docs/adrs` for durable architecture decisions.
 - After substantial work, PRs, behavior changes, architecture decisions, migrations, or documentation moves, update the OKF bundle and add concise entries to the relevant `log.md` files.
+- Maintain Markdown cross-links between related OKF concepts so future agents can traverse decisions, specs, architecture, runbooks, guides, and references.
 - Every non-reserved Markdown file under `./docs` should have OKF frontmatter with at least a non-empty `type` field. `index.md` and `log.md` are reserved navigation/history files.
 ```
 
@@ -224,7 +245,8 @@ Before finishing, verify:
 - `./docs/adrs/log.md` exists.
 - Every non-reserved `./docs/**/*.md` file has frontmatter with `type`.
 - Moved or newly created docs have useful `title` and `description` fields when known.
-- Important links still resolve or are intentionally forward references.
+- Important cross-links still resolve or are intentionally forward references.
+- New or changed durable relationships are represented with Markdown links between relevant concepts.
 - AGENTS.md tells future agents how to consume and maintain the OKF bundle.
 
 ## When to ask the user
