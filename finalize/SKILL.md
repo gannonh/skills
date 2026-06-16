@@ -101,7 +101,7 @@ Scope:
 - Address high-confidence issues directly when the fix is in scope and behavior-preserving.
 - Do not expand product scope or rewrite unrelated code.
 - Do not commit. The parent agent will inspect and commit accepted changes.
-- Do not launch other subagents.
+- Follow the skill's adversarial review workflow, including spawning parallel adversarial review subagents when available.
 
 Acceptance:
 - Apply safe, in-scope fixes directly.

@@ -1,6 +1,6 @@
 ---
 name: strict-quality-review
-description: Run a strict maintainability review for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict quality review, deep code quality audit, or especially strict maintainability review.
+description: Run a strict maintainability review with parallel adversarial subagents for abstraction quality, giant files, and spaghetti-condition growth. Use for a strict quality review, deep code quality audit, or especially strict maintainability review.
 disable-model-invocation: true
 ---
 
@@ -9,6 +9,50 @@ disable-model-invocation: true
 Use this skill for an unusually strict review focused on implementation quality, maintainability, abstraction quality, and codebase health.
 
 Above all, this skill should push the reviewer to be **ambitious** about code structure. Do not merely identify local cleanup opportunities. Actively search for "code judo" moves: restructurings that preserve behavior while making the implementation dramatically simpler, smaller, more direct, and more elegant.
+
+## Adversarial Review Workflow
+
+Do not perform this review entirely inline when subagents are available. Independent adversarial reviewers catch structural debt that the author — or a single reviewer with implementation context — will rationalize away.
+
+### When subagents are available
+
+1. **Establish review scope** — current branch diff against the base branch, or the user's specified scope.
+2. **Spawn at least two parallel adversarial review subagents** (three for large or high-risk diffs). Point each subagent at this skill file. Do not summarize, soften, or omit the non-negotiable standards below.
+3. **Adversarial mandate** — each subagent must:
+   - Assume the diff introduces maintainability debt until shown otherwise.
+   - Hunt for code-judo opportunities the author likely missed.
+   - Flag structural regressions even when behavior looks correct.
+   - Cite file paths and line ranges for every finding.
+   - Separate **blockers** (presumptive ship-stoppers per Approval Bar) from **opportunities** (high-value simplifications).
+   - End with `Approve`, `Request changes`, or `Block` for the scoped diff.
+4. **Default to review-only subagents** — do not let subagents modify code unless the invoking workflow explicitly authorizes fixes. The parent agent synthesizes findings and applies accepted changes.
+5. **Synthesize** — merge subagent reports, dedupe overlapping findings, escalate findings multiple reviewers flagged independently, and drop low-conviction nits that only one reviewer raised without clear evidence.
+6. **Reconcile disagreement** — when reviewers conflict, read the cited code yourself and state which position holds.
+
+### Subagent prompt template
+
+```text
+Adversarial strict quality review.
+
+Read and follow this skill exactly:
+<absolute-path-to>/strict-quality-review/SKILL.md
+
+Scope: <branch diff / file list / commit range>
+
+You are an adversarial reviewer. Attack the implementation quality of the scoped change — do not rubber-stamp working code. Apply every non-negotiable standard in the skill. Hunt for structural regressions, missed code-judo moves, spaghetti growth, unjustified file-size expansion, boundary leaks, and unnecessary abstraction.
+
+Deliver:
+- Findings ordered by severity (blockers first)
+- Each finding: severity, file:line, issue, suggested remedy
+- Verdict: Approve | Request changes | Block
+- One paragraph on the single biggest structural risk in the diff
+
+Do not modify files unless explicitly told to.
+```
+
+### When subagents are unavailable
+
+Perform the same review inline. Label the output section **Inline adversarial review** so downstream consumers know it was not independently verified.
 
 ## Core Prompt
 
@@ -152,6 +196,13 @@ Good phrases:
 - `this refactor moves complexity around, but doesn't really delete it. is there a way to make the model itself simpler?`
 
 ## Output Expectations
+
+When adversarial subagents ran, include an **Adversarial Review** section before the synthesized findings:
+
+- List each subagent verdict (`Approve` / `Request changes` / `Block`).
+- Note findings multiple reviewers agreed on.
+- Call out unresolved disagreements and how you resolved them.
+- State the final recommendation after synthesis.
 
 Prioritize findings in this order:
 
