@@ -2,7 +2,6 @@
 name: validate-kata-code-nightly-release
 description: Validate Kata Code nightly releases on macOS with the @Computer plugin. Start and update the nightly app, use its New Project flow to create a timestamp-suffixed nightly UAT project under `/Volumes/EVO/dev`, then execute explicit acceptance criteria for a Codex GPT-5.4-Mini chat, Browser and Files panels, and git commit flow; capture criterion-level screenshots and write an evidence-linked report in the created project. Use when validating or documenting the Kata Code nightly release flow.
 ---
-
 # Validate Kata Nightly
 
 ## Workflow
@@ -18,16 +17,18 @@ Use [@Computer](plugin://computer-use@openai-bundled) for every Kata Code UI act
 
 ## Acceptance Criteria
 
-| ID | Criterion | Required screenshot |
-| --- | --- | --- |
-| AC01 | Kata Code (Nightly) opens successfully. | `AC01-app-launched.png` shows the running nightly app. |
-| AC02 | `Check for Updates…` completes and the app reports the latest nightly is installed or restarts after installing it. | `AC02-update-check.png` shows the update result. |
-| AC03 | The New Project flow creates and opens `/Volumes/EVO/dev/nightly-uat-<timestamp>`. | `AC03-new-project.png` shows the created project name or path. |
-| AC04 | A new chat uses Codex with `GPT-5.4-Mini` and receives a response. | `AC04-codex-response.png` shows the selected model and response. |
-| AC05 | The right-panel Browser loads `http://127.0.0.1:3774`. | `AC05-browser.png` shows the loaded local page. |
-| AC06 | The right-panel Files view shows the created UAT project tree. | `AC06-files-panel.png` shows the project files. |
-| AC07 | `nightly-uat.txt` appears as an untracked change before commit. | `AC07-untracked-file.png` shows the file in Files or Changes. |
-| AC08 | The new file is committed and `git status` is clean. | `AC08-commit-clean.png` shows the commit result and clean status in Changes. |
+
+| ID   | Criterion                                                                                                           | Required screenshot                                                          |
+| ---- | ------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| AC01 | Kata Code (Nightly) opens successfully.                                                                             | `AC01-app-launched.png` shows the running nightly app.                       |
+| AC02 | `Check for Updates…` completes and the app reports the latest nightly is installed or restarts after installing it. | `AC02-update-check.png` shows the update result.                             |
+| AC03 | The New Project flow creates and opens `/Volumes/EVO/dev/nightly-uat-<timestamp>`.                                  | `AC03-new-project.png` shows the created project name or path.               |
+| AC04 | A new chat uses Codex with `GPT-5.4-Mini` and receives a response.                                                  | `AC04-codex-response.png` shows the selected model and response.             |
+| AC05 | The right-panel Browser loads "Pair with this environment" modal at `http://127.0.0.1:3774`.                        | `AC05-browser.png` shows the loaded local page.                              |
+| AC06 | The right-panel Files view shows the created UAT project tree.                                                      | `AC06-files-panel.png` shows the project files.                              |
+| AC07 | `nightly-uat.txt` appears as an untracked change before commit.                                                     | `AC07-untracked-file.png` shows the file in Files or Changes.                |
+| AC08 | The new file is committed and `git status` is clean.                                                                | `AC08-commit-clean.png` shows the commit result and clean status in Changes. |
+
 
 ## Notes
 
@@ -37,3 +38,4 @@ Use [@Computer](plugin://computer-use@openai-bundled) for every Kata Code UI act
 - Use the required filename for every acceptance-criteria screenshot.
 - Save all evidence files and `report.md` inside the created `nightly-uat-<timestamp>` project.
 - Record video only when the Computer plugin supports it for the active environment; save it in the created project.
+
