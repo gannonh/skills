@@ -6,11 +6,11 @@ description: Validate Kata Code nightly releases on macOS with the @Computer plu
 
 ## Workflow
 
-Use [@Computer](plugin://computer-use@openai-bundled) for every Kata Code UI action and visual check. Capture screenshots with the Computer plugin and copy each capture into the created project immediately.
+Use [@Computer](plugin://computer-use@openai-bundled) (or equivalent "computer-use" capability) for every Kata Code UI action and visual check. Capture screenshots and/or video and copy each capture into the created project immediately.
 
 1. Launch `/Applications/Kata Code (Nightly).app`. If the bundle is missing, download the latest nightly from the GitHub tags page.
 2. Use `Check for Updates…` in the app menu and complete the update flow.
-3. Use the app's New Project flow to create `/Volumes/EVO/dev/nightly-uat-<timestamp>`. Use the exact project name `nightly-uat-<timestamp>` and a timestamp unique to this run.
+3. Use the app's New Project flow to create a new project at `/Volumes/EVO/dev/nightly-uat/nightly-uat-<timestamp>` (or a temp location such as `/tmp/nightly-uat-<timestamp>`) if not running locally. Use the exact project name `nightly-uat-<timestamp>` and a timestamp unique to this run.
 4. Copy [assets/report.md](assets/report.md) to the created project as `report.md`. Save all screenshots and any video recording in the created project.
 5. Evaluate every acceptance criterion below. Capture a screenshot for each criterion, even when it fails, and save it as `AC##-<short-name>.png` in the created project.
 6. Complete `report.md`. Mark each criterion `Pass`, `Fail`, or `Blocked`, include the exact evidence filename, and list all failures and blockers in the final summary.
