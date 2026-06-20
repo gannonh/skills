@@ -27,7 +27,7 @@ Use [@Computer](plugin://computer-use@openai-bundled) for every Kata Code UI act
 | AC05 | The right-panel Browser loads `http://127.0.0.1:3774`. | `AC05-browser.png` shows the loaded local page. |
 | AC06 | The right-panel Files view shows the created UAT project tree. | `AC06-files-panel.png` shows the project files. |
 | AC07 | `nightly-uat.txt` appears as an untracked change before commit. | `AC07-untracked-file.png` shows the file in Files or Changes. |
-| AC08 | The new file is committed and `git status` is clean. | `AC08-commit-clean.png` shows the commit result and clean status. |
+| AC08 | The new file is committed and `git status` is clean. | `AC08-commit-clean.png` shows the commit result and clean status in Changes. |
 
 ## Notes
 
