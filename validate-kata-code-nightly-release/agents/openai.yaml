@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validate Kata Code Nightly Release"
+  short_description: "Validate Kata Code nightly builds"
+  default_prompt: "Use $validate-kata-nightly to validate a Kata Code nightly build against its acceptance criteria, with @Computer screenshots and a timestamped UAT report."
