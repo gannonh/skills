@@ -26,7 +26,8 @@ You MUST create a task for each of these items and complete them in order:
 8. **Validate reviewer feedback** — revise the spec when feedback is valid and actionable, or provide a reasoned rebuttal when it is not
 9. **Finalize spec location** — move or save the finalized spec to the appropriate section/location and commit
 10. **User reviews written spec** — ask user to review the spec file before proceeding
-11. **Transition to Build phase** — ask the user if they would like to advance to the Build phase (`./build.md`).
+11. **Mark spec approved** — once the user explicitly approves, update frontmatter `status: Approved` and the top-of-document `## Status` section (see below)
+12. **Transition to Build phase** — ask the user if they would like to advance to the Build phase (`./build.md`).
 
 ## Process Flow
 
@@ -56,7 +57,9 @@ digraph brainstorming {
     "Validate feedback\n(revise or rebut)" -> "Finalize spec location";
     "Finalize spec location" -> "User reviews spec?";
     "User reviews spec?" -> "Write design spec" [label="changes requested"];
-    "User reviews spec?" -> "Advance to Build phase" [label="approved"];
+    "User reviews spec?" -> "Mark spec approved" [label="approved"];
+    "Mark spec approved" [shape=box];
+    "Mark spec approved" -> "Advance to Build phase";
 }
 ```
 
@@ -103,6 +106,63 @@ digraph brainstorming {
 - Where existing code has problems that affect the work (e.g., a file that's grown too large, unclear boundaries, tangled responsibilities), include targeted improvements as part of the design - the way a good developer improves code they're working in.
 - Don't propose unrelated refactoring. Stay focused on what serves the current goal.
 
+## Spec status and frontmatter
+
+Every written spec must track approval status in two places:
+
+1. **YAML frontmatter** — `status` field at the top of the file
+2. **Document body** — a `## Status` section immediately after the title and before other content
+
+Use these status values during Plan:
+
+- `Draft` — while writing, revising, or awaiting user review
+- `Approved` — after explicit user approval of the written spec
+
+When the user approves, update **both** places in the same edit. Do not advance to Build until both show `Approved`.
+
+**Draft spec template:**
+
+```markdown
+---
+type: Spec
+title: <human-readable title>
+description: <single-sentence summary>
+status: Draft
+---
+
+# <Title>
+
+## Status
+Draft
+
+## Goal
+...
+```
+
+**After user approval**, update to:
+
+```markdown
+---
+type: Spec
+title: <human-readable title>
+description: <single-sentence summary>
+status: Approved
+approved_at: <ISO 8601 datetime>
+---
+
+# <Title>
+
+## Status
+Approved
+
+## Goal
+...
+```
+
+Include OKF frontmatter fields (`type`, `title`, `description`) when the project uses OKF under `./docs`. Preserve any existing frontmatter keys when updating status.
+
+If the user requests changes after approval, revert both frontmatter and `## Status` to `Draft`, remove `approved_at`, make the edits, re-run adversarial review if needed, and mark approved again only after the user re-approves.
+
 ## After the Design
 
 **Documentation:**
@@ -127,6 +187,7 @@ digraph brainstorming {
   - `Explicitly deferred work` - related work intentionally left out.
   - `Build handoff` - approved scope, non-goals, ordered phases, required verification, fixtures, risks, and blocking questions.
 - Keep implementation detail at the task-shaping level. Include phases, likely files, and acceptance checks; avoid large pasted code blocks or exact APIs that have not been verified in the repo.
+- Set frontmatter `status: Draft` and add `## Status` / `Draft` at the top of the document body before committing for user review
 - Commit the design spec to git
 
 **Acceptance Criteria Section:**
@@ -166,6 +227,17 @@ After the adversarial review and main-agent validation pass, ask the user to rev
 > "Spec written and committed to `<path>`. Please review it and let me know if you want to make any changes."
 
 Wait for the user's response. If they request changes, make them and re-run the adversarial spec review loop. Only proceed once the user approves.
+
+**Mark spec approved:**
+
+Once the user explicitly approves the written spec:
+
+1. Update frontmatter `status` from `Draft` to `Approved`
+2. Add `approved_at` with the current ISO 8601 datetime
+3. Update the document body's `## Status` section from `Draft` to `Approved`
+4. Commit the approval update to git
+
+Confirm both locations show `Approved` before asking about Build.
 
 **Build phase:**
 

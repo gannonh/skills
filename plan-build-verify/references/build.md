@@ -24,7 +24,7 @@ If neither `tdd` nor `test-driven-development` is available, use TDD best practi
 Before editing files:
 
 1. Read the approved spec and/or plan file path(s) completely.
-2. Confirm `## Status` is `Approved`, or confirm the user explicitly overrode the approval gate.
+2. Confirm frontmatter `status: Approved` and the document body's `## Status` section is `Approved`, or confirm the user explicitly overrode the approval gate. If they disagree, stop and return to Plan to reconcile.
 3. Confirm the spec or plan contains `## Acceptance criteria` with concrete criteria. If missing or ambiguous, stop and return to Plan to fix the source document.
 4. Confirm `Blocking open questions` is `None`, or confirm the user explicitly approved proceeding with listed questions.
 5. Inspect repo instructions such as `AGENTS.md`, `CLAUDE.md`, and README command sections.
@@ -171,7 +171,7 @@ After all tasks pass their per-task gates:
 3. Dispatch or perform a final whole-branch review against the approved spec and/or plan.
 4. Fix final-review issues.
 5. Re-run final review until no blocking issues remain.
-6. Update the spec or plan status from `Approved` to `Implemented`, or note why status could not be updated.
+6. Update the spec or plan status from `Approved` to `Implemented` in both frontmatter and the document body's `## Status` section, or note why status could not be updated.
 
 ## Build completion report
 

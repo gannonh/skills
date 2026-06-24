@@ -91,4 +91,5 @@ Only load the workflow you need. If the selected workflow's reference file is em
 - Prefer small, verifiable phases over broad unverified changes.
 - Keep scope tied to the selected spec, plan, or acceptance criteria.
 - A Plan spec is incomplete unless it has an exact `## Acceptance criteria` section with observable pass/fail criteria that Build can implement and Verify can test.
+- Plan specs track approval in frontmatter `status` and a top-of-document `## Status` section. Write both as `Draft` until user review; once the user approves, update both to `Approved` before Build.
 - Surface uncertainty instead of filling gaps with guesses.
