@@ -14,9 +14,9 @@ Acceptance evidence should be experiential and reproducible:
 - For UI changes, capture video when practical, then screenshots at meaningful checkpoints. Video captures timing, transitions, focus, and end-to-end flow.
 - For CLI and TUI apps, capture terminal transcripts, screenshots, recordings, generated files, and exit codes.
 - For APIs and SDKs, capture requests, responses, output files, logs, and small runnable examples.
-- For native apps, including Electron-type apps, strongly prefer `/computer-use` when available to drive the real app window and validate acceptance criteria through normal user-visible behavior.
+- For native apps, including Electron-type apps, prefer Agent Browser or Playwright to drive the app through its browser automation surface (Electron CDP or embedded web views) and validate acceptance criteria through normal user-visible behavior.
 
-Automated tests can supplement UAT, but they do not replace an in-app walkthrough, command run, API call, or SDK example.
+Walkthrough verification comes first. After walkthrough verification with Agent Browser or Playwright, create end-to-end tests that cover the new feature product area; these tests serve as the primary evidence, with walkthrough artifacts as supporting evidence. Pre-existing tests alone do not replace a walkthrough.
 
 ## Supported targets
 
@@ -64,23 +64,29 @@ If the requested target is outside this list, ask whether to proceed with a best
 
 ## Tool selection
 
-Load and use the best available skill or CLI for the target. If a required skill or CLI is unavailable, install it with `npx agents install <skill-name>`, then follow that skill's installation instructions for its underlying CLI.
+Load and use the best available skill or CLI for the target, preferring Agent Browser or Playwright for UI targets. If a required skill is unavailable, install it with:
+
+```bash
+npx skills add vercel-labs/agent-browser --skill agent-browser -y
+npx skills add microsoft/playwright-cli --skill playwright-cli -y
+```
+
+Then verify the underlying CLI required by the chosen skill.
 
 | Target | Preferred tools | Evidence to capture |
 | --- | --- | --- |
-| Web app | `agent-browser`; `playwright` when the repo already uses Playwright or traces are useful; `chrome-cdp` only for an already-open Chrome page with user approval | Video, screenshots, DOM/accessibility snapshots, console/network notes |
-| CLI app | Shell commands, `script`, generated output files; `/computer-use` skill (if available) for terminal video/GIF when visual proof helps | Terminal transcript, exit codes, output files, JSON, screenshots/video for interactive flows |
-| TUI app | `/computer-use` skill (if available) for terminal recording or screenshots; terminal transcript where possible | Video/GIF, screenshots, transcript, config/output files |
+| Web app | `agent-browser` (preferred); `playwright` when the repo already uses Playwright, traces are useful, or `agent-browser` cannot complete the flow; `chrome-cdp` only for an already-open Chrome page with user approval | Video, screenshots, DOM/accessibility snapshots, console/network notes, e2e test run |
+| CLI app | Shell commands, `script`, generated output files; terminal video/GIF via `script`, VHS, or asciinema when visual proof helps | Terminal transcript, exit codes, output files, JSON, screenshots/video for interactive flows |
+| TUI app | Terminal recording via `script`, VHS, or asciinema; terminal transcript where possible | Video/GIF, screenshots, transcript, config/output files |
 | API | `curl`, HTTP client, repo scripts, logs | Request/response JSON, status codes, logs, saved payloads |
 | SDK | Minimal runnable example in the target language, repo examples/tests only as supplement | Source snippet, command output, generated files, logs |
-| Native app, including Electron-type | `/computer-use` skill if available for app-window driving, interaction, accessibility inspection, screenshots, and recording; `agent_browser` Electron/CDP automation when the app exposes useful browser automation or CDP proof is needed | Window video, screenshots, accessibility snapshots, logs |
+| Native app, including Electron-type | `agent-browser` Electron/CDP automation (preferred) when the app exposes browser automation or CDP; `playwright` Electron automation when the repo already uses Playwright or `agent-browser` cannot complete the flow; OS screenshots and accessibility snapshots for purely native apps without a web view | Window video, screenshots, accessibility/DOM snapshots, logs, e2e test run |
 
 Installation checks:
 
 ```bash
-
-# Then verify the underlying CLI required by the chosen skill
 command -v agent-browser || true
+command -v playwright || true
 ```
 
 Do not install tools that are unrelated to the target.
@@ -122,6 +128,7 @@ recordings/            # MP4/GIF terminal or UI recordings
 responses/             # JSON/API/SDK outputs
 logs/                  # command logs, server logs, console excerpts
 outputs/               # generated files from the feature
+tests/                 # end-to-end tests covering the new feature product area
 ```
 
 Keep evidence paths stable and report them in the final answer. If `uat-evidence/` is not ignored by git, mention that it should be ignored before committing unless the user explicitly wants artifacts committed.
@@ -173,29 +180,40 @@ Use the matching playbook:
 - Native/Electron-type UI flows: `references/native-electron-playbook.md`
 - CLI, TUI, API, and SDK: `references/cli-api-sdk-playbook.md`
 
-For native/Electron-type app-window validation, strongly prefer `/computer-use` if available so the evidence reflects the real desktop surface a user sees.
+For native/Electron-type app-window validation, prefer Agent Browser (Electron CDP) or Playwright so the evidence reflects the real app surface a user sees.
 
 For mixed work, run the user-facing path first, then the technical proof tied to the same outcome.
 
-### 4. Capture durable evidence
+### 4. Create end-to-end tests for the product area
+
+After walkthrough verification with Agent Browser or Playwright, create end-to-end tests that cover the new feature product area. These tests are the primary acceptance evidence.
+
+- Use the same tool used for the walkthrough when practical: Playwright for web and Electron targets, or the repo's existing e2e framework if one is already present.
+- Place tests under `uat-evidence/<target>-<timestamp>/tests/` or in the repo's e2e directory when that is the project convention; record the chosen path in `evidence.md`.
+- Each acceptance slice should map to at least one e2e test that exercises the user-visible flow, not just a unit-level assertion.
+- Run the tests and save the run output (per-slice pass/fail, exit code, and trace or HTML report when available) under `logs/` or `tests/`.
+- The walkthrough proves the path; the tests lock it in as primary evidence. Do not accept a slice on tests alone without the preceding walkthrough.
+
+### 5. Capture durable evidence
 
 - Save artifacts under `uat-evidence/<target>-<timestamp>/`.
 - Capture video for web, native/Electron-type, and TUI when practical.
 - Capture screenshots at the start, key state changes, and final success state.
 - Capture command output with `tee`, `script`, or `scripts/run-capture-command.mjs`; always save exit codes.
 - Save API/SDK JSON responses and generated output files.
+- Save the end-to-end test run output (per-slice pass/fail, exit code, and trace or HTML report) as primary evidence alongside walkthrough artifacts.
 - For bugfix UAT, capture negative evidence that the old failure is absent: search logs for the old error string, search active source/docs for removed flags or stale commands, and save zero-match outputs.
 - Classify failed checks. If a failing file or behavior changed in the branch, treat the slice as failed. If it is outside the branch diff, report it as an unrelated validation failure with file/error evidence.
 - Write `evidence.json` and `evidence.md`, then run `scripts/verify-evidence.mjs` before responding.
 
-### 5. Run adversarial evidence review
+### 6. Run adversarial evidence review
 
 - Provide the spec, acceptance criteria, requirements, PR description, or ticket plus the saved artifacts to an adversarial review subagent when available.
 - Ask the reviewer to decide `Pass` or `Fail` for each criterion and cite exact evidence paths.
 - Treat missing, ambiguous, or inaccessible artifacts as failures for the affected criteria.
 - If a reviewer flags a gap, collect more evidence or mark the slice failed before reporting.
 
-### 6. Report results
+### 7. Report results
 
 Use this order:
 
@@ -203,16 +221,17 @@ Use this order:
 2. `Target: ...`
 3. `Slice-by-slice result`
 4. `Evidence`
-5. `Adversarial Review`
-6. `Manual Run Instructions`
-7. `Recommendation: Pending user sign-off`
-8. `Please reply: accept / reject`
+5. `End-to-end Tests`
+6. `Adversarial Review`
+7. `Manual Run Instructions`
+8. `Recommendation: Pending user sign-off`
+9. `Please reply: accept / reject`
 
 Keep the report concise. Link to artifact paths and explain what each artifact proves.
 
 ## Output contract
 
-For every UAT response, include:
+For every UAT response, include the sections below. Include the `End-to-end Tests` section when the walkthrough used Agent Browser or Playwright (web and native/Electron-type targets).
 
 ```markdown
 UAT Scope: <scope>
@@ -223,6 +242,9 @@ Slice-by-slice result:
 
 Evidence:
 - <artifact path> - <what it proves>
+
+End-to-end Tests:
+- <test path> - <slice it covers> - Pass/Fail (run: <log/report path>)
 
 Adversarial Review:
 - Pass/Fail: <criterion> - <artifact-backed reason>
@@ -263,7 +285,8 @@ Before responding, verify:
 - `evidence.json` is valid and `evidence.md` is non-empty.
 - UI evidence includes video plus screenshots when practical, or a stated reason video was skipped.
 - UI screenshots/video files exist and are readable.
-- Native app validation used `/computer-use` when available, or explains why another tool was used.
+- Native/Electron-type app validation used Agent Browser (Electron CDP) or Playwright, or explains why another tool was used.
+- End-to-end tests covering the new feature product area were created and run, with per-slice pass/fail and run output saved as primary evidence (UI targets).
 - Adversarial review checked every criterion against evidence and produced pass/fail judgments.
 - Command logs include exit codes.
 - Old-bug negative evidence is saved when validating a fix.
@@ -273,7 +296,7 @@ Before responding, verify:
 
 ## Common mistakes
 
-- Running only tests and calling it UAT.
+- Running only pre-existing tests without a walkthrough or newly created end-to-end tests covering the product area.
 - Reporting a code summary without artifacts.
 - Skipping video or screenshots for UI work without explanation.
 - Providing Playwright or test commands as the primary manual UI path.

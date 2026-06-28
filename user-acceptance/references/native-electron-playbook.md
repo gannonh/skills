@@ -4,12 +4,20 @@ Use the actual native app window and capture what a human would see. Tests can s
 
 ## Tool choice
 
-- Strongly prefer `/computer-use` when available. Use it to drive the real app window, inspect accessibility state, capture screenshots, and record video evidence.
-- Use Electron's CDP port plus `agent-browser --cdp <port>` when CDP evidence is needed, when `/computer-use` is unavailable, or when browser-level logs, DOM, or network proof strengthens the walkthrough.
+- Prefer Agent Browser with Electron's CDP port (`agent-browser --cdp <port>`) to drive the app, inspect DOM/accessibility state, capture screenshots, and record video evidence.
+- Use Playwright Electron automation when the repo already uses Playwright, traces are useful, or Agent Browser cannot complete the flow.
 - Use the bundled `scripts/cdp-capture-page.mjs` when `agent-browser screenshot` hangs or cannot select the right target.
 - Use app logs, OS logs, and process output when they explain behavior or failure.
+- For purely native apps without a web view or CDP surface, capture OS screenshots and accessibility snapshots with available tooling and state the limitation in `evidence.md`.
 
-If the needed skill or CLI is missing, install it with `npx agents install <skill-name>`, then follow that skill's installation instructions. Do not install unrelated tools.
+If the needed skill is missing, install it with:
+
+```bash
+npx skills add vercel-labs/agent-browser --skill agent-browser -y
+npx skills add microsoft/playwright-cli --skill playwright-cli -y
+```
+
+Then verify the underlying CLI. Do not install unrelated tools.
 
 ## Evidence priority
 
@@ -19,14 +27,14 @@ If the needed skill or CLI is missing, install it with `npx agents install <skil
 4. CDP DOM, console, network, or app logs when they explain behavior.
 5. Negative evidence for bugfixes: saved searches showing the old crash, error, flag, or stale wording is absent from logs and active source/docs.
 
-If video is skipped, record the reason in `evidence.md`. If `/computer-use` is unavailable, state the limitation and use the strongest available app-window evidence.
+If video is skipped, record the reason in `evidence.md`. If Agent Browser or Playwright cannot drive the app, state the limitation and use the strongest available app-window evidence.
 
 ## Product smoke path
 
 1. Quit stale app instances that would confuse the proof.
 2. Run the product command a human would run, such as `pnpm desktop:dev`, `npm run electron:dev`, or opening the built app.
 3. Save the full app/dev-server log and exit code.
-4. Use `/computer-use` when available to interact through the visible app window.
+4. Use Agent Browser (Electron CDP) or Playwright to interact through the visible app window.
 5. Capture video plus screenshots at meaningful checkpoints.
 6. For bugfixes, search the log for the old crash/error and save the zero-match output.
 7. Save logs and clean up every process started for UAT, unless the user asked to keep the app running.
@@ -39,7 +47,7 @@ Use this path when CDP proof adds value or the normal product command cannot exp
 2. Choose a free CDP port. Avoid assuming `9222`.
 3. Launch Electron with the remote debugging flag and the same app build/dev server used by the product path.
 4. Connect with `agent-browser --cdp <port>` and select the app window target, not the DevTools target.
-5. Use `/computer-use` for visible app-window actions when available. Use CDP for DOM, console, network, or deterministic capture.
+5. Use Agent Browser for visible app-window actions. Use CDP for DOM, console, network, or deterministic capture.
 6. Capture video first when practical, then screenshots and text/DOM snapshots.
 7. Save logs and clean up every process started for UAT.
 
@@ -57,6 +65,16 @@ agent-browser --cdp 9322 tab list --json > <dir>/logs/cdp-tabs.json
 agent-browser --cdp 9322 tab 1 --json
 node <skill-dir>/scripts/cdp-capture-page.mjs --evidence <dir> --cdp http://127.0.0.1:9322 --title "Kata Desktop" --screenshot screenshots/01-start.png --text logs/01-start-text.txt
 ```
+
+## End-to-end tests
+
+After the walkthrough, create end-to-end tests that cover the new feature product area. These tests are the primary acceptance evidence.
+
+- Prefer Playwright Electron automation, or the repo's existing e2e framework when present.
+- Map each acceptance slice to at least one e2e test exercising the user-visible flow through the real app window.
+- Save tests under `uat-evidence/electron-<timestamp>/tests/` or the repo's e2e directory per project convention; record the path in `evidence.md`.
+- Run the tests and save per-test pass/fail, exit code, and trace or HTML report under `logs/` or `tests/`.
+- The walkthrough proves the path; the tests lock it in as primary evidence.
 
 ## Adversarial evidence review
 

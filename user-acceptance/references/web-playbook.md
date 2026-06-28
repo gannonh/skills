@@ -8,7 +8,14 @@ Use the actual web app and capture what a human would see. Tests can supplement 
 - Use `playwright` when the repo already uses Playwright, when traces are useful, or when `agent-browser` cannot complete the flow.
 - Use `chrome-cdp` only when the user explicitly approved inspection of an already-open Chrome page.
 
-If the needed skill or CLI is missing, install it with `npx agents install <skill-name>`, then follow that skill's installation instructions. Do not rely on `agent-browser skills get ...` unless the installed CLI confirms that command exists.
+If the needed skill is missing, install it with:
+
+```bash
+npx skills add vercel-labs/agent-browser --skill agent-browser -y
+npx skills add microsoft/playwright-cli --skill playwright-cli -y
+```
+
+Then verify the underlying CLI. Do not rely on `agent-browser skills get ...` unless the installed CLI confirms that command exists.
 
 ## Evidence priority
 
@@ -42,6 +49,16 @@ agent-browser screenshot uat-evidence/web-<timestamp>/screenshots/01-start.png
 agent-browser screenshot uat-evidence/web-<timestamp>/screenshots/02-result.png
 agent-browser snapshot -i > uat-evidence/web-<timestamp>/logs/result-snapshot.txt
 ```
+
+## End-to-end tests
+
+After the walkthrough, create end-to-end tests that cover the new feature product area. These tests are the primary acceptance evidence.
+
+- Prefer Playwright for web targets, or the repo's existing e2e framework when present.
+- Map each acceptance slice to at least one e2e test exercising the user-visible flow.
+- Save tests under `uat-evidence/web-<timestamp>/tests/` or the repo's e2e directory per project convention; record the path in `evidence.md`.
+- Run the tests and save per-test pass/fail, exit code, and trace or HTML report under `logs/` or `tests/`.
+- The walkthrough proves the path; the tests lock it in as primary evidence.
 
 ## Adversarial evidence review
 
