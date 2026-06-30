@@ -241,8 +241,8 @@ Confirm both locations show `Approved` before asking about Build.
 
 **Build phase:**
 
-- ask the user if they would like to advance to the Build phase (`./build.md`).
-- Do NOT invoke any other skill. writing-plans is the next step.
+- ask the user if they would like to advance to the Build phase (`references/build.md`).
+- Do NOT invoke any other skill.
 
 ## Key Principles
 

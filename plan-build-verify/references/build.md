@@ -11,11 +11,13 @@ Build is the second phase in Plan → Build → Verify. It should start from app
 - Build handoff or plan section with scope, non-goals, ordered tasks, verification commands, and blocking open questions.
 - Explicit user approval if the spec or plan status is not `Approved`.
 
-## Required dependency
+## Required bundled workflow
 
-Implementation tasks must use a TDD skill before writing production code. Valid skill names are `tdd` and `test-driven-development`. Prefer `tdd` when both are available.
+Implementation tasks must use the bundled TDD workflow before writing production code.
 
-If neither `tdd` nor `test-driven-development` is available, use TDD best practices before writing production code and record that no dedicated TDD skill was available.
+1. Read `references/tdd/workflow.md` completely.
+2. Follow linked references under `references/tdd/` as needed.
+3. Do not substitute ad hoc TDD guidance when the bundled workflow applies.
 
 ## Build workflow
 
@@ -32,7 +34,7 @@ Before editing files:
 7. Identify the current branch. Do not start implementation on `main` or `master` without explicit user consent.
 8. Capture a base SHA with `git rev-parse HEAD`.
 9. Identify verification commands from the spec and/or plan and repo scripts.
-10. Confirm required tools are available: todo tracking and subagent dispatch if using the subagent path. Determine the TDD path: use `tdd` if present, otherwise `test-driven-development` if present, otherwise TDD best practices.
+10. Confirm required tools are available: todo tracking and subagent dispatch if using the subagent path.
 
 Stop and ask if the spec or plan is unapproved, the worktree has unrelated changes, the branch is unsafe, required tools are missing, or the plan has blocking questions.
 
@@ -46,7 +48,7 @@ Create todo items for all tasks when a todo tool is available. Keep exactly one 
 
 Prefer the subagent path when subagent dispatch is available and the current agent is acting as orchestrator.
 
-Use the single-agent path only when subagents are unavailable or the user explicitly asks you to work without them. Preserve the same gates: `tdd` or `test-driven-development` when available, TDD best practices when neither skill is available, self-review, spec compliance check, code quality check, tests, and completion report.
+Use the single-agent path only when subagents are unavailable or the user explicitly asks you to work without them. Preserve the same gates: bundled TDD workflow, self-review, spec compliance check, code quality check, tests, and completion report.
 
 ## Subagent path
 
@@ -63,7 +65,7 @@ Give the subagent:
 - Approved scope and non-goals.
 - Base SHA for the task.
 - Required verification commands.
-- Instruction to use `tdd` or `test-driven-development` before writing implementation code, preferring `tdd` when both are present. If neither skill is present, instruct the implementer to follow TDD best practices and report that no dedicated TDD skill was available.
+- Instruction to read and follow `references/tdd/workflow.md` before writing implementation code.
 
 Do not make the implementer read the plan file to discover its own task. Provide the needed context directly.
 
@@ -111,7 +113,7 @@ If the reviewer finds Critical or Important issues, send them back to the implem
 
 A task is complete only when:
 
-- `tdd` or `test-driven-development` was used when available, or TDD best practices were followed and the missing dedicated skill was recorded.
+- Bundled TDD workflow from `references/tdd/workflow.md` was followed.
 - Required tests and verification commands pass.
 - Spec compliance review passes.
 - Code quality review passes.
@@ -130,7 +132,7 @@ Use this path only when subagents are unavailable or disallowed.
 For each task:
 
 1. Read the task text and acceptance criteria.
-2. Load and follow `tdd` or `test-driven-development` before writing implementation code, preferring `tdd` when both are present. If neither skill is available, follow TDD best practices and record that no dedicated TDD skill was available.
+2. Read and follow `references/tdd/workflow.md` before writing implementation code.
 3. Implement the smallest slice that satisfies the task.
 4. Run required verification commands.
 5. Perform a written spec compliance check against the task and non-goals.
@@ -207,7 +209,7 @@ Stop and ask when:
 - Blocking open questions remain.
 - The worktree contains unrelated changes.
 - The branch is `main` or `master` and the user has not approved direct implementation there.
-- No dedicated TDD skill is available and TDD best practices cannot be applied.
+- No dedicated TDD workflow is bundled or readable.
 - Acceptance criteria are missing, vague, or not testable.
 - Required verification commands are unknown.
 - Reviewers find unresolved issues.
@@ -215,7 +217,7 @@ Stop and ask when:
 
 Never:
 
-- Skip `tdd`, `test-driven-development`, or TDD best practices before implementation.
+- Skip the bundled TDD workflow before implementation.
 - Skip spec compliance review.
 - Skip code quality review.
 - Start code quality review before spec compliance passes.

@@ -82,6 +82,17 @@ Reference files:
 
 Only load the workflow you need. If the selected workflow's reference file is empty or incomplete, say so and ask the user whether to draft that workflow before proceeding.
 
+## Bundled phase references
+
+Build and Verify load bundled reference workflows from this skill directory. Read the entry point completely; follow linked files and scripts under the same subtree.
+
+| Phase  | Workflow | Entry point |
+| ------ | -------- | ----------- |
+| Build  | TDD | `references/tdd/workflow.md` |
+| Verify | User acceptance | `references/user-acceptance/workflow.md` |
+
+Scripts for user-acceptance evidence live under `scripts/user-acceptance/`.
+
 ## Shared principles
 
 - Inspect the repo before making claims about project structure or commands.

@@ -15,14 +15,11 @@ If the user asks for UAT, signoff, merge readiness, or proof that work is comple
 
 ## Step 2: Verify against acceptance criteria
 
-- Use the `user-acceptance` skill to verify the **Acceptance criteria** from the spec.
-- Follow `user-acceptance` instructions for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
+- Read `references/user-acceptance/workflow.md` completely and follow it to verify the **Acceptance criteria** from the spec.
+- Follow that workflow for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
+- Use scripts under `scripts/user-acceptance/` when the workflow calls for them.
 - Use an explicit **acceptance-criteria matrix** in the final report.
-- Each criterion should show the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note -- This keeps Verify tied to the approved scope instead of only producing a general UAT summary.
-
-If `user-acceptance` is unavailable, stop and alert the user that the preferred verification workflow is missing, then offer to run the standalone workflow below.
-
-The `user-acceptance` skill is available here if it needs to be installed: <https://github.com/gannonh/skills/tree/main/user-acceptance>
+- Each criterion should show the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note — this keeps Verify tied to the approved scope instead of only producing a general UAT summary.
 
 ## Step 3: Verify the report and fill in gaps
 
