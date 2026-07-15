@@ -1,6 +1,6 @@
 ---
-name: code-review
-description: "Structured code review closeout. Codex review is the default when no engine is set and is the recommended reviewer. Use this for code-review, autoreview, second-model review, CodeRabbit, Greptile, Cursor, Codex review, Claude review, PR review, and final quality/security review requests."
+name: auto-review
+description: "Structured code review closeout. Codex review is the default when no engine is set and is the recommended reviewer. Use this for auto-review, autoreview, second-model review, CodeRabbit, Greptile, Cursor, Codex review, Claude review, PR review, and final quality/security review requests."
 ---
 
 # Code Review
@@ -11,7 +11,7 @@ Codex review is the default when no engine is set. It usually delivers the best 
 
 Use when:
 
-- user asks for code-review / autoreview / Codex review / Claude review / Cursor review / CodeRabbit review / Greptile review / second-model review
+- user asks for auto-review / autoreview / Codex review / Claude review / Cursor review / CodeRabbit review / Greptile review / second-model review
 - after non-trivial code edits, before final/commit/ship
 - reviewing a local branch or PR branch after fixes
 
@@ -32,28 +32,25 @@ Use when:
 - Tools are useful in review mode. The helper allows read-only inspection tools and web search by default so reviewers can check dependency contracts, upstream docs, and current behavior.
 - Security perspective is always included, but it should not cripple legitimate functionality. Report security findings only when the change creates a concrete, actionable risk or removes an important safety check.
 - For regression provenance, keep roles separate: blamed code author, blamed PR author, PR merger/committer, current PR author, and PR/date. If no blamed PR is traceable, use the blamed commit as the provenance: commit SHA, date, and author username. Do not guess a merger or frame missing PR metadata as a separate finding.
-- If the blamed PR was merged by `clawsweeper[bot]` or another automation, identify the human trigger when practical. Check timeline/comments first; if rate-limited, use gitcrawl/cache or public PR HTML. Look for maintainer commands such as `@clawsweeper automerge`, `/landpr`, or labels/status comments that armed automerge. Report `automerge triggered by @login`; if not found, say trigger unknown.
 - Do not invoke built-in `codex review`, nested reviewers, or reviewer panels from inside the review. The helper builds one bundle, calls one selected engine, validates one structured result, and stops.
 - Stop as soon as the helper exits 0 with no accepted/actionable findings. Do not run an extra review just to get a nicer "clean" line, a second opinion, or clearer closeout wording.
 - Treat the helper's successful exit plus absence of actionable findings as the clean review result, even if the underlying Codex CLI output is terse.
 - Multi-reviewer panels are opt-in only. Use them when explicitly requested or when risk justifies the extra spend; the main agent still verifies every accepted finding before fixing.
 - If rejecting a finding as intentional/not worth fixing, add a brief inline code comment only when it explains a real invariant or ownership decision that future reviewers should know.
-- If `gh`/Gitcrawl reports `database disk image is malformed`, run `gitcrawl doctor --json` once to let the portable cache repair before retrying review; do not bypass the shim unless repair fails and freshness requires live GitHub.
-- If Gitcrawl reports a portable manifest mismatch, source/runtime DB health error, or stale portable-store checkout, run `gitcrawl doctor --json` and inspect `source_db_health`, `runtime_db_health`, and `portable_store_status` before falling back to live GitHub.
 - Do not push just to review. Push only when the user requested push/ship/PR update.
 
 ## Pick Target
 
-In examples, `<path-to-code-review-skill>` means the absolute path to this skill directory. The bundled helper is:
+In examples, `<path-to-auto-review-skill>` means the absolute path to this skill directory. The bundled helper is:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview
+<path-to-auto-review-skill>/scripts/autoreview
 ```
 
 Dirty local work:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --mode local
+<path-to-auto-review-skill>/scripts/autoreview --mode local
 ```
 
 Use this only when the patch is actually unstaged/staged/untracked in the
@@ -66,26 +63,26 @@ only proves there is no local patch.
 Branch/PR work:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --mode branch --base origin/main
+<path-to-auto-review-skill>/scripts/autoreview --mode branch --base origin/main
 ```
 
 Optional review context is first-class:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --mode branch --base origin/main --prompt-file /tmp/review-notes.md --dataset /tmp/evidence.json
+<path-to-auto-review-skill>/scripts/autoreview --mode branch --base origin/main --prompt-file /tmp/review-notes.md --dataset /tmp/evidence.json
 ```
 
 If an open PR exists, use its actual base:
 
 ```bash
 base=$(gh pr view --json baseRefName --jq .baseRefName)
-<path-to-code-review-skill>/scripts/autoreview --mode branch --base "origin/$base"
+<path-to-auto-review-skill>/scripts/autoreview --mode branch --base "origin/$base"
 ```
 
 Committed single change:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --mode commit --commit HEAD
+<path-to-auto-review-skill>/scripts/autoreview --mode commit --commit HEAD
 ```
 
 Use commit review for already-landed or already-pushed work on `main`. Reviewing
@@ -98,7 +95,7 @@ with `--base`.
 Format first if formatting can change line locations. Then it is OK to run tests and review in parallel:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --parallel-tests "<focused test command>"
+<path-to-auto-review-skill>/scripts/autoreview --parallel-tests "<focused test command>"
 ```
 
 On Windows, the default `--parallel-tests` shell preserves the platform `cmd.exe`
@@ -112,25 +109,25 @@ Tradeoff: tests may force code changes that stale the review. If tests or review
 Run multiple reviewers against one frozen bundle:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --reviewers codex,claude
+<path-to-auto-review-skill>/scripts/autoreview --reviewers codex,claude
 ```
 
 `--panel` is shorthand for Codex plus Claude unless `--engine` changes the first reviewer:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --panel
+<path-to-auto-review-skill>/scripts/autoreview --panel
 ```
 
 Set reviewer models and thinking/effort explicitly:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --reviewers codex,claude --model codex=gpt-5.1 --thinking codex=high --model claude=sonnet --thinking claude=max
+<path-to-auto-review-skill>/scripts/autoreview --reviewers codex,claude --model codex=gpt-5.1 --thinking codex=high --model claude=sonnet --thinking claude=max
 ```
 
 Inline syntax is also supported:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --reviewers codex:gpt-5.1:high,claude:sonnet:max
+<path-to-auto-review-skill>/scripts/autoreview --reviewers codex:gpt-5.1:high,claude:sonnet:max
 ```
 
 Codex maps thinking to `model_reasoning_effort` and accepts `low`, `medium`,
@@ -140,9 +137,9 @@ Engines without a real thinking knob reject `--thinking`.
 Cursor, CodeRabbit, and Greptile can be selected as single reviewers or panel members:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --engine cursor --mode branch --base origin/main
-<path-to-code-review-skill>/scripts/autoreview --engine coderabbit --mode branch --base origin/main
-<path-to-code-review-skill>/scripts/autoreview --engine greptile --mode branch --base origin/main
+<path-to-auto-review-skill>/scripts/autoreview --engine cursor --mode branch --base origin/main
+<path-to-auto-review-skill>/scripts/autoreview --engine coderabbit --mode branch --base origin/main
+<path-to-auto-review-skill>/scripts/autoreview --engine greptile --mode branch --base origin/main
 ```
 
 Cursor uses `cursor-agent --print --mode ask --sandbox enabled` and is pinned to
@@ -160,32 +157,32 @@ Run the helper directly so target selection, engine choice, structured validatio
 
 ## Helper
 
-Resolve `<path-to-code-review-skill>` to the directory containing this `SKILL.md`, then invoke bundled scripts from that directory:
+Resolve `<path-to-auto-review-skill>` to the directory containing this `SKILL.md`, then invoke bundled scripts from that directory:
 
 ```bash
-<path-to-code-review-skill>/scripts/autoreview --help
+<path-to-auto-review-skill>/scripts/autoreview --help
 ```
 
 For this checkout:
 
 ```bash
-/Users/gannonhall/dev/skills/code-review/scripts/autoreview --help
+/Users/gannonhall/dev/skills/auto-review/scripts/autoreview --help
 ```
 
 On native Windows, invoke the extensionless Python helper through Python:
 
 ```powershell
-python <path-to-code-review-skill>\scripts\autoreview --help
+python <path-to-auto-review-skill>\scripts\autoreview --help
 ```
 
 The smoke harness has thin shell wrappers over a shared Python implementation:
 
 ```bash
-<path-to-code-review-skill>/scripts/test-review-harness --fixture benign --engine codex
+<path-to-auto-review-skill>/scripts/test-review-harness --fixture benign --engine codex
 ```
 
 ```powershell
-<path-to-code-review-skill>\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
+<path-to-auto-review-skill>\scripts\test-review-harness.ps1 -Fixture benign -Engine codex
 ```
 
 The helper:
