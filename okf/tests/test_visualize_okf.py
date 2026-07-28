@@ -84,6 +84,18 @@ def test_malformed_concept_is_skipped_with_warning(tmp_path: Path, capsys) -> No
     assert "broken.md: missing YAML frontmatter; skipped" in captured.err
 
 
+def test_missing_pyyaml_fails_clearly(tmp_path: Path, monkeypatch) -> None:
+    docs = create_bundle(tmp_path)
+    monkeypatch.setattr(visualize_okf, "yaml", None)
+
+    try:
+        visualize_okf.generate_visualization(docs, tmp_path / "viewer.html")
+    except RuntimeError as exc:
+        assert "PyYAML is required" in str(exc)
+    else:
+        raise AssertionError("expected missing PyYAML to fail")
+
+
 def test_cli_defaults_to_repo_docs_and_viz_html(tmp_path: Path) -> None:
     create_bundle(tmp_path)
 
