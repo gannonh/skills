@@ -48,6 +48,12 @@
       "prompt": "We finished a feature branch that changed SSO behavior, the auth boundary, and a migration. Use /okf update in a software-project bundle, but do not add repetitive logs or create a new concept when an existing canonical auth spec already covers the work.",
       "expected_output": "Updates the canonical auth spec and relevant ADR/runbook or migration reference, refreshes navigation and links, records one useful semantic log entry only if the bundle uses logs, and updates generated or verified metadata only for events that actually occurred.",
       "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "Use /okf viz on a documentation bundle that contains absolute bundle-relative links, ordinary relative links, v0.2 lifecycle and trust metadata, and one malformed Markdown concept. Write the viewer to a custom output path.",
+      "expected_output": "Runs the bundled visualization helper with the requested bundle and output paths, produces a single interactive HTML graph with concepts, directed links, search, filtering, layouts, details, backlinks, and v0.2 status/trust/freshness signals, resolves absolute and relative concept links, reports counts and the malformed-concept warning, and does not modify or commit the bundle unless asked.",
+      "files": []
     }
   ]
 }
