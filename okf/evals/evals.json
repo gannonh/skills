@@ -3,26 +3,50 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "Use /okf init on this repo. It has docs/plans/payments-redesign.md, docs/architecture.md, adr/0001-use-postgres.md, README.md, and AGENTS.md. Reorganize the existing docs into an OKF bundle under ./docs, keep root files that tooling expects in place, and add instructions to AGENTS.md for future agents.",
-      "expected_output": "Creates an OKF-compliant ./docs bundle with specs and adrs sections, preserves root README/AGENTS files, adds frontmatter to concept docs, writes index/log files, creates Markdown cross-links between related concepts, and adds AGENTS.md instructions for reading and maintaining the OKF bundle.",
+      "prompt": "Use /okf init on a documentation-first repository containing concepts/, guides/, policies/, examples/, and a published docs site configuration. Keep existing URLs stable and add OKF v0.2 structure without creating software-specific folders.",
+      "expected_output": "Selects the documentation profile and overlay strategy, preserves the established information architecture and published paths, adds v0.2 frontmatter and progressive-disclosure indexes, and does not create empty specs or adrs sections.",
       "files": []
     },
     {
       "id": 2,
-      "prompt": "We are at the end of a feature branch that added SSO login, changed the auth boundary, and added a migration. Use /okf update so future agents understand what changed. The repo already has docs/index.md, docs/specs/index.md, and docs/adrs/index.md.",
-      "expected_output": "Reads the current OKF map, updates relevant specs and roadmap entries, adds or updates an ADR for the auth boundary decision, refreshes Markdown cross-links between related concepts, updates migration or runbook docs if useful, and records concise newest-first log entries.",
+      "prompt": "Use /okf init on this software project. It has docs/plans/payments-redesign.md, docs/architecture.md, adr/0001-use-postgres.md, README.md, and AGENTS.md. Reorganize only clearly misplaced docs and add instructions for future agents.",
+      "expected_output": "Selects the software-project profile, uses specs and adrs because those document types exist, preserves root files, adds OKF v0.2 frontmatter and links, updates AGENTS.md, and avoids seeding unrelated empty sections.",
       "files": []
     },
     {
       "id": 3,
-      "prompt": "Initialize OKF docs for a small CLI repo that currently only has README.md, CHANGELOG.md, and a docs/usage.md file. Do not overbuild the taxonomy. I mainly want future coding agents to know where specs, ADRs, and durable guides live.",
-      "expected_output": "Creates the required OKF shape with docs/index.md, docs/log.md, docs/specs, and docs/adrs; treats docs/usage.md as a guide/reference concept with frontmatter; keeps optional sections minimal; updates AGENTS.md or proposes creating it when missing.",
+      "prompt": "Use /okf audit on a 500-page documentation repository. It has broken links, duplicate titles, inconsistent types, old timestamp fields, legacy Citations sections, stale pages, and concepts that no index links to. Do not edit anything.",
+      "expected_output": "Runs repository and editorial diagnostics, prioritizes conformance errors and high-impact documentation problems, identifies orphaned and stale concepts plus v0.1 migration work, and returns a read-only audit rather than rewriting the corpus.",
       "files": []
     },
     {
       "id": 4,
-      "prompt": "Use /okf read before touching the billing code. I want to know which roadmap items, specs, ADRs, and runbooks are relevant to the invoice retry work.",
-      "expected_output": "Performs a read-only traversal starting from docs/index.md and docs/specs/index.md, follows relevant cross-links into specs, ADRs, runbooks, guides, reference docs, or domain concepts, then summarizes loaded context, constraints, docs gaps, and recommended next files without modifying logs or docs.",
+      "prompt": "Use /okf read before answering a support question about authentication. The bundle contains a stable policy, an older deprecated guide, a tutorial, and a conflicting unverified research note.",
+      "expected_output": "Traverses from indexes to the canonical policy and relevant guide/tutorial, uses status and verification signals, reports the conflicting unverified note, and does not silently treat the deprecated guide as current.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Update a research documentation bundle after reviewing three primary sources. Two sources support the finding and one disagrees. Preserve source-level provenance and distinguish evidence from inference.",
+      "expected_output": "Uses sources frontmatter with stable IDs and keyed footnotes, preserves the disagreement, records generated and verified events honestly, avoids a legacy body Citations list, and does not turn inference into fact.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "Migrate this OKF v0.1 concept to v0.2. It has timestamp and a body # Citations list. The author and exact verification history are unknown.",
+      "expected_output": "Moves supported provenance into sources and keyed footnotes, does not invent generated.by or verified events, preserves legacy information that cannot be migrated honestly, and explains remaining uncertainty.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Use /okf validate on a bundle with no index.md but otherwise valid concepts. Show the difference between conformance and repository validation.",
+      "expected_output": "Passes OKF v0.2 conformance because indexes are optional, reports the missing root index at repository level, and does not claim that the bundle is non-conformant solely because navigation is absent.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "We finished a feature branch that changed SSO behavior, the auth boundary, and a migration. Use /okf update in a software-project bundle, but do not add repetitive logs or create a new concept when an existing canonical auth spec already covers the work.",
+      "expected_output": "Updates the canonical auth spec and relevant ADR/runbook or migration reference, refreshes navigation and links, records one useful semantic log entry only if the bundle uses logs, and updates generated or verified metadata only for events that actually occurred.",
       "files": []
     }
   ]
