@@ -77,6 +77,8 @@ def generate_visualization(
     """Walk an OKF bundle and write a single interactive HTML file."""
     bundle_root = Path(bundle_root).resolve()
     out_path = Path(out_path)
+    if yaml is None:
+        raise RuntimeError("PyYAML is required; install it with 'python -m pip install pyyaml'")
     if not bundle_root.is_dir():
         raise FileNotFoundError(f"Bundle directory not found: {bundle_root}")
 
@@ -391,7 +393,7 @@ def main(argv: Iterable[str] | None = None) -> int:
     out = Path(args.out) if args.out else bundle / "viz.html"
     try:
         stats = generate_visualization(bundle, out, bundle_name=args.name)
-    except (FileNotFoundError, OSError) as exc:
+    except (FileNotFoundError, OSError, RuntimeError) as exc:
         print(f"OKF visualization failed: {exc}", file=sys.stderr)
         return 1
     print(
