@@ -83,7 +83,7 @@ def resolve(dest: str, source: Path, root: Path, docs_root: Path) -> Path | None
         return None
     path_part = path_part.replace("%20", " ")
     if path_part.startswith("/"):
-        # OKF bundles use docs-root-absolute links such as /adrs/0001-x.md.
+        # Some bundles use docs-root-absolute links such as /adrs/0001-x.md.
         candidates = [docs_root / path_part.lstrip("/"), root / path_part.lstrip("/")]
     else:
         candidates = [source.parent / path_part]

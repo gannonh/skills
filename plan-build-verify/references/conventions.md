@@ -71,7 +71,7 @@ The script uses `gh label create --force`, which creates missing labels and upda
 Compose issue bodies in a scratch file, then write through `gh`:
 
 ```bash
-BODY="$(mktemp -t pbvg-spec).md"
+BODY="$(mktemp -t pbv-spec).md"
 # write the spec body to "$BODY"
 gh issue create --title "<title>" --body-file "$BODY" --label "kind:spec,status:draft,phase:plan"
 rm -f "$BODY"
@@ -234,16 +234,13 @@ gh search issues --repo <owner>/<repo> "<keywords>" --state open   # duplicate c
 
 Before Plan creates a new spec issue, search for an existing issue covering the same work. Extend the existing issue instead of opening a duplicate.
 
-## OKF integration
+## What migration leaves in the repo
 
-This skill coexists with the `okf` skill. When the repo has an OKF bundle at `./docs`:
+After migration, `docs/specs/` holds no spec documents. It keeps only:
 
-- **`docs/specs/` stops holding spec documents.** `docs/specs/index.md` becomes a pointer that tells agents and humans the roadmap lives in GitHub Issues, with the queries needed to read it.
-- **`docs/specs/log.md` stays** and records roadmap-level events: migrations, epics opened, specs verified. Keep entries newest-first under `YYYY-MM-DD` headings.
-- **`docs/adrs/` is unaffected.** Durable architecture decisions remain ADR files in the repo. A spec issue that depends on a decision links to the ADR path; the ADR links back to the issue URL.
-- **Other OKF sections are unaffected.** `architecture/`, `guides/`, `reference/`, `runbooks/`, and `domains/` keep working as before.
-- OKF validation still passes because `docs/specs/index.md` and `docs/specs/log.md` are reserved files that need no frontmatter, and no non-reserved Markdown remains in `docs/specs/` outside `archive/`.
-- Archived spec files under `docs/specs/archive/` keep their OKF frontmatter so `validate_okf.py` continues to pass.
+- `index.md`, a pointer stating the roadmap lives in GitHub Issues, with the queries needed to read it.
+- `log.md`, holding the dated migration receipt. This is a record of what the migration did, not a document to maintain going forward.
+- `archive/`, holding the original files with normalized frontmatter.
 
 ### Archived spec frontmatter
 
@@ -290,7 +287,7 @@ gh sub-issue list <N>                                   # read an epic's phases
 
 ## Writing and executing specs
 
-Use the `plan-build-verify-github` skill. It publishes specs as issues, runs Build against approved issues, and posts acceptance evidence back to the issue.
+Use the `plan-build-verify` skill. It publishes specs as issues, runs Build against approved issues, and posts acceptance evidence back to the issue.
 
 ## Archive
 
@@ -308,7 +305,7 @@ Specs for this repository are GitHub Issues, not files. `docs/specs/` holds only
 
 - Read the roadmap with `gh issue list --label kind:spec --state open`.
 - Read a spec with `gh issue view <N>`; read an epic's phases with `gh sub-issue list <N>`.
-- Do not create spec files under `docs/specs/`. Use the `plan-build-verify-github` skill, which publishes specs as issues.
+- Do not create spec files under `docs/specs/`. Use the `plan-build-verify` skill, which publishes specs as issues.
 - Never build an issue that is not labeled `status:approved` without explicit maintainer approval.
 - Post build reports and acceptance evidence as comments on the spec issue.
 - ADRs remain files under `docs/adrs/`. Cross-link them with the issues they constrain.

@@ -1,8 +1,8 @@
 # Migration Workflow
 
-Use this workflow to move a project from file-based specs (`plan-build-verify`) to GitHub Issues (`plan-build-verify-github`).
+Use this workflow to move a project from file-based specs under `docs/specs/` to GitHub Issues.
 
-Migration is a one-time, one-way change. After it, the issue is the spec and `docs/specs/` holds only an index pointer and an archive. Read `references/github-conventions.md` before starting.
+Migration is a one-time, one-way change. After it, the issue is the spec and `docs/specs/` holds only an index pointer and an archive. Read `references/conventions.md` before starting.
 
 The script never guesses. Anything it cannot classify with evidence is reported and left in place for a human decision.
 
@@ -12,7 +12,6 @@ Run the scripts from the skill directory that the agent runtime actually loaded,
 
 ```bash
 ls <skill-dir>/scripts/migrate_specs.sh
-ls <okf-skill-dir>/scripts/validate_okf.py     # only if the repo uses OKF
 ```
 
 If a configured skill path does not exist, stop and ask the user which installation to use. Do not copy skill files into the project working tree to make a path resolve. Materializing skill assets inside the repo leaves untracked files that pollute the migration diff.
@@ -93,7 +92,7 @@ Map entries win over every other source, so they also resolve conflicts. Show th
 
 ## Step 3: Preflight
 
-1. Run the `gh` preflight from `references/github-conventions.md`.
+1. Run the `gh` preflight from `references/conventions.md`.
 2. Confirm the target repo is the one that should own the roadmap. For a fork, ask.
 3. Commit or stash any pending changes under `docs/specs/`. The script refuses to run on a dirty specs directory.
 4. Confirm the user wants the migration on the current branch, or create a branch for it.
@@ -126,7 +125,7 @@ Options:
 | --------------------------- | ---------------------------------------------------------------------------- |
 | `--repo owner/name`         | Target repo when the roadmap is not the current remote.                      |
 | `--specs-dir <path>`        | Spec directory other than `docs/specs`.                                       |
-| `--docs-root <path>`        | Root for `/`-absolute OKF links. Default `docs`.                              |
+| `--docs-root <path>`        | Root for `/`-absolute doc links. Default `docs`.                              |
 | `--status-map <file>`       | Per-file status decisions. Highest precedence.                                |
 | `--default-status <s>`      | Status for files that declare none.                                           |
 | `--implemented-action <a>`  | `migrate` (default), `archive`, `blocked`, or `skip`.                         |
@@ -169,15 +168,15 @@ archived_at: 2026-08-04T09:36:10Z
 ---
 ```
 
-`type` is filled in when the source file had none, so OKF validation keeps passing.
+`type` is filled in when the source file had none, so every archived file carries the same shape.
 
 ### Partial failure
 
-If a run dies partway, re-run it. Every issue body carries `pbvg-source:<path>`. The script scans existing issues for that key before creating anything, so a file whose issue exists but was never archived is picked up rather than duplicated. Failures are listed in the summary and recorded in the migration log entry.
+If a run dies partway, re-run it. Every issue body carries `pbv-source:<path>`. The script scans existing issues for that key before creating anything, so a file whose issue exists but was never archived is picked up rather than duplicated. Failures are listed in the summary and recorded in the migration log entry.
 
 ## Step 6: Update AGENTS.md
 
-Add the AGENTS.md snippet from `references/github-conventions.md` so future agents look for specs in GitHub rather than in `docs/specs/`.
+Add the AGENTS.md snippet from `references/conventions.md` so future agents look for specs in GitHub rather than in `docs/specs/`.
 
 Remove or amend any existing instruction that tells agents to write specs to `docs/specs/YYYY-MM-DD-<topic>.md`. Leaving a stale instruction in place produces agents that write spec files no one reads.
 
@@ -186,7 +185,6 @@ Check the same for `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, and any `.github
 ## Step 7: Validate
 
 ```bash
-python <okf-skill-dir>/scripts/validate_okf.py .      # if the repo uses OKF
 gh issue list --label kind:spec --state open --json number,title,labels
 git status --short
 git diff --cached --check
@@ -209,7 +207,7 @@ Spot-check two or three issues by eye. The script does not reformat spec bodies,
 The script does not create sub-issues. After migration, review the migrated issues for specs with more than one independently buildable phase:
 
 1. Add `kind:epic` to the parent.
-2. Create a sub-issue per phase with `gh sub-issue create --parent <N>`, following the decomposition rules in `references/github-conventions.md`.
+2. Create a sub-issue per phase with `gh sub-issue create --parent <N>`, following the decomposition rules in `references/conventions.md`.
 3. Move each phase's acceptance criteria from the parent into the child that owns it, leaving outcome-level criteria on the parent.
 
 Run Triage (`references/triage.md`) afterward to check hierarchy integrity and produce the ready-to-work ordering.

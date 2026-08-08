@@ -2,7 +2,7 @@
 
 Use this workflow to groom the issue backlog so the roadmap stays readable and every spec issue is in a state Build or Verify can act on.
 
-Triage is on-demand. It never runs automatically. Plan, Build, and Verify perform a lightweight read-only hygiene check at phase entry and report findings; fixing them is this workflow's job. Read `references/github-conventions.md` before starting.
+Triage is on-demand. It never runs automatically. Plan, Build, and Verify perform a lightweight read-only hygiene check at phase entry and report findings; fixing them is this workflow's job. Read `references/conventions.md` before starting.
 
 ## Scope
 
@@ -148,7 +148,7 @@ gh issue edit 161 --add-label "kind:spec"
 gh issue edit 158 --remove-label "phase:build"
 ```
 
-Fixing a body requires the round-trip from `references/github-conventions.md`: view to a temp file, edit, `gh issue edit --body-file`, delete the temp file.
+Fixing a body requires the round-trip from `references/conventions.md`: view to a temp file, edit, `gh issue edit --body-file`, delete the temp file.
 
 ## Step 5: Order the backlog
 
@@ -184,8 +184,6 @@ Summarize:
 - Blocking defects that stop Build or Verify.
 - Recommended next issue, with the reason.
 - Staleness decisions still owed by the user.
-
-When the repo has an OKF bundle and the grooming pass changed the roadmap materially, append an entry to `docs/specs/log.md`.
 
 ## Answering "what should we work on next?"
 

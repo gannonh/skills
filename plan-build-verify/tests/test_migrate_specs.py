@@ -211,7 +211,7 @@ def test_archive_status_is_normalized_and_source_preserved(repo):
 
 
 def test_archive_frontmatter_always_has_type(repo):
-    """OKF validation fails on archived files without a non-empty `type`."""
+    """Archived files always carry a non-empty `type`."""
     repo.write("docs/specs/nofm.md", "# No frontmatter\n\n## Status\n\nApproved\n")
     repo.commit()
 
@@ -393,7 +393,7 @@ def test_rerun_after_failure_reuses_the_existing_issue(repo):
     issues = repo.state / "issues"
     issues.mkdir(parents=True, exist_ok=True)
     (issues / "77.body").write_text(
-        "## Status\n\nApproved\n\n_Source key: `pbvg-source:docs/specs/2026-01-01-export.md`_\n",
+        "## Status\n\nApproved\n\n_Source key: `pbv-source:docs/specs/2026-01-01-export.md`_\n",
         encoding="utf-8",
     )
 
@@ -410,7 +410,7 @@ def test_issue_body_carries_a_source_key(repo):
 
     repo.migrate()
 
-    assert "pbvg-source:docs/specs/2026-01-01-export.md" in repo.issue_body(100)
+    assert "pbv-source:docs/specs/2026-01-01-export.md" in repo.issue_body(100)
 
 
 def test_already_migrated_files_are_skipped(repo):

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Create or repair the plan-build-verify-github label taxonomy in a GitHub repo.
+# Create or repair the plan-build-verify label taxonomy in a GitHub repo.
 #
 # Idempotent: uses `gh label create --force`, which creates missing labels and
 # updates color and description on existing ones. Never deletes labels and never

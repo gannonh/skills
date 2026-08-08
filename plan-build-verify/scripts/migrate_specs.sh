@@ -24,7 +24,7 @@
 #                            changes. Writes nothing.
 #   --repo owner/name        Target repo. Defaults to the current git remote.
 #   --specs-dir <path>       Spec directory. Defaults to docs/specs.
-#   --docs-root <path>       OKF docs root for root-relative links. Default docs.
+#   --docs-root <path>       Docs root for root-relative links. Default docs.
 #   --status-map <file>      Per-file status overrides: `<relpath> <status>` per
 #                            line, `#` comments allowed. Highest precedence.
 #   --default-status <s>     Status for files that declare none. Without it,
@@ -146,7 +146,7 @@ NOW="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-WORK_DIR="$(mktemp -d -t pbvg-migrate)"
+WORK_DIR="$(mktemp -d -t pbv-migrate)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
 RECORDS="$WORK_DIR/records.tsv"
@@ -356,7 +356,7 @@ status_map_lookup() {
   ' "$STATUS_MAP_FILE"
 }
 
-source_key() { printf 'pbvg-source:%s' "$1"; }
+source_key() { printf 'pbv-source:%s' "$1"; }
 
 # ---------------------------------------------------------------- archiving --
 
@@ -503,7 +503,7 @@ gh sub-issue list <N>                                   # read an epic's phases
 
 ## Writing and executing specs
 
-Use the `plan-build-verify-github` skill. It publishes specs as issues, runs Build
+Use the `plan-build-verify` skill. It publishes specs as issues, runs Build
 against approved issues, and posts acceptance evidence back to the issue.
 
 ## Archive
@@ -1017,8 +1017,8 @@ if [ "$REWRITE_LINKS" -eq 1 ] && [ -s "$PATH_MAP" ]; then
       done < <(sed -n 's/^rewrote  *\([^ ]*\) .*/\1/p' "$LINK_REPORT")
     else
       echo "error: link rewriting failed. Archived files moved but links were not updated." >&2
-      echo "Path map: $PATH_MAP (copied to $REPO_ROOT/.pbvg-pathmap.tsv)" >&2
-      cp "$PATH_MAP" "$REPO_ROOT/.pbvg-pathmap.tsv"
+      echo "Path map: $PATH_MAP (copied to $REPO_ROOT/.pbv-pathmap.tsv)" >&2
+      cp "$PATH_MAP" "$REPO_ROOT/.pbv-pathmap.tsv"
       exit 1
     fi
   else
