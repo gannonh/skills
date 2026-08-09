@@ -29,18 +29,28 @@ Before editing files:
 2. Read the issue completely:
 
 ```bash
-gh issue view <N> --json number,title,body,labels,state,url,comments
+gh issue view <N> --json number,title,body,labels,state,url,comments,blockedBy
 gh sub-issue list <N>    # if the issue is an epic
 ```
 
-3. Confirm the issue carries `status:approved` and the body's `## Status` section says `Approved`, or confirm the user explicitly overrode the approval gate. If the label and the body disagree, stop and reconcile with the user before writing code.
-4. **If the issue is an epic** (`kind:epic`), do not build the parent. Pick the first `status:approved` child whose dependencies are already `status:verified` or `status:implemented`. If several are ready, ask which to build or confirm the order. State the choice before proceeding.
-5. Confirm the issue contains `## Acceptance criteria` with concrete checkbox criteria. If missing or ambiguous, add `needs:acceptance-criteria`, stop, and return to Plan to fix the issue.
-6. Run the phase-entry hygiene check from `references/conventions.md` and report findings.
-7. Inspect repo instructions such as `AGENTS.md`, `CLAUDE.md`, and README command sections.
-8. Check worktree state with `git status --short --branch`.
-9. Confirm `Blocking open questions` is `None`, or confirm the user explicitly approved proceeding with listed questions.
-10. Create or check out the working branch:
+3. **Check `blockedBy` before writing any code.** If a blocker is still open, stop and report it. Do not start a blocked issue unless the user explicitly acknowledges the blocker and chooses to proceed. If a blocker is already closed or `status:verified`, the edge is stale: clear it with `gh issue edit <N> --remove-blocked-by <BLOCKER>` and say so.
+4. Confirm the issue carries `status:approved` and the body's `## Status` section says `Approved`, or confirm the user explicitly overrode the approval gate. If the label and the body disagree, stop and reconcile with the user before writing code.
+5. **If the issue is an epic** (`kind:epic`), do not build the parent. Pick the first `status:approved` child with no open blockers. Read the graph rather than assuming the order:
+
+```bash
+for c in $(gh sub-issue list <N> --json number | jq -r '.[].number'); do
+  gh issue view "$c" --json number,title,labels,state,blockedBy
+done
+```
+
+If several are ready, ask which to build or confirm the order. State the choice before proceeding.
+
+6. Confirm the issue contains `## Acceptance criteria` with concrete checkbox criteria. If missing or ambiguous, add `needs:acceptance-criteria`, stop, and return to Plan to fix the issue.
+7. Run the phase-entry hygiene check from `references/conventions.md` and report findings.
+8. Inspect repo instructions such as `AGENTS.md`, `CLAUDE.md`, and README command sections.
+9. Check worktree state with `git status --short --branch`.
+10. Confirm `Blocking open questions` is `None`, or confirm the user explicitly approved proceeding with listed questions.
+11. Create or check out the working branch:
 
 ```bash
 gh issue develop <N> --name "<N>-<kebab-title>" --base <default-branch> --checkout

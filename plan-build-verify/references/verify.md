@@ -112,9 +112,18 @@ When the verified issue is a sub-issue:
 
 1. Comment on the parent linking the child's matrix.
 2. Check the parent's own acceptance criteria only when a parent-level criterion is genuinely satisfied by the child's evidence.
-3. Run `gh sub-issue list <PARENT>` and check whether every child is `status:verified`.
-4. If all children are verified, verify the parent's top-level acceptance criteria directly, then transition the parent to `status:verified` and close it.
-5. If children remain, report which one is next.
+3. Clear the dependency edges this work unblocked. A verified issue should no longer block anything:
+
+```bash
+gh issue view <N> --json blocking          # what was waiting on this
+gh issue edit <DEPENDENT> --remove-blocked-by <N>
+```
+
+Leaving stale `blockedBy` edges makes the next Build stop on a blocker that is already done.
+
+4. Run `gh sub-issue list <PARENT>` and check whether every child is `status:verified`.
+5. If all children are verified, verify the parent's top-level acceptance criteria directly, then transition the parent to `status:verified` and close it.
+6. If children remain, report which one is next and whether it is now unblocked.
 
 Do not mark a parent verified because its children are done. The parent's own criteria still need evidence.
 

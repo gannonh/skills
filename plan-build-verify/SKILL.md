@@ -9,7 +9,7 @@ Route implementation work through a sequential path where **GitHub Issues are th
 
 ## Read the conventions first
 
-Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, and temporary body files. Every other reference file depends on it.
+Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, and temporary body files. Every other reference file depends on it.
 
 ## Phase contracts
 
@@ -64,8 +64,10 @@ Resolve script paths against the skill directory the runtime actually loaded. If
 ## Requirements
 
 - `gh` CLI, authenticated with issue write access for the target repo.
-- `gh sub-issue` extension (`yahsan2/gh-sub-issue`) for decomposed specs. If absent, install with `gh extension install yahsan2/gh-sub-issue` or use the task-list fallback in `references/conventions.md`.
+- `gh sub-issue` extension (`yahsan2/gh-sub-issue`) for decomposed specs. If absent, install with `gh extension install yahsan2/gh-sub-issue` or use the task-list fallback in `references/conventions.md`. Its `create` subcommand has no `--body-file`, so children are created with `gh issue create` and then attached with `gh sub-issue add`.
+- A `gh` recent enough for issue dependencies (`gh issue edit --add-blocked-by`). Native; no extension required.
 - A git remote pointing at the GitHub repository that owns the roadmap.
+- `jq`, for reading `gh sub-issue list --json` output. The extension has no `-q` flag of its own.
 - `python3`, for link rewriting during migration only.
 
 Run the preflight in `references/conventions.md` before the first `gh` write of a session. If `gh` is unavailable or unauthenticated, stop and tell the user. Do not fall back to writing spec files locally.
