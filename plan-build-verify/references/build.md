@@ -216,20 +216,13 @@ After all tasks pass their per-task gates:
 4. Fix final-review issues.
 5. Re-run final review until no blocking issues remain.
 
-## Open the pull request
+## Push the branch
+
+Push the branch so the work is durable, but **do not open the pull request**. Verify owns PR creation, because the PR body carries the acceptance-criteria matrix and opening it starts the CI convergence loop.
 
 ```bash
-gh pr create \
-  --base <default-branch> \
-  --head <branch> \
-  --title "<issue title>" \
-  --body-file "$PR_BODY"
-rm -f "$PR_BODY"
+git push -u origin <branch>
 ```
-
-The PR body must contain `Closes #<N>` for the issue being implemented. For a sub-issue, close the sub-issue, not the parent. Summarize scope, tasks, verification results, and approved deviations in the PR body, and link to the Build completion report comment.
-
-If the repo's convention is to merge without a PR, say so and skip this step.
 
 ## Build completion report
 
@@ -253,7 +246,7 @@ Start the comment with `## Build completion report` and include:
 - Approved deviations, with links to their comments.
 - Known follow-up issues, with links if they were opened.
 - Whether independent subagent review was used.
-- PR link.
+- Branch name and pushed head SHA. There is no PR yet; Verify opens it.
 
 Then move the issue to implemented:
 
@@ -273,7 +266,8 @@ When the built issue is a sub-issue:
 
 1. Comment on the parent with a one-line status and a link to the child's Build completion report.
 2. Leave the parent at `status:approved` until every child is `status:verified` and the parent's own acceptance criteria pass.
-3. Report which sibling is next in dependency order.
+
+Do not pick the next sibling here. This child still has to pass Verify, and a sibling that starts before that may build on work that fails acceptance. Verify advances the epic after signoff (Step 10 of `references/verify.md`).
 
 ## Follow-up work
 
@@ -288,9 +282,13 @@ Link it from the Build completion report. Triage will groom it into the roadmap.
 
 ## Transition to Verify
 
-After Build is complete, ask the user if they want to move to Verify.
+**Continue directly into Verify. Do not ask permission.** Read `references/verify.md` and follow it in the same session. Build is not a terminal state: an implemented issue with no acceptance evidence and no PR is unfinished work.
 
-If yes, transition to `references/verify.md` and follow it for acceptance review and validation.
+Announce the transition, then proceed:
+
+> Build complete for #<N>. Entering Verify: acceptance evidence, PR, then CI convergence.
+
+Stop and hand back to the user instead of continuing only when a Red flag below applies, or when the branch could not be pushed.
 
 ## Red flags
 

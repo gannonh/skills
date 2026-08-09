@@ -239,6 +239,7 @@ Rules:
 
 - Branch name: `<issue-number>-<kebab-title>`, for example `142-export-workflow`. Derive it from the issue with `gh issue develop <N> --name <branch> --base <default>` when the user wants GitHub to link the branch to the issue.
 - One branch per spec issue or per sub-issue. Never build two issues on one branch.
+- **Verify opens the PR, not Build.** Build pushes the branch; Verify opens the PR once acceptance evidence exists, so the PR body carries the matrix and CI runs against verified work.
 - The PR body must contain `Closes #<N>` for the issue it implements. For a sub-issue, close the sub-issue, not the parent.
 - Link the PR back to the issue with a comment when the PR is opened from a branch GitHub did not auto-link.
 

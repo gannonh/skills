@@ -16,8 +16,8 @@ Before any mode, read `references/conventions.md` completely. It defines the rep
 | Phase   | Input                                                     | Output                                                                                                              | Status label transition                   |
 | ------- | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
 | Plan    | Idea, vague request, or new build request                  | Context exploration → alignment dialogue → approach approval → spec issue with mandatory `## Acceptance criteria` | none → `status:draft` → `status:approved` |
-| Build   | Approved spec issue number, or explicit user override      | Implemented tasks, commits, PR, review results, Build completion report comment                                     | `status:approved` → `status:implemented`  |
-| Verify  | Implemented spec issue plus completed work or Build report | Acceptance evidence comment, checked acceptance criteria, signoff recommendation                                    | `status:implemented` → `status:verified`  |
+| Build   | Approved spec issue number, or explicit user override      | Implemented tasks, commits, review results, pushed branch, Build completion report comment                           | `status:approved` → `status:implemented`  |
+| Verify  | Implemented spec issue plus completed work or Build report | Acceptance evidence, durable acceptance tests, pull request, green CI, resolved review threads, signoff recommendation | `status:implemented` → `status:verified`  |
 | Triage  | Repo issue backlog                                         | Grooming report and applied label, decomposition, and closure actions                                               | corrective, per issue                     |
 | Migrate | Existing `docs/specs/*.md` bundle                          | Assessment report, spec issues, archived local files, rewritten cross-links, updated specs index                    | derived from each file's declared status  |
 
@@ -35,10 +35,14 @@ Default to **Plan** unless the user explicitly directs you to execute an existin
 
 Read `references/conventions.md` and then the selected reference file completely, and follow both. Only load the workflow you need.
 
+**Build and Verify are one continuous run.** Build does not stop to ask whether to verify; it enters Verify directly. Verify then runs unattended through evidence, acceptance tests, PR creation, and CI convergence, stopping only at signoff. See the autonomy contract in `references/verify.md`.
+
 Hard gates:
 
 - Build must not start from a `status:draft` issue unless the user explicitly overrides the approval gate.
 - Verify must not claim signoff without evidence.
+- Verify must never merge the PR. Signoff and merge are the user's decision.
+- Verify opens the PR, not Build. The PR body carries the acceptance-criteria matrix.
 - In Plan, do not draft a spec issue before the user has answered an alignment question or approved a recommended direction. If you are about to, stop and ask instead.
 - Migration is assess-first. Run `scripts/migrate_specs.sh --assess` and settle every unclassified or conflicting file with the user before any write.
 
@@ -52,6 +56,15 @@ Build and Verify load bundled workflows from this skill directory. Read the entr
 | ------ | --------------- | ---------------------------------------- |
 | Build  | TDD             | `references/tdd/workflow.md`             |
 | Verify | User acceptance | `references/user-acceptance/workflow.md` |
+
+Verify's convergence loop (Step 7) additionally uses two sibling skills, resolved against the installed skills directory:
+
+| Purpose                          | Skill                  | Entry point                                              |
+| -------------------------------- | ---------------------- | -------------------------------------------------------- |
+| CI and PR state polling          | `babysit-pr`           | `<path-to-skills-directory>/babysit-pr/SKILL.md`           |
+| Review-thread inventory and fixes | `address-pr-comments` | `<path-to-skills-directory>/address-pr-comments/SKILL.md`  |
+
+Those skills assume a supervised operator and gate on user confirmation before replying to human reviewers. `references/verify.md` overrides those gates; its autonomy contract takes precedence. If neither skill is installed, Verify still converges using `gh pr checks`, `gh pr view`, and `gh api` directly, but say so in the report.
 
 ## Helper scripts
 
