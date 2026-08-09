@@ -21,21 +21,6 @@ Run without asking:
 
 Stop early only for the conditions in "Stop and ask" at the end of this file. A push is never a terminal state. A single green snapshot while checks are still queued is never a terminal state.
 
-### Precedence over the bundled PR skills
-
-Step 7 uses the `babysit-pr` and `address-pr-comments` skills. Their operating policies were written for standalone supervised use, and `babysit-pr` in particular forbids replying to human review threads without explicit confirmation.
-
-**Inside this workflow, that restriction does not apply.** Where those skills and this file disagree, this file wins:
-
-| Topic                        | Their policy                              | Here                                                                 |
-| ---------------------------- | ----------------------------------------- | -------------------------------------------------------------------- |
-| Replying to human reviewers  | Draft and wait for user confirmation      | Reply autonomously, prefixed `[agent]`                                |
-| Resolving human threads      | Only the requesting user's threads        | Resolve any thread this workflow actually addressed                   |
-| Stopping when green          | Keep watching indefinitely                | Stop at the Step 7 exit condition and go to signoff                   |
-| Merging                      | Not covered                               | Never merge; the user decides at Step 9                               |
-
-Use their scripts, failure-classification heuristics, and ledger discipline. Ignore their confirmation gates.
-
 ## Step 1: Gather inputs
 
 ```bash
@@ -143,17 +128,30 @@ This is the autonomous loop. It runs until the exit condition, without asking pe
 1. **Snapshot** PR, CI, and review state:
 
 ```bash
-python3 <path-to-skills-directory>/babysit-pr/scripts/gh_pr_watch.py --pr auto --watch
+gh pr view --json number,headRefOid,mergeable,mergeStateStatus,reviewDecision,statusCheckRollup
+gh pr checks --required --watch --fail-fast
 ```
 
-Use `--once` for a single diagnostic snapshot. Prefer `--watch` and keep consuming its output in the same turn. Never leave a detached watcher running and end the turn as if the work were done.
+`gh pr checks --watch` blocks until the checks finish and exits non-zero when one fails, so it is the wait itself, not a poll you have to schedule. Keep consuming its output in the same turn. Never background it and end the turn as if the work were done. Drop `--required` when the repo marks nothing as required.
 
 2. **Review feedback first**, before CI reruns. A review fix produces a new commit that retriggers CI anyway, so fixing flakes on a SHA you are about to replace is wasted work.
 
- Build a ledger before editing anything. Enumerate every published review item, group related comments into issue candidates, and record `id`, `source` (author, path, line, thread URL), `reviewer ask`, `classification`, `evidence`, `action`, `disposition`. Read `<path-to-skills-directory>/address-pr-comments/SKILL.md` and use its comment-fetching script for full thread state including resolved and outdated flags:
+ Build a ledger before editing anything. Enumerate every published review item, group related comments into issue candidates, and record `id`, `source` (author, path, line, thread URL), `reviewer ask`, `classification`, `evidence`, `action`, `disposition`.
+
+ Follow `<path-to-skills-directory>/address-pr-comments/SKILL.md` for this step. It already runs autonomously and its comment-fetching script returns full thread state including resolved and outdated flags, which `gh pr view` does not expose. If that skill is not installed, read threads directly:
 
 ```bash
-python3 <path-to-skills-directory>/address-pr-comments/scripts/fetch_comments.py > /tmp/pbv-pr-comments.json
+gh api graphql -f query='
+  query($owner:String!,$repo:String!,$pr:Int!){
+    repository(owner:$owner,name:$repo){
+      pullRequest(number:$pr){
+        reviewThreads(first:100){ nodes{
+          id isResolved isOutdated
+          comments(first:50){ nodes{ author{login} body path line url } }
+        }}
+      }
+    }
+  }' -F owner=<owner> -F repo=<repo> -F pr=<number>
 ```
 
  Classify each candidate against the **current** code, not the diff the reviewer saw: `fix`, `already-addressed`, `false-positive`, `question`, or `unsafe-to-change`. Every classification needs evidence.
@@ -166,12 +164,25 @@ python3 <path-to-skills-directory>/address-pr-comments/scripts/fetch_comments.py
 
  **Never silently drop a review item.** A comment you decline still needs a posted rationale, or the PR looks ignored.
 
-3. **Diagnose CI failures.** Classify branch-related versus flaky or infrastructural before touching anything. Read `<path-to-skills-directory>/babysit-pr/references/heuristics.md` for the decision tree.
+3. **Diagnose CI failures.** Read the logs before deciding anything:
 
- - **Branch-related** (compile, test, lint, typecheck, snapshot failures in touched code): fix, validate locally, commit, push.
- - **Flaky or infrastructural** (timeouts, runner provisioning, registry outages): rerun via the watcher's `--retry-failed-now`, up to 3 attempts. Do not edit tests, CI config, or dependency pins to make an unrelated failure disappear. That converts a red build into a hidden defect.
+```bash
+gh run view <run-id> --log-failed
+gh api repos/<owner>/<repo>/actions/jobs/<job-id>/logs    # single job, before the run finishes
+```
 
- If a specific job has failed while the overall run is still pending, pull that job's logs immediately instead of waiting for the run to finish.
+ Classify branch-related versus flaky or infrastructural:
+
+ - **Branch-related** — compile, test, lint, typecheck, or snapshot failures in code this branch touched. Fix, validate locally, commit, push.
+ - **Flaky or infrastructural** — timeouts, runner provisioning, registry or network outages, Actions infra errors. Rerun, up to 3 attempts:
+
+```bash
+gh run rerun <run-id> --failed
+```
+
+ Do not edit tests, CI configuration, or dependency pins to make an unrelated failure disappear. That converts a red build into a hidden defect. If classification is ambiguous, diagnose manually once before rerunning.
+
+ `gh run view --log-failed` is scoped to the whole run and may not expose logs until the run completes. If a single job has already failed while the run is still going, pull that job's logs directly rather than waiting.
 
 4. **Check mergeability.** Resolve merge conflicts against the base branch by rebasing or merging, per repo convention.
 

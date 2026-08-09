@@ -57,14 +57,13 @@ Build and Verify load bundled workflows from this skill directory. Read the entr
 | Build  | TDD             | `references/tdd/workflow.md`             |
 | Verify | User acceptance | `references/user-acceptance/workflow.md` |
 
-Verify's convergence loop (Step 7) additionally uses two sibling skills, resolved against the installed skills directory:
+Verify's convergence loop (Step 7) drives CI with `gh pr checks --watch` and `gh run` directly. For review threads it uses one sibling skill, resolved against the installed skills directory:
 
-| Purpose                          | Skill                  | Entry point                                              |
-| -------------------------------- | ---------------------- | -------------------------------------------------------- |
-| CI and PR state polling          | `babysit-pr`           | `<path-to-skills-directory>/babysit-pr/SKILL.md`           |
-| Review-thread inventory and fixes | `address-pr-comments` | `<path-to-skills-directory>/address-pr-comments/SKILL.md`  |
+| Purpose                           | Skill                 | Entry point                                               |
+| --------------------------------- | --------------------- | --------------------------------------------------------- |
+| Review-thread inventory and fixes | `address-pr-comments` | `<path-to-skills-directory>/address-pr-comments/SKILL.md`   |
 
-Those skills assume a supervised operator and gate on user confirmation before replying to human reviewers. `references/verify.md` overrides those gates; its autonomy contract takes precedence. If neither skill is installed, Verify still converges using `gh pr checks`, `gh pr view`, and `gh api` directly, but say so in the report.
+If it is not installed, Verify reads threads with `gh api graphql` instead; the loop does not depend on it.
 
 ## Helper scripts
 
