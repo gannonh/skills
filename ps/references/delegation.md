@@ -47,6 +47,25 @@ pi spans providers, so panels here get real diversity. Prefer it for `panel` wor
 
 **No native mechanism.** Run the workflow inline, single-threaded, in the order the phases specify. Label the output so the reader knows it was not a real panel, and say which parts lost their independence.
 
+## Waking up
+
+Long or unattended runs need a way to come back. Playbooks call this the harness's wake mechanism. Resolve it here.
+
+| Harness | Mechanism |
+|---|---|
+| Claude Code | the `loop` skill for a recurring or self-paced tick; the `schedule` skill for cron runs |
+| pi | the `subagent` tool's `schedule` actions |
+| Cursor | its `/loop` command |
+| None of these | a polling heartbeat you re-arm yourself after every verdict you act on |
+
+Prefer an event wake over a fixed interval. Something concrete to watch (CI, a merge, a ref advancing) gets a watcher that wakes you when it changes, with a long time-based heartbeat as the fallback. Only when there is no event to watch do you size a bare interval, and size it to when the answer is actually worth re-checking. Never run two sleep loops at once.
+
+## Asking the user
+
+Playbooks say "the harness's ask-user tool". That is Claude Code's `AskUserQuestion`, Cursor's `AskQuestion`, or pi's ask-user extension. Prefer it over free text: structured options are lower effort to answer and get better answers.
+
+Where no such tool exists, ask in prose with the options enumerated. Either way, [Never Block on the Human](references/principles/never-block-on-the-human.md) still governs when to ask at all.
+
 ## Herdr mode
 
 Only when the task was invoked with `--herdr`. Verify first:
