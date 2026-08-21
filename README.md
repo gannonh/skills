@@ -6,6 +6,12 @@ Personal [Agent Skills](https://agentskills.io/) directory. A mix of original sk
 
 Copy individual skill directories into your skills path, typically `~/.claude/skills/` or `~/.agents/skills/`.
 
+## Skills
+
+Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. One carries its own README:
+
+- [`ps`](./ps/) — rigorous engineering mode. Routes a task to one of 22 playbooks, applies 21 named principles, delegates to parallel subagents, and verifies against the real artifact. Harness-agnostic.
+
 ## License
 
 This repository is licensed under the [MIT License](LICENSE).
