@@ -36,7 +36,7 @@ One message, three subagents per `references/delegation.md`. Reviewers need MCP 
 | Tooling | `code` role, escalated | `references/reflect/tooling-reviewer.md` |
 | Divergent | `judgment` role, a different family from Judgment where the harness allows | `references/reflect/divergent-reviewer.md` |
 
-Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in the `Task` response body.
+Pass each template verbatim, substituting the transcript path or digest where marked. Reviewers return findings in their response body.
 
 ### 3. Synthesize
 

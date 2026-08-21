@@ -161,8 +161,12 @@ function gateReason(
   if (row.kind === "merged") return null;
   if (row.kind === "closed") return "closed-without-merge";
   if (row.facts.isDraft && !allowDraft) return "draft-pr";
-  return row.facts.reviewDecision === "CHANGES_REQUESTED"
-    ? "changes-requested"
+  if (row.facts.reviewDecision === "CHANGES_REQUESTED")
+    return "changes-requested";
+  // Branch protection requiring approvals that have not arrived. GitHub
+  // refuses the merge, so READY here would be a false merge-ready report.
+  return row.facts.reviewDecision === "REVIEW_REQUIRED"
+    ? "review-required"
     : null;
 }
 function gateBlocker(
@@ -196,7 +200,8 @@ function readyContribution(
   )
     return null;
   const reviewDecision = row.facts.reviewDecision;
-  if (reviewDecision === "CHANGES_REQUESTED") return null;
+  if (reviewDecision === "CHANGES_REQUESTED" || reviewDecision === "REVIEW_REQUIRED")
+    return null;
   return {
     kind: "ready-pr",
     context: row.context,
@@ -225,6 +230,10 @@ export function classifyPr(
     if (blocker !== null) return { kind: "blocker", blocker };
   if (row.kind === "open" && row.ci.kind === "ci-pending")
     return { kind: "waiting", waiting: row.context, pending: row.ci.pending };
+  // GitHub is still computing mergeability. READY is terminal, so emitting it
+  // here would lock in a verdict that was never provable.
+  if (row.kind === "open" && row.facts.mergeable === "UNKNOWN")
+    return { kind: "mergeability-unknown", waiting: row.context };
   const ready = readyContribution(row, allowDraft);
   if (ready === null) throw new Error("snapshot has no classified decision");
   return ready.kind === "merged-pr"
@@ -433,12 +442,16 @@ export async function runSimple(args: {
           args.mode
         ),
       };
+    const waitReason =
+      decision.kind === "waiting"
+        ? ({ kind: "pending-checks", pending: decision.pending } as const)
+        : ({ kind: "mergeability-unknown" } as const);
     args.dependencies.emit(
       stamp({
         kind: "WAITING",
         terminal: false,
         waiting: decision.waiting,
-        reason: { kind: "pending-checks", pending: decision.pending },
+        reason: waitReason,
       })
     );
     return {
@@ -449,7 +462,10 @@ export async function runSimple(args: {
           kind: "TIMEOUT",
           terminal: true,
           exitCode: 5,
-          reason: { kind: "pending-checks", pending: decision.pending },
+          reason:
+            waitReason.kind === "pending-checks"
+              ? { kind: "pending-checks", pending: waitReason.pending }
+              : { kind: "mergeability-unknown" },
         }),
     };
   };

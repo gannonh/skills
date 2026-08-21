@@ -23,7 +23,7 @@ Read the argument before doing anything else.
 
 ## Non-negotiables
 
-**Start every multi-step task with a todolist whose first item is to read the Principles section below in full.** The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it means you skipped its file; it must trace to a real choice the principle's rule drove.
+**Start every multi-step task with a todolist. Its first item is to read the Principles section below in full; its next items are the matched playbook's steps, copied in verbatim.** The principles ground every trigger here. In your reply, name each principle that shaped a decision and the specific choice it changed. A citation with no decision behind it means you skipped its file; it must trace to a real choice the principle's rule drove.
 
 Remaining triggers:
 
@@ -43,6 +43,10 @@ Remaining triggers:
 - A review bot commented (CodeRabbit, Cursor Bugbot, GitHub agentic review) → skeptical posture. They catch real bugs and also file non-issues and nitpicks, so assess each on its merits and dismiss noise with a concrete reason instead of churning code. Triage per `references/review-bot-triage.md`.
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
 - Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back") → a decision trail via `references/show-me-your-work.md`.
+
+## Bundled scripts
+
+Paths written `<path-to-skill>/scripts/...` resolve against the directory this skill was loaded from, not your working directory. Resolve them at run time; if a path does not exist, say which installation you looked in rather than guessing. Never copy skill files into the project tree to make a path resolve.
 
 ## Optional skills
 
@@ -161,7 +165,7 @@ Route here when the user names one, or when a trigger above fires.
 
 ## Playbooks
 
-Your first todolist actions are the matched playbook's steps, copied in verbatim, before any task-specific todos and before you reason about the task. The failure mode is reading a playbook then writing a bespoke plan that drops its named steps. A step you choose not to do stays in the list with a one-line `skip: <reason>`; skipping silently is not allowed.
+After the Principles read, the todolist's next actions are the matched playbook's steps, copied in verbatim, before any task-specific todos and before you reason about the task. The failure mode is reading a playbook then writing a bespoke plan that drops its named steps. A step you choose not to do stays in the list with a one-line `skip: <reason>`; skipping silently is not allowed.
 
 A large or cross-cutting effort, or work the user steps away from to trust later, routes to `references/figure-it-out.md` even when a narrower playbook like Feature fits. A standing project-scale program routes to Orchestrate instead.
 

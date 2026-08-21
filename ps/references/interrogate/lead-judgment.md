@@ -9,7 +9,7 @@ Adversarial reviewers are useful because they're aggressive. But aggression with
 - What was already tried and rejected
 - What constraints exist outside the code (timeline, dependencies, migration plans)
 - Which parts of the code are temporary scaffolding vs. permanent architecture
-- What the next PR in the stack will address
+- What an already-planned follow-up PR will address
 
 You have the full conversation context. Use it.
 
