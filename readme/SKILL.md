@@ -1,58 +1,55 @@
 ---
 name: readme
-description: Write or rewrite a project README that leads with the problem, shows the tool working, and respects both skimmers and deep readers. Use when the user asks to create, write, rewrite, improve, or review a README, complains their README is too long, too marketing-heavy, or buries the install instructions, or says "make a README" / "fix my README".
+description: Write or rewrite a project README as plain factual documentation: what the tool is, how to install and run it, what it touches, how to undo it. Use when the user asks to create, write, rewrite, improve, or review a README, complains their README is too long, too marketing-heavy, or buries the install instructions, or says "make a README" / "fix my README".
 ---
 
 # Readme
 
-Write READMEs that answer three questions in order: what pain does this solve, how do I try it, how does it work. Readers arrive skeptical and busy; every sentence either moves them toward installing or loses them.
+A README documents a tool. It states what the tool does, shows it running, and explains how to install, use, and remove it. It never persuades. If the facts are good, they carry the README; if they need dressing up, that is a signal about the tool, not a writing problem.
 
-## Patterns
+## Rules
 
-1. **Lead with the problem, not the framework.** "Coding agents forget everything between sessions. This fixes that." beats "A DevOps layer implementing the Three Ways." No jargon in the first line. Framework names and design rationale belong in the body.
-2. **Acknowledge prior art.** If the approach resembles agile, CI/CD, spec-driven dev, or an existing tool, say so: "If you've used X, you know the problem. What's new here is Y." Experienced readers dismiss anything claiming to reinvent the wheel; claim only what's genuinely novel.
-3. **Show, don't claim.** A terminal transcript or code snippet demonstrating the tool beats any adjective. Assertions without evidence read as marketing. If it can't be shown in a code block, it isn't ready for the README.
-4. **State the differentiator once.** One explanation, one demonstration, done. Repeating the value proposition across sections turns documentation into ad copy.
-5. **Trust block near install.** Anything that runs code, hooks, or modifies config needs, next to the install command: what files/hooks it touches, network calls or telemetry (or explicit local-only statement), permission surface, and how to disable/uninstall. Not buried in an FAQ.
-6. **Collapse depth, don't delete it.** Architecture, theory, and reference material go in `<details>` blocks with markdown inside (blank line after `<summary>`, trailing blank line before `</details>`). Skimmers get the fast path; deep readers still get everything.
-7. **No guru tone.** Strip "What N months taught me", "This is what makes X different", first-person journey narratives. Let the tool speak for itself.
-8. **Order serves adoption.** Problem → Install/Trust → See It Work → Getting Started → How It Works (collapsed) → Reference → FAQ → Contributing/License. Theory comes after examples.
+1. **First line says what the thing is.** Plain declarative sentence: "Backup for sqlite databases, scheduled by cron." No problem/solution framing, no pain narrative, no "Tired of X?". A reader should know what they are looking at in five seconds.
+2. **Show a real invocation early.** A command and its actual output beat any description. Copy from a real session, not an idealized one.
+3. **Facts over adjectives.** Delete "powerful", "simple", "elegant", "blazing fast", "seamless". State the mechanism instead: not "lightning-fast search" but "searches 100k files in ~50ms (ripgrep)".
+4. **Say what it touches.** Anything that runs code, registers hooks, writes files, or makes network calls gets stated next to the install command, along with how to disable or uninstall it. This is documentation of behavior, not a trust-building exercise.
+5. **One mention per fact.** If install is documented in Install, do not repeat it elsewhere. Repetition reads as selling.
+6. **Collapse depth with `<details>`, don't cut it.** Architecture notes, design rationale, and reference tables go inside `<details>` blocks with markdown inside (blank line after `<summary>`, blank line before `</details>`).
+7. **No narrative voice.** No "I built this because...", no "What I learned", no origin story, no philosophy section up top. If design rationale matters, put a short note in a collapsed section.
+8. **Order follows use.** What it is → Install → Usage/example → How it works → Reference/FAQ → License. A reader who wants to try the tool should never scroll past theory to find a command.
 
 ## Workflow
 
 ### 1. Gather context silently
 
-Read what exists before asking anything: `README.md`, manifest (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`), `PRODUCT.md`, `LICENSE`, top-level source dirs. Infer name, language, install command, license, existing description.
+Read what exists before asking anything: `README.md`, manifest (`package.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`), `LICENSE`, top-level source dirs. Infer name, language, install command, license.
 
 ### 2. Ask only what you can't infer
 
 Batch remaining gaps into one round of questions, at most:
-- The problem, one sentence (offer a suggestion from context if derivable)
-- The simplest demo after install (command, snippet, or transcript)
-- Trust concerns if the tool runs shell commands/hooks, touches config outside the project, or makes network calls
+- One sentence on what the tool does (if the code doesn't make it obvious)
+- A real command + output demonstrating it (or offer to run the tool to capture one)
+- Whether it runs shell commands/hooks, writes outside the project, or makes network calls
 
 Skip any question the repo already answers.
 
 ### 3. Generate
 
-Write the README using the patterns above. Structure serves the patterns, not a fixed template — a tiny CLI needs a fraction of what a framework needs. No emoji unless existing content uses them. Badges only if the repo already has them or the user asks.
+Write the README using the rules above. Structure serves the content, not a fixed template — a tiny CLI needs a fraction of what a framework needs. No emoji unless existing content uses them. Badges only if the repo already has them or the user asks.
 
-For rewrites: keep accurate content, fix anti-patterns, preserve anything the current README gets right.
+For rewrites: keep accurate content, fix violations below, preserve anything the current README already does well.
 
 ### 4. Self-review before finishing
 
-Check the result against the anti-pattern table and fix violations:
-
-| Anti-pattern | Fix |
+| Violation | Fix |
 |---|---|
-| Value prop stated 3+ times | State once in the problem section, demonstrate once |
-| Opens with methodology/framework name | Rewrite lead as problem statement |
-| "What I learned", "this is what makes X different" | Delete; let the tool speak |
-| Jargon before definition | Define on first use or use plain language |
-| Security/permissions info below the fold | Move near install |
-| Uninstall not findable | Add to trust block |
-| Same install command in 3+ places | One hero install, one canonical reference |
-| Architecture before examples | Move theory into collapsed details below demos |
-| "Best"/"unique"/"powerful" without demo | Replace with example or delete |
+| Opens with a question, pain point, or "Tired of X?" | Replace with a plain statement of what the tool is |
+| Problem/solution pitch structure | State what the tool does; skip the pitch |
+| Adjectives without numbers ("fast", "simple", "powerful") | Replace with mechanism or measurement, or delete |
+| Value repeated across sections | Keep the first factual mention, delete rest |
+| Touches/hooks/network behavior undocumented | Document next to install, including uninstall |
+| Same command documented in 3+ places | One usage section |
+| Origin story or philosophy above examples | Move to collapsed details or delete |
+| Idealized example output | Use real captured output |
 
-Report which anti-patterns you found and fixed, so the user can veto intentional choices.
+Report which violations you found and fixed, so the user can veto intentional choices.
