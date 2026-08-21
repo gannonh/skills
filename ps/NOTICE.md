@@ -10,3 +10,19 @@
 - Stacked-pull-request support removed. The `autopilot-stack` playbook is dropped, `shipping` and `autopilot` rewritten around independent PRs, and the `frontier` subcommand deleted from `scripts/orch`.
 - Bugbot-specific triage generalized to any review bot, with CodeRabbit detection added to `scripts/watch-pr`.
 - The `benny` Slack-automation pack was not ported.
+
+## Substituted skills
+
+pstack delegated to Cursor built-ins and to its sibling plugin `cursor-team-kit`, neither of which exists outside Cursor. Each hand-off was repointed:
+
+| pstack used | Kind | `ps` uses |
+|---|---|---|
+| `create-skill` | Cursor built-in | `skill-creator` (anthropics/skills) |
+| `deslop` | cursor-team-kit | `simplify` (gannonh/skills) |
+| `control-ui` | cursor-team-kit | `agent-browser`, `chrome-cdp` |
+| `control-cli` | cursor-team-kit | `automating-ios-simulator`, or driving the binary directly |
+| `/babysit` | Cursor built-in | `references/playbooks/babysit.md` |
+| `/loop` | Cursor built-in | the harness's own wake mechanism |
+| `AskQuestion` | Cursor built-in | the harness's ask-user tool |
+
+The `cursor-team-kit` originals are public at `https://github.com/cursor/plugins` if you would rather use them.

@@ -56,6 +56,8 @@ Remaining triggers:
 | `automating-ios-simulator` | Driving the iOS simulator | Drive `xcrun simctl` directly |
 | `herdr` | `--herdr` delegation mode only | Fall back to the native mechanism in `references/delegation.md` |
 
+Install commands for each are in `README.md`. Offer one when a missing skill is the reason a step degraded, then carry on with the fallback rather than waiting.
+
 ## Principles
 
 Read the file in full for any principle you apply. Each entry names when it applies.

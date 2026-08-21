@@ -6,12 +6,11 @@ Works in Claude Code, pi, Cursor, and Codex without modification. Adapted from [
 
 ## Install
 
-Copy the directory into your skills path:
-
 ```bash
-cp -R ps ~/.agents/skills/     # universal
-cp -R ps ~/.claude/skills/     # Claude Code
+npx skills add https://github.com/gannonh/skills --skill ps
 ```
+
+Or copy the directory into your skills path (`~/.agents/skills/`, `~/.claude/skills/`).
 
 Then configure which models each role uses:
 
@@ -76,13 +75,16 @@ The skill itself is self-contained. The bundled scripts need [Bun](https://bun.s
 
 Six other skills are **optional** hand-offs. Each site that uses one names an inline fallback, so a missing skill degrades the step rather than blocking it. `SKILL.md` carries the table.
 
-| Skill | Used for |
-|---|---|
-| `simplify` | Cleanup pass before commit |
-| `skill-creator` | Authoring or editing a SKILL.md |
-| `agent-browser`, `chrome-cdp` | Driving a browser or Electron surface |
-| `automating-ios-simulator` | Driving the iOS simulator |
-| `herdr` | The `--herdr` delegation mode only |
+| Skill | Used for | Install |
+|---|---|---|
+| `simplify` | Cleanup pass before commit | `npx skills add https://github.com/gannonh/skills --skill simplify` |
+| `skill-creator` | Authoring or editing a SKILL.md | `npx skills add https://github.com/anthropics/skills --skill skill-creator` |
+| `agent-browser` | Browser and Electron surfaces | `npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser` |
+| `chrome-cdp` | Driving a live Chrome session | `npx skills add https://github.com/pasky/chrome-cdp-skill --skill chrome-cdp` |
+| `automating-ios-simulator` | Driving the iOS simulator | `npx skills add https://github.com/gannonh/skills --skill automating-ios-simulator` |
+| `herdr` | The `--herdr` delegation mode only | `npx skills add https://github.com/herdrdev/herdr --skill herdr` |
+
+Add `-g` to install globally, `-y` to skip prompts.
 
 The `why` workflow queries MCP servers when they exist — source control, issue tracker, docs, chat, observability, error tracking, analytics — and ships a playbook per provider. None are required. It discovers what is connected at run time, flags any category it could not reach as an explicit gap, and always has `code-archaeology` working from git alone.
 
