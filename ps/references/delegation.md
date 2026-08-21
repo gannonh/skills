@@ -51,7 +51,7 @@ pi spans providers, so panels here get real diversity. Prefer it for `panel` wor
 
 Run the task to completion. You do not need a wake mechanism to keep working, and reaching for one to pace yourself through your own task is wasted motion.
 
-The exception is genuinely blocking on state you do not control: a CI run, a merge, a deploy. There, watch the thing itself. `scripts/watch-pr/watch-pr` polls a PR to a terminal verdict and is the event wake for anything PR-shaped. For other external state, poll it directly and re-arm after each verdict you act on.
+The exception is genuinely blocking on state you do not control: a CI run, a merge, a deploy. There, watch the thing itself. `<path-to-skill>/scripts/watch-pr/watch-pr` polls a PR to a terminal verdict and is the event wake for anything PR-shaped. For other external state, poll it directly and re-arm after each verdict you act on.
 
 Only if a harness-level scheduler is genuinely needed (a check that must survive the session ending) reach for what the harness offers: the `loop` or `schedule` skills in Claude Code, `schedule` actions on pi's `subagent` tool, `/loop` in Cursor. Never run two sleep loops at once.
 

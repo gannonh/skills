@@ -144,6 +144,38 @@ describe("snapshot query planning", () => {
   });
 });
 
+it("treats REVIEW_REQUIRED as a merge gate rather than ready", async () => {
+  const snapshot = await readSnapshot({
+    reader: fakeReader({
+      facts: { reviewDecision: "REVIEW_REQUIRED", mergeStateStatus: "BLOCKED" },
+      fastPath: { kind: "checks", checks: [passingCheck()] },
+    }),
+    context: context(1),
+    pendingHistory: "include",
+    allowDraft: false,
+  });
+  const decision = classifyPr(snapshot, false);
+  expect(decision.kind).toBe("blocker");
+  if (decision.kind !== "blocker") throw new Error("expected blocker");
+  expect(decision.blocker).toMatchObject({
+    kind: "merge-gate",
+    reason: "review-required",
+  });
+});
+
+it("does not report ready while GitHub mergeability is UNKNOWN", async () => {
+  const snapshot = await readSnapshot({
+    reader: fakeReader({
+      facts: { mergeable: "UNKNOWN", reviewDecision: "APPROVED" },
+      fastPath: { kind: "checks", checks: [passingCheck()] },
+    }),
+    context: context(1),
+    pendingHistory: "include",
+    allowDraft: false,
+  });
+  expect(classifyPr(snapshot, false).kind).not.toBe("ready");
+});
+
 it("waits on a draft while checks are pending, then reports the draft gate", async () => {
   const pending = await readSnapshot({
     reader: fakeReader({

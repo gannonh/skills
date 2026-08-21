@@ -116,7 +116,7 @@ Subagent config (each):
 
 Each investigator gets:
 1. The base prompt from `references/why/investigator-prompt.md`
-2. The category playbook `references/sources/<source>.md` for the selected MCP, adapted from the examples in `references/why/source-playbook.md`
+2. The category playbook for the selected MCP: the matching file in `references/why/sources/`, adapted from the examples in `references/why/source-playbook.md`
 3. The cross-cutting `references/why/sources/incident-postmortem.md` **if the target code looks defensive** (null checks, retry logic, timeout handling, rate limiting, feature flags, egress guards, OOM handlers)
 4. The code anchor from Step 2 (file paths, symbols, commit hashes, PR numbers, ticket IDs)
 5. The user's original question
@@ -218,5 +218,5 @@ After the Sources Consulted block, if the user's `why` question is a precursor t
 - `references/why/epistemics.md`. Confidence tiers and phrasing guide. The synthesizer must follow it.
 - `references/why/investigator-prompt.md`. Base prompt template for investigator subagents.
 - `references/why/source-playbook.md`. Index pointing at the category playbooks below.
-- `references/sources/*.md`. One self-contained example playbook per category, plus cross-cutting `incident-postmortem.md`. Give an investigator the single file that matches its category and adapt it to the available MCP.
+- `references/why/sources/`. One self-contained example playbook per category, plus cross-cutting `incident-postmortem.md`. Give an investigator the single file that matches its category and adapt it to the available MCP.
 - `references/why/synthesizer-prompt.md`. Prompt template for the synthesizer subagent, including the output format.

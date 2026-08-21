@@ -160,7 +160,7 @@ export interface ReadyPr {
     readonly ci: CiClean;
     readonly gate: {
       readonly state: "OPEN";
-      readonly reviewDecision: Exclude<ReviewDecision, "CHANGES_REQUESTED">;
+      readonly reviewDecision: Extract<ReviewDecision, "APPROVED" | null>;
       readonly draft: "not-draft" | "draft-allowed";
     };
   };
@@ -173,7 +173,8 @@ export interface MergedPr {
 export type MergeGateReason =
   | "closed-without-merge"
   | "draft-pr"
-  | "changes-requested";
+  | "changes-requested"
+  | "review-required";
 export type MergeBlocker =
   | {
       readonly kind: "merge-conflicts";
@@ -233,9 +234,15 @@ export interface WaitingDecision {
   readonly waiting: PrContext;
   readonly pending: NonEmpty<PendingCheck>;
 }
+/** GitHub has not finished computing mergeability. Transient; re-poll. */
+export interface MergeabilityUnknownDecision {
+  readonly kind: "mergeability-unknown";
+  readonly waiting: PrContext;
+}
 export type PrDecision =
   | { readonly kind: "blocker"; readonly blocker: MergeBlocker }
   | WaitingDecision
+  | MergeabilityUnknownDecision
   | { readonly kind: "ready"; readonly pr: ReadyPr }
   | { readonly kind: "merged"; readonly pr: MergedPr };
 export type WatchMode = "single";
@@ -266,7 +273,8 @@ export type ProgressVerdict =
             readonly kind: "pending-checks";
             readonly pending: NonEmpty<PendingCheck>;
           }
-        | { readonly kind: "merge-queue"; readonly unmergedCount: number };
+        | { readonly kind: "merge-queue"; readonly unmergedCount: number }
+        | { readonly kind: "mergeability-unknown" };
     })
   | (Progress<"RETRY"> & {
       readonly failure: QueryFailure;
@@ -308,7 +316,8 @@ export type TimeoutVerdict = Terminal<"TIMEOUT", 5> & {
         readonly kind: "pending-checks";
         readonly pending: NonEmpty<PendingCheck>;
       }
-    | { readonly kind: "status-unavailable"; readonly failure: QueryFailure };
+    | { readonly kind: "status-unavailable"; readonly failure: QueryFailure }
+    | { readonly kind: "mergeability-unknown" };
 };
 export type TerminalVerdict =
   | (Terminal<"STATUS", 0> & {
