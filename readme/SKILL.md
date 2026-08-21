@@ -1,6 +1,6 @@
 ---
 name: readme
-description: Write or rewrite a project README as plain factual documentation: what the tool is, how to install and run it, what it touches, how to undo it. Use when the user asks to create, write, rewrite, improve, or review a README, complains their README is too long, too marketing-heavy, or buries the install instructions, or says "make a README" / "fix my README".
+description: Write or rewrite a project README as plain factual documentation covering what the tool is, how to install and run it, what it touches, and how to undo it. Use when the user asks to create, write, rewrite, improve, or review a README, complains their README is too long, too marketing-heavy, or buries the install instructions, or says "make a README" / "fix my README".
 ---
 
 # Readme
