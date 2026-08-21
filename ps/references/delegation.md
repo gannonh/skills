@@ -47,18 +47,13 @@ pi spans providers, so panels here get real diversity. Prefer it for `panel` wor
 
 **No native mechanism.** Run the workflow inline, single-threaded, in the order the phases specify. Label the output so the reader knows it was not a real panel, and say which parts lost their independence.
 
-## Waking up
+## Waiting on something external
 
-Long or unattended runs need a way to come back. Playbooks call this the harness's wake mechanism. Resolve it here.
+Run the task to completion. You do not need a wake mechanism to keep working, and reaching for one to pace yourself through your own task is wasted motion.
 
-| Harness | Mechanism |
-|---|---|
-| Claude Code | the `loop` skill for a recurring or self-paced tick; the `schedule` skill for cron runs |
-| pi | the `subagent` tool's `schedule` actions |
-| Cursor | its `/loop` command |
-| None of these | a polling heartbeat you re-arm yourself after every verdict you act on |
+The exception is genuinely blocking on state you do not control: a CI run, a merge, a deploy. There, watch the thing itself. `scripts/watch-pr/watch-pr` polls a PR to a terminal verdict and is the event wake for anything PR-shaped. For other external state, poll it directly and re-arm after each verdict you act on.
 
-Prefer an event wake over a fixed interval. Something concrete to watch (CI, a merge, a ref advancing) gets a watcher that wakes you when it changes, with a long time-based heartbeat as the fallback. Only when there is no event to watch do you size a bare interval, and size it to when the answer is actually worth re-checking. Never run two sleep loops at once.
+Only if a harness-level scheduler is genuinely needed (a check that must survive the session ending) reach for what the harness offers: the `loop` or `schedule` skills in Claude Code, `schedule` actions on pi's `subagent` tool, `/loop` in Cursor. Never run two sleep loops at once.
 
 ## Asking the user
 

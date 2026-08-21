@@ -22,7 +22,7 @@ pstack delegated to Cursor built-ins and to its sibling plugin `cursor-team-kit`
 | `control-ui` | cursor-team-kit | `agent-browser`, `chrome-cdp` |
 | `control-cli` | cursor-team-kit | `automating-ios-simulator`, or driving the binary directly |
 | `/babysit` | Cursor built-in | `references/playbooks/babysit.md` |
-| `/loop` | Cursor built-in | the harness's wake mechanism, resolved in `references/delegation.md` |
+| `/loop` | Cursor built-in | dropped. Agents run to completion; only external state is waited on, per `references/delegation.md` |
 | `AskQuestion` | Cursor built-in | the harness's ask-user tool, resolved in `references/delegation.md` |
 
 The `cursor-team-kit` originals are public at `https://github.com/cursor/plugins` if you would rather use them.
