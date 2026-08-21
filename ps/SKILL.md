@@ -44,6 +44,18 @@ Remaining triggers:
 - Broken skill mid-task → fix it in its own PR. Don't block. Don't silently work around it.
 - Long, autonomous, or multi-phase work, or any task the user steps away from to review later ("going to bed", "trust it when i'm back") → a decision trail via `references/show-me-your-work.md`.
 
+## Optional skills
+
+`ps` is self-contained except for six skills it hands off to. Each is optional. When one is not installed, do the work inline and say so in the reply; never block on a missing skill, and never silently skip the step it was covering.
+
+| Skill | Used for | Without it |
+|---|---|---|
+| `simplify` | Cleanup pass before commit | Do the pass inline against [Laziness Protocol](references/principles/laziness-protocol.md) and [Minimize Reader Load](references/principles/minimize-reader-load.md) |
+| `skill-creator` | Authoring or editing a SKILL.md | Follow `references/playbooks/authoring-a-skill.md` directly |
+| `agent-browser`, `chrome-cdp` | Driving a browser or Electron surface | Drive the surface directly and assert on what you observe |
+| `automating-ios-simulator` | Driving the iOS simulator | Drive `xcrun simctl` directly |
+| `herdr` | `--herdr` delegation mode only | Fall back to the native mechanism in `references/delegation.md` |
+
 ## Principles
 
 Read the file in full for any principle you apply. Each entry names when it applies.

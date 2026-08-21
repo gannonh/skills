@@ -70,6 +70,31 @@ Direct workflow calls are for when you already know what you want:
 
 Everything is reached from the dispatch table at the top of `SKILL.md`. Nothing else is registered as a skill, so none of it competes for auto-invocation.
 
+## Dependencies
+
+The skill itself is self-contained. The bundled scripts need [Bun](https://bun.sh), and `watch-pr` plus several playbooks shell out to `git` and the [`gh`](https://cli.github.com) CLI.
+
+Six other skills are **optional** hand-offs. Each site that uses one names an inline fallback, so a missing skill degrades the step rather than blocking it. `SKILL.md` carries the table.
+
+| Skill | Used for |
+|---|---|
+| `simplify` | Cleanup pass before commit |
+| `skill-creator` | Authoring or editing a SKILL.md |
+| `agent-browser`, `chrome-cdp` | Driving a browser or Electron surface |
+| `automating-ios-simulator` | Driving the iOS simulator |
+| `herdr` | The `--herdr` delegation mode only |
+
+The `why` workflow queries MCP servers when they exist — source control, issue tracker, docs, chat, observability, error tracking, analytics — and ships a playbook per provider. None are required. It discovers what is connected at run time, flags any category it could not reach as an explicit gap, and always has `code-archaeology` working from git alone.
+
+Check what you have:
+
+```bash
+for s in simplify skill-creator agent-browser chrome-cdp automating-ios-simulator herdr; do
+	[ -d ~/.agents/skills/$s ] || [ -d ~/.claude/skills/$s ] \
+		&& echo "  ok      $s" || echo "  missing $s"
+done
+```
+
 ## How delegation works
 
 `references/delegation.md` is the only file that names a harness-specific mechanism. Workflows ask for a **role** — `explorer`, `code`, `judgment`, `panel`, `worker` — and that file resolves it against your `AGENTS.md` roster and the harness you are in.

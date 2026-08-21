@@ -2,7 +2,7 @@
 
 Investigate the motivation and intent behind code. Why was it built this way? What edge cases were considered? What product, business, or operational constraints shaped the design? What alternatives were rejected, and why?
 
-Companion to the `how` skill. `how` answers what the code does and how it works. `why` answers what forces led to its shape.
+Companion to the how workflow (`references/how/how.md`). `how` answers what the code does and how it works. `why` answers what forces led to its shape.
 
 ## How this skill works
 
