@@ -6,6 +6,6 @@ Invoked at the end of every other playbook.
 
 **Commits.** Commit liberally; rebase into small, ordered commits before opening PRs. Each commit is a future PR: landable, ordered to tell the story. Amend when the fix belongs in a just-made commit; new commit when separable.
 
-**PRs.** Run the `simplify` skill on the diff before commit; the no-comments workflow (`references/no-comments.md`) before review; apply the unslop workflow (`references/unslop.md`) to the PR description and commit bodies. Small PRs, 5 narrow over 1 fat; branch off main. `gh pr view <number>` before referencing PR status. Rebase on `main` before substantial work. No `## Summary` / `## Test plan` boilerplate on small PRs; commit bodies don't restate the subject. After opening, run `references/playbooks/babysit.md`; push back when feedback drifts from intent.
+**PRs.** Run the deslop workflow (`references/deslop.md`) on the diff before commit; the no-comments workflow (`references/no-comments.md`) before review; apply the unslop workflow (`references/unslop.md`) to the PR description and commit bodies. Small PRs, 5 narrow over 1 fat; branch off main. `gh pr view <number>` before referencing PR status. Rebase on `main` before substantial work. No `## Summary` / `## Test plan` boilerplate on small PRs; commit bodies don't restate the subject. After opening, run `references/playbooks/babysit.md`; push back when feedback drifts from intent.
 
-A subagent that opens a PR runs the interrogate workflow, the `simplify` skill, and the no-comments workflow, returns the URL, and does NOT babysit. Return to the parent.
+A subagent that opens a PR runs the interrogate, deslop, and no-comments workflows, returns the URL, and does NOT babysit. Return to the parent.

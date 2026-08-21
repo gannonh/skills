@@ -35,9 +35,9 @@ Remaining triggers:
 - Contested design → `references/interrogate/interrogate.md` before shipping.
 - Any prose surface → `references/unslop.md`. Your reply is a prose surface; write it per **Writing the reply**. Agent-facing prose also follows the `skill-creator` skill.
 - Docs, RFCs, readmes, PR descriptions, or commit messages → `references/technical-writing.md`.
-- Before commit → the `simplify` skill.
+- Before commit → the deslop workflow (`references/deslop.md`).
 - Before review → `references/no-comments.md`.
-- Shipping UI, IDE, or CLI → drive the real surface yourself. Browser and Electron via the `agent-browser` or `chrome-cdp` skills, iOS via `automating-ios-simulator`. For bug fixes, reproduce on the same surface before fixing.
+- Shipping UI, IDE, or CLI → drive the real surface yourself. Browser, IDE, and Electron via the control-ui workflow (`references/control-ui.md`); CLIs, TUIs, and native mobile via the control-cli workflow (`references/control-cli.md`). For bug fixes, reproduce on the same surface before fixing.
 - Any PR-status request → `references/playbooks/babysit.md`. That includes "get it green", "address the review comments", and the commonest phrasing, "check on PR X" / "anything outstanding on X". Never triggered by merely opening a PR.
 - Asked to land or ship → `references/playbooks/shipping.md`. Green is not safe. Nothing merges before an independent verdict.
 - A review bot commented (CodeRabbit, Cursor Bugbot, GitHub agentic review) → skeptical posture. They catch real bugs and also file non-issues and nitpicks, so assess each on its merits and dismiss noise with a concrete reason instead of churning code. Triage per `references/review-bot-triage.md`.
@@ -46,14 +46,11 @@ Remaining triggers:
 
 ## Optional skills
 
-`ps` is self-contained except for six skills it hands off to. Each is optional. When one is not installed, do the work inline and say so in the reply; never block on a missing skill, and never silently skip the step it was covering.
+`ps` is self-contained except for two skills it hands off to. Each is optional. When one is not installed, do the work inline and say so in the reply; never block on a missing skill, and never silently skip the step it was covering.
 
 | Skill | Used for | Without it |
 |---|---|---|
-| `simplify` | Cleanup pass before commit | Do the pass inline against [Laziness Protocol](references/principles/laziness-protocol.md) and [Minimize Reader Load](references/principles/minimize-reader-load.md) |
 | `skill-creator` | Authoring or editing a SKILL.md | Follow `references/playbooks/authoring-a-skill.md` directly |
-| `agent-browser`, `chrome-cdp` | Driving a browser or Electron surface | Drive the surface directly and assert on what you observe |
-| `automating-ios-simulator` | Driving the iOS simulator | Drive `xcrun simctl` directly |
 | `herdr` | `--herdr` delegation mode only | Fall back to the native mechanism in `references/delegation.md` |
 
 Install commands for each are in `README.md`. Offer one when a missing skill is the reason a step degraded, then carry on with the fallback rather than waiting.
@@ -150,6 +147,9 @@ Route here when the user names one, or when a trigger above fires.
 | tdd | Fixing a bug with a cheap local test path. Failing test first. | `references/tdd.md` |
 | no-comments | Strip comments before review. | `references/no-comments.md` |
 | unslop | Cleaning up writing. Removes AI tells. | `references/unslop.md` |
+| deslop | Cleaning up code before commit. Removes AI code slop. | `references/deslop.md` |
+| control-ui | Driving a browser, IDE, or Electron UI for evidence. | `references/control-ui.md` |
+| control-cli | Driving a CLI or TUI for evidence. | `references/control-cli.md` |
 | technical-writing | Layered doc standard for docs, RFCs, readmes, PR descriptions. | `references/technical-writing.md` |
 | typescript | Reading or editing TypeScript. | `references/typescript/best-practices.md` |
 | show-me-your-work | You want a reviewable decision trail. | `references/show-me-your-work.md` |

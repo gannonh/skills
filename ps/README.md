@@ -63,7 +63,7 @@ Direct workflow calls are for when you already know what you want:
 
 **21 principles.** Short, named rules the mode cites by name when one changes a decision. Grouped as core, architecture, verification, delegation, meta. A citation with no decision behind it means the principle was skipped.
 
-**21 workflows.** `how` and `why` for understanding, `architect` and `arena` for design, `swarm` for fan-out, `interrogate` for adversarial review, `tdd`, `unslop`, `no-comments`, `blast-radius`, `reflect`, and the rest.
+**24 workflows.** `how` and `why` for understanding, `architect` and `arena` for design, `swarm` for fan-out, `interrogate` for adversarial review, `deslop`, `unslop` and `no-comments` for cleanup, `control-ui` and `control-cli` for driving the real surface, plus `tdd`, `blast-radius`, `reflect` and the rest.
 
 **4 scripts.** `watch-pr` polls a PR to a merge-ready or blocked verdict. `orch` is a plain-file coordination store for long programs. `worktree-audit.sh` finds reclaimable worktrees. `check-links.sh` validates that every path this skill references resolves.
 
@@ -73,16 +73,12 @@ Everything is reached from the dispatch table at the top of `SKILL.md`. Nothing 
 
 The skill itself is self-contained. The bundled scripts need [Bun](https://bun.sh), and `watch-pr` plus several playbooks shell out to `git` and the [`gh`](https://cli.github.com) CLI.
 
-Six other skills are **optional** hand-offs. Each site that uses one names an inline fallback, so a missing skill degrades the step rather than blocking it. `SKILL.md` carries the table.
+`ps` bundles its own cleanup and surface-driving workflows rather than reaching for whatever else you have installed, so it stands alone as a stack. Two skills remain **optional** hand-offs, and each use site names an inline fallback so a missing one degrades that step rather than blocking it.
 
-| Skill | Used for | Install |
-|---|---|---|
-| `simplify` | Cleanup pass before commit | `npx skills add https://github.com/gannonh/skills --skill simplify` |
-| `skill-creator` | Authoring or editing a SKILL.md | `npx skills add https://github.com/anthropics/skills --skill skill-creator` |
-| `agent-browser` | Browser and Electron surfaces | `npx skills add https://github.com/vercel-labs/agent-browser --skill agent-browser` |
-| `chrome-cdp` | Driving a live Chrome session | `npx skills add https://github.com/pasky/chrome-cdp-skill --skill chrome-cdp` |
-| `automating-ios-simulator` | Driving the iOS simulator | `npx skills add https://github.com/gannonh/skills --skill automating-ios-simulator` |
-| `herdr` | The `--herdr` delegation mode only | `npx skills add https://github.com/herdrdev/herdr --skill herdr` |
+| Skill | Used for | Without it | Install |
+|---|---|---|---|
+| `skill-creator` | Authoring a SKILL.md | `references/playbooks/authoring-a-skill.md` | `npx skills add https://github.com/anthropics/skills --skill skill-creator` |
+| `herdr` | `--herdr` mode only | Native subagents | `npx skills add https://github.com/herdrdev/herdr --skill herdr` |
 
 Add `-g` to install globally, `-y` to skip prompts.
 
@@ -91,7 +87,7 @@ The `why` workflow queries MCP servers when they exist — source control, issue
 Check what you have:
 
 ```bash
-for s in simplify skill-creator agent-browser chrome-cdp automating-ios-simulator herdr; do
+for s in skill-creator herdr; do
 	[ -d ~/.agents/skills/$s ] || [ -d ~/.claude/skills/$s ] \
 		&& echo "  ok      $s" || echo "  missing $s"
 done

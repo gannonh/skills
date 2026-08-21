@@ -83,9 +83,9 @@ Each phase needs both:
 
 **Runtime.** Exercise the feature on the matching surface via the relevant control skill:
 
-- Browser / Electron / Web UIs: the `agent-browser` or `chrome-cdp` skill.
+- Browser / Electron / Web UIs: the control-ui workflow (`references/control-ui.md`).
 - CLIs and TUIs: drive the binary directly and assert on its output.
-- iOS: the `automating-ios-simulator` skill.
+- CLIs, TUIs, and native mobile: the control-cli workflow (`references/control-cli.md`).
 - Native mobile: whatever simulator-driving skill your team has.
 - No control skill for the touched surface: flag it in the plan.
 
@@ -97,7 +97,7 @@ In the overview, name which of this skill's non-negotiables the implementer must
 
 - the how workflow (`references/how/how.md`) over each unfamiliar subsystem before changing it.
 - the interrogate workflow (`references/interrogate/interrogate.md`) for adversarial review on contested designs before shipping.
-- The `simplify` skill over each diff before commit. the unslop workflow (`references/unslop.md`) over any prose surface.
+- The deslop workflow (`references/deslop.md`) over each diff before commit. The unslop workflow (`references/unslop.md`) over any prose surface.
 - the show-me-your-work workflow (`references/show-me-your-work.md`) to keep a decision trail when the plan is large enough to need an auditable record.
 - `references/playbooks/babysit.md` after opening the PR.
 

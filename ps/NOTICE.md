@@ -17,12 +17,14 @@ pstack delegated to Cursor built-ins and to its sibling plugin `cursor-team-kit`
 
 | pstack used | Kind | `ps` uses |
 |---|---|---|
-| `create-skill` | Cursor built-in | `skill-creator` (anthropics/skills) |
-| `deslop` | cursor-team-kit | `simplify` (gannonh/skills) |
-| `control-ui` | cursor-team-kit | `agent-browser`, `chrome-cdp` |
-| `control-cli` | cursor-team-kit | `automating-ios-simulator`, or driving the binary directly |
+| `create-skill` | Cursor built-in | `references/playbooks/authoring-a-skill.md`, or `skill-creator` if installed |
+| `deslop` | cursor-team-kit | bundled as `references/deslop.md` |
+| `control-ui` | cursor-team-kit | bundled as `references/control-ui.md` |
+| `control-cli` | cursor-team-kit | bundled as `references/control-cli.md` |
 | `/babysit` | Cursor built-in | `references/playbooks/babysit.md` |
 | `/loop` | Cursor built-in | dropped. Agents run to completion; only external state is waited on, per `references/delegation.md` |
 | `AskQuestion` | Cursor built-in | the harness's ask-user tool, resolved in `references/delegation.md` |
 
-The `cursor-team-kit` originals are public at `https://github.com/cursor/plugins` if you would rather use them.
+`deslop`, `control-ui`, and `control-cli` are vendored from [cursor-team-kit](https://github.com/cursor/plugins/tree/main/cursor-team-kit), MIT, Copyright (c) 2026 Cursor. They are unmodified apart from stripped frontmatter. Vendoring them keeps `ps` a self-contained alternative stack rather than a wrapper that reaches into whatever else you happen to have installed.
+
+`create-skill` has no bundled equivalent. It is Cursor-managed internal content with no license file and is not published in the public plugins repo, so it is not redistributable here. Skill authoring falls back to `references/playbooks/authoring-a-skill.md`, or the `skill-creator` skill if you have it.
