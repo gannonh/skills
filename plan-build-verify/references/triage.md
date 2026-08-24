@@ -48,7 +48,7 @@ Check every issue in scope against these rules.
 
 **Body integrity**
 
-- Missing `## Status` section, or a `## Status` value that disagrees with the `status:*` label (including leftover `Draft` in the body when the label is `status:approved` or later).
+- Missing `## Status` section, or a `## Status` value that disagrees with the `status:*` label. A `Draft` body with `status:approved` is a defect to report, not proof the label is right.
 - Missing `## Acceptance criteria` heading.
 - Acceptance criteria present but not checkbox-formatted, empty, or written with vague language ("works", "fast", "robust", "easy") and no observable threshold.
 - Missing `## Build handoff` on a `status:approved` issue.
@@ -111,9 +111,9 @@ Present findings grouped by severity. Do not mutate anything yet.
 Blocking (Build or Verify cannot run)
   #150  no acceptance criteria                        → add needs:acceptance-criteria
   #147  status:approved but Blocking open questions: 2 → return to Plan
+  #142  label status:approved, body says Draft         → Build blocked; ask before reconciling
 
 Integrity (state is misleading)
-  #142  label status:approved, body says Draft         → update ## Status to Approved
   #139  closed, never verified                         → reopen or record why
   #155  kind:epic with no sub-issues                   → decompose or drop kind:epic
   #140  status:approved with leftover phase:plan       → remove phase:plan
@@ -141,14 +141,15 @@ Apply in tiers, and get approval before anything in tier 2 or 3.
 - Add a missing `kind:*` label that is unambiguous from the body.
 - Add `needs:acceptance-criteria`, `needs:decomposition`, or `needs:triage` flags.
 - Remove a `needs:*` flag whose gap is fixed.
-- Remove a stale `phase:*` label when no branch or PR is active, including leftover `phase:plan` after approval.
-- Reconcile a `## Status` section to match its `status:*` label when the label is clearly right (a Build report comment exists, a PR is merged, or the body still says `Draft` after `status:approved`).
+- Remove a stale `phase:*` label when no branch or PR is active, including leftover `phase:plan` after a real approval.
+- Reconcile a `## Status` section to match its `status:*` label only when independent evidence shows the label is right: a Build report comment, a merged PR, or an explicit user approval / Plan comment that records approval. Never treat leftover `Draft` alone as that evidence, and never auto-promote `## Status` from Draft to Approved just because the label is `status:approved`.
 - Link an orphaned sub-issue to its obvious parent with `gh sub-issue add`.
 - Remove a `blockedBy` edge whose blocker is closed or `status:verified`.
 - Add a `blockedBy` edge that the issue body already states in prose.
 
 **Tier 2: ask first.** These change what the roadmap says.
 
+- When `status:approved` and `## Status` still says `Draft` (or otherwise disagrees) with no independent approval evidence: ask first. Conservative default is revert the label to `status:draft` (restore `phase:plan` if appropriate), not rewrite the body to Approved.
 - Swap a `status:*` label to a different state.
 - Reopen a closed issue, or close an open one.
 - Mark an issue `status:blocked`.

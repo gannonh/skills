@@ -89,6 +89,7 @@ If it is not installed, Verify reads threads with `gh api graphql` instead; the 
 ## Helper scripts
 
 - `scripts/ensure_labels.sh`: idempotently creates this skill's label taxonomy. `--dry-run` reports what would change.
+- `scripts/install-skills.sh`: project-local, non-interactive install of `plan-build-verify` and `address-pr-comments` only. Product repos can copy it. Never `-g`; never installs `ps`, `okf`, or `kata-linear`.
 - `scripts/migrate_specs.sh`: bulk-converts `docs/specs/*.md` into spec issues, archives the sources, rewrites cross-links, and updates the specs index. Run `--assess`, then `--dry-run`, then apply.
 - `scripts/rewrite_spec_links.py`: repoints Markdown links after files move into the archive. Called by the migration script; requires `python3`.
 

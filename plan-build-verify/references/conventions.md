@@ -219,7 +219,7 @@ Notes:
 - `## Delivery slices` is mandatory for all specs; an epic parent lists its children, while a sub-spec usually contains one slice. It describes increments of demonstrable behavior, not storage/backend/frontend/testing work packages. A slice crosses whichever technical layers it needs to produce an observable outcome.
 - `## Demonstration` is mandatory for standalone specs and sub-specs. It must name the consumer, action/input, observable result, and evidence that works without waiting for later siblings. A technical-enablement exception records its blocker, minimum scope, contract/integration evidence, and immediate user-facing slice unlocked instead.
 - Every user-facing slice plans a passing public-boundary E2E test. Visual slices also plan required starting/final screenshots. Video is ideal when temporal behavior matters, but its tooling is best-effort: use the documented bounded attempt and skip-and-flag contract instead of making Verify spin.
-- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn. A leftover `Draft` in the body while the label is `status:approved` (or any other mismatch) is a triage defect.
+- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn. A mismatch is a triage defect. Do not treat `status:approved` alone as proof the body should say Approved; without independent approval evidence, Triage asks first and defaults to reverting the label (see `references/triage.md`).
 - Keep this template and `.github/ISSUE_TEMPLATE/spec.md` in sync. That file is the canonical GitHub issue form for new specs in this skills repo; product repos should copy it rather than drift.
 - Do not use YAML frontmatter in issue bodies. GitHub renders it as a table or as literal text. Status lives in the `## Status` section and the label.
 
@@ -441,7 +441,7 @@ gh issue view <N> --json number,title,labels,body,state
 Report when:
 
 - The issue has no `status:*` label, or more than one.
-- The `## Status` section disagrees with the `status:*` label (including leftover `Draft` in the body when the label is `status:approved` or later).
+- The `## Status` section disagrees with the `status:*` label (including leftover `Draft` when the label is `status:approved` or later). For Build, both the `status:*` label and `## Status` must be approved (or later). A Draft body blocks Build even if the label says approved; do not silently follow the label.
 - `phase:plan` remains after the issue has left Plan (`status:approved`, `status:implemented`, or `status:verified`).
 - `## Acceptance criteria` is missing, empty, or contains vague language.
 - A standalone spec or sub-spec has no independently exercisable `## Demonstration` through a human, operator, or API/SDK public interface, unless it documents a justified minimal technical-enablement exception and the immediate user-facing slice it unlocks.
@@ -450,7 +450,7 @@ Report when:
 - The issue is closed but not `status:verified`.
 - The issue duplicates another open spec issue.
 
-State the findings in one short block, then continue with the requested phase unless a finding blocks it (missing acceptance criteria blocks Build and Verify; an unapproved status blocks Build). To fix hygiene problems across the backlog, run Triage.
+State the findings in one short block, then continue with the requested phase unless a finding blocks it (missing acceptance criteria blocks Build and Verify; label/`## Status` disagreement or an unapproved status blocks Build). To fix hygiene problems across the backlog, run Triage.
 
 ## Safety rules
 
