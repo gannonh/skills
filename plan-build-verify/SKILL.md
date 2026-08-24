@@ -9,7 +9,16 @@ Route implementation work through a sequential path where **GitHub Issues are th
 
 ## Read the conventions first
 
-Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, and temporary body files. Every other reference file depends on it.
+Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, temporary body files, and coexistence with pstack. Every other reference file depends on it.
+
+## Coexistence with pstack
+
+GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. pstack (poteto-mode, architect, TDD, per-repo verify skill and feature map) is the engineering execution and proof layer. It runs **inside** Build and Verify, and may run during Plan as investigation (`architect` / `how` / `why`). It does not own planning, labels, roadmap priority, or whether work is approved.
+
+- Do not skip an unapproved issue because "the best spec is code."
+- For product-shaped work, an architect checkpoint during Plan is investigation only. Do not treat pstack's never-block-on-the-human stance as permission to build past an unapproved spec.
+- A per-repo verification skill and feature map complement `## Demonstration` / `## Verification` on the issue. They do not replace acceptance criteria.
+- Do not invent a second issue tracker or file-based specs. See `references/conventions.md`.
 
 ## Phase contracts
 

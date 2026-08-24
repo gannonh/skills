@@ -41,12 +41,14 @@ Check every issue in scope against these rules.
 - More than one `status:*` label.
 - More than one `phase:*` label.
 - A `phase:*` label on an issue nobody is working on. A stale `phase:build` label means an abandoned branch or a crashed session.
+- Leftover `phase:plan` on a `status:approved`, `status:implemented`, or `status:verified` issue. Approval must remove `phase:plan` in the same turn; treat leftovers as hygiene to clear.
 - No `kind:*` label on an issue that is clearly a spec.
 - A `needs:*` flag whose underlying gap is already fixed.
+- Do not treat adopted type labels (`enhancement`, `feature`, `bug`, and similar) as plan-build-verify defects. They are repo labels outside the `kind:` / `status:` / `phase:` / `needs:` namespaces; leave them alone unless the user asks to change them.
 
 **Body integrity**
 
-- Missing `## Status` section, or a `## Status` value that disagrees with the `status:*` label.
+- Missing `## Status` section, or a `## Status` value that disagrees with the `status:*` label (including leftover `Draft` in the body when the label is `status:approved` or later).
 - Missing `## Acceptance criteria` heading.
 - Acceptance criteria present but not checkbox-formatted, empty, or written with vague language ("works", "fast", "robust", "easy") and no observable threshold.
 - Missing `## Build handoff` on a `status:approved` issue.
@@ -111,13 +113,15 @@ Blocking (Build or Verify cannot run)
   #147  status:approved but Blocking open questions: 2 → return to Plan
 
 Integrity (state is misleading)
-  #142  label status:approved, body says Implemented   → reconcile to Implemented
+  #142  label status:approved, body says Draft         → update ## Status to Approved
   #139  closed, never verified                         → reopen or record why
   #155  kind:epic with no sub-issues                   → decompose or drop kind:epic
+  #140  status:approved with leftover phase:plan       → remove phase:plan
 
 Hygiene (safe corrections)
   #161  no kind:* label                                → add kind:spec
   #158  phase:build, no branch since 2026-06-02        → remove phase:build
+  #144  has enhancement + kind:spec                    → leave enhancement (adopted type label)
 
 Stale (needs a decision)
   #133  status:draft, 74 days untouched                → close, or revive?
@@ -137,8 +141,8 @@ Apply in tiers, and get approval before anything in tier 2 or 3.
 - Add a missing `kind:*` label that is unambiguous from the body.
 - Add `needs:acceptance-criteria`, `needs:decomposition`, or `needs:triage` flags.
 - Remove a `needs:*` flag whose gap is fixed.
-- Remove a stale `phase:*` label when no branch or PR is active.
-- Reconcile a `## Status` section to match its `status:*` label when the label is clearly right (a Build report comment exists, a PR is merged).
+- Remove a stale `phase:*` label when no branch or PR is active, including leftover `phase:plan` after approval.
+- Reconcile a `## Status` section to match its `status:*` label when the label is clearly right (a Build report comment exists, a PR is merged, or the body still says `Draft` after `status:approved`).
 - Link an orphaned sub-issue to its obvious parent with `gh sub-issue add`.
 - Remove a `blockedBy` edge whose blocker is closed or `status:verified`.
 - Add a `blockedBy` edge that the issue body already states in prose.

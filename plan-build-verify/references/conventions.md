@@ -8,6 +8,22 @@ Shared contract for every mode of this skill. Read this file completely before P
 
 If `gh` fails, stop and report the failure. Do not save the spec as a repo file as a fallback; that recreates the two-sources-of-truth problem this skill exists to remove.
 
+## Coexistence with pstack
+
+plan-build-verify sequences product work. pstack executes and proves it. They are complementary layers, not competing operating systems.
+
+| Layer | Owns | Does not own |
+| ----- | ---- | ------------ |
+| plan-build-verify | Specs as GitHub Issues, priority, Plan / Build / Verify lifecycle, `kind:*` / `status:*` / `phase:*` / `needs:*` labels, acceptance criteria | Implementation tactics inside a Build or Verify run |
+| pstack | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
+
+Rules:
+
+- Agents must not skip an unapproved issue because "the best spec is code." The issue's `status:*` label and `## Status` section decide readiness for Build.
+- For product-shaped work, run an architect checkpoint during Plan as investigation. Do not use pstack's never-block-on-the-human guidance to build past an unapproved spec.
+- A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
+- Do not invent a second issue tracker, and do not revive file-based specs under `docs/specs/` or elsewhere. Temporary body files only, then delete them after the `gh` write.
+
 ## Preflight
 
 Run once per session, before the first `gh` write.
@@ -31,7 +47,7 @@ Record the resolved `<owner>/<repo>` for the session and reuse it.
 
 ## Label taxonomy
 
-This skill owns three namespaces and creates them automatically:
+This skill owns four namespaces and creates them automatically:
 
 | Label                       | Color    | Meaning                                                            |
 | --------------------------- | -------- | ------------------------------------------------------------------ |
@@ -53,9 +69,9 @@ This skill owns three namespaces and creates them automatically:
 Rules:
 
 - `status:*` labels are **mutually exclusive**. Every transition removes the old one and adds the new one in a single `gh issue edit` call.
-- `phase:*` labels are also mutually exclusive and reflect what is happening right now. Remove the `phase:*` label when a phase ends without immediately starting the next one.
+- `phase:*` labels are also mutually exclusive and reflect what is happening right now. Remove the `phase:*` label when a phase ends without immediately starting the next one. Leaving `phase:plan` on a `status:approved` (or later) issue is a triage defect; the draft → approved transition must remove it in the same turn.
 - `needs:*` labels are triage flags. Clear them when the underlying gap is fixed.
-- **Adopt existing repo labels** for area, component, priority, and type. Run `gh label list --limit 200` during preflight and reuse what already exists rather than creating parallel labels. Only the three namespaces above belong to this skill.
+- **Adopt existing repo labels** for area, component, priority, and type (`enhancement`, `feature`, `bug`, and similar). Those are the repo's labels, not a plan-build-verify namespace. Reuse them; do not invent a parallel type system or tell people to replace them. Run `gh label list --limit 200` during preflight. Only the `kind:`, `status:`, `phase:`, and `needs:` namespaces belong to this skill.
 
 Create or repair the taxonomy:
 
@@ -161,7 +177,8 @@ Notes:
 - `## Delivery slices` is mandatory for all specs; an epic parent lists its children, while a sub-spec usually contains one slice. It describes increments of demonstrable behavior, not storage/backend/frontend/testing work packages. A slice crosses whichever technical layers it needs to produce an observable outcome.
 - `## Demonstration` is mandatory for standalone specs and sub-specs. It must name the consumer, action/input, observable result, and evidence that works without waiting for later siblings. A technical-enablement exception records its blocker, minimum scope, contract/integration evidence, and immediate user-facing slice unlocked instead.
 - Every user-facing slice plans a passing public-boundary E2E test. Visual slices also plan required starting/final screenshots. Video is ideal when temporal behavior matters, but its tooling is best-effort: use the documented bounded attempt and skip-and-flag contract instead of making Verify spin.
-- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn.
+- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn. A leftover `Draft` in the body while the label is `status:approved` (or any other mismatch) is a triage defect.
+- Keep this template and `.github/ISSUE_TEMPLATE/spec.md` in sync. That file is the canonical GitHub issue form for new specs in this skills repo; product repos should copy it rather than drift.
 - Do not use YAML frontmatter in issue bodies. GitHub renders it as a table or as literal text. Status lives in the `## Status` section and the label.
 
 ## Status transitions
@@ -175,7 +192,7 @@ Notes:
 | any → `status:blocked`                 | Work cannot proceed; reason recorded in a comment      | `gh issue edit N --remove-label <current> --add-label status:blocked`                                |
 | `status:approved` → `status:draft`     | User requests changes after approval                   | `gh issue edit N --remove-label status:approved --add-label status:draft,phase:plan`                 |
 
-Update the `## Status` section in the body to match, in the same turn as the label change.
+Update the `## Status` section in the body to match, in the same turn as the label change. On `status:draft` → `status:approved`, remove `phase:plan` in that same edit; a leftover `phase:plan` after approval is a triage defect.
 
 Close the issue only when it reaches `status:verified`, or when the user decides the work will not be done. A merged PR containing `Closes #N` closes the issue automatically; if Verify has not run, reopen it or record why verification was skipped.
 
@@ -382,7 +399,8 @@ gh issue view <N> --json number,title,labels,body,state
 Report when:
 
 - The issue has no `status:*` label, or more than one.
-- The `## Status` section disagrees with the `status:*` label.
+- The `## Status` section disagrees with the `status:*` label (including leftover `Draft` in the body when the label is `status:approved` or later).
+- `phase:plan` remains after the issue has left Plan (`status:approved`, `status:implemented`, or `status:verified`).
 - `## Acceptance criteria` is missing, empty, or contains vague language.
 - A standalone spec or sub-spec has no independently exercisable `## Demonstration` through a human, operator, or API/SDK public interface, unless it documents a justified minimal technical-enablement exception and the immediate user-facing slice it unlocks.
 - An epic has no sub-issues, a sub-issue has no parent, or the children are architecture-layer work packages rather than demonstrable vertical slices.
