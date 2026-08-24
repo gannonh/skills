@@ -8,21 +8,26 @@ Shared contract for every mode of this skill. Read this file completely before P
 
 If `gh` fails, stop and report the failure. Do not save the spec as a repo file as a fallback; that recreates the two-sources-of-truth problem this skill exists to remove.
 
-## Coexistence with pstack
+## Coexistence with pstack and other skills in this pack
 
-plan-build-verify sequences product work. pstack executes and proves it. They are complementary layers, not competing operating systems.
+plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`). It is the only product operating system in those repos. Other skills in this pack stay in their lanes.
 
 | Layer | Owns | Does not own |
 | ----- | ---- | ------------ |
 | plan-build-verify | Specs as GitHub Issues, priority, Plan / Build / Verify lifecycle, `kind:*` / `status:*` / `phase:*` / `needs:*` labels, acceptance criteria | Implementation tactics inside a Build or Verify run |
-| pstack | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
+| pstack / ps | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
+| okf / finalize's OKF step | Docs-as-knowledge in repos that still use an OKF bundle | Live roadmap or specs for the four GitHub-issue product repos above |
+| kata-linear | Linear ticket lifecycle in Linear-first repos | Those four GitHub-issue product repos |
 
 Rules:
 
 - Agents must not skip an unapproved issue because "the best spec is code." The issue's `status:*` label and `## Status` section decide readiness for Build.
 - For product-shaped work, run an architect checkpoint during Plan as investigation. Do not use pstack's never-block-on-the-human guidance to build past an unapproved spec.
 - A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
-- Do not invent a second issue tracker, and do not revive file-based specs under `docs/specs/` or elsewhere. Temporary body files only, then delete them after the `gh` write.
+- Do not invent a second issue tracker. Do not create or maintain product specs under `docs/specs/` except the migration index/archive this skill leaves after Migrate. Temporary body files only, then delete them after the `gh` write.
+- Do not run `okf init`, `okf update`, or finalize's OKF documentation step as the roadmap writer in the four GitHub-issue product repos. Those steps treat `docs/specs/index.md` as the roadmap; that competes with Issues and is out of bounds there.
+- Do not use `kata-linear` as the work-item lifecycle in those four repos. It is for Linear-first projects only.
+- When installing skills for product delivery on those repos, install plan-build-verify (and any Build/Verify companions you need), not the whole `gannonh/skills` pack by default. A full-pack install leaves okf, kata-linear, and ps competing for "what is the roadmap?"
 
 ## Preflight
 

@@ -6,11 +6,20 @@ Personal [Agent Skills](https://agentskills.io/) directory. A mix of original sk
 
 Copy individual skill directories into your skills path, typically `~/.claude/skills/` or `~/.agents/skills/`.
 
+For product delivery on GitHub-issue repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), install **plan-build-verify** as the product operating system, not the whole pack:
+
+```bash
+npx skills add https://github.com/gannonh/skills --skill plan-build-verify
+```
+
+A full-pack install also pulls in `okf`, `kata-linear`, and `ps`, which use different roadmap models. Those skills remain in this repo for other workflows; do not treat them as the product OS for those four repos. See `plan-build-verify/SKILL.md` (coexistence section).
+
 ## Skills
 
-Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. One carries its own README:
+Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. A few carry a stronger product or engineering role:
 
-- [`ps`](./ps/) — rigorous engineering mode. Routes a task to one of 22 playbooks, applies 21 named principles, delegates to parallel subagents, and verifies against the real artifact. Harness-agnostic.
+- [`plan-build-verify`](./plan-build-verify/) — product operating system for GitHub-issue repos. Specs live as Issues; Plan / Build / Verify is the lifecycle.
+- [`ps`](./ps/) — rigorous engineering mode (Build/Verify engine when used with plan-build-verify). Routes a task to one of 22 playbooks, applies 21 named principles, delegates to parallel subagents, and verifies against the real artifact. Harness-agnostic.
 
 ## License
 

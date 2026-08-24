@@ -11,14 +11,24 @@ Route implementation work through a sequential path where **GitHub Issues are th
 
 Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, temporary body files, and coexistence with pstack. Every other reference file depends on it.
 
-## Coexistence with pstack
+## Coexistence with pstack and other skills in this pack
 
-GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. pstack (poteto-mode, architect, TDD, per-repo verify skill and feature map) is the engineering execution and proof layer. It runs **inside** Build and Verify, and may run during Plan as investigation (`architect` / `how` / `why`). It does not own planning, labels, roadmap priority, or whether work is approved.
+GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. Other skills in this pack must not replace that sequencer for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`).
+
+| Skill / layer | Role in those repos | Not its job there |
+| ------------- | ------------------- | ----------------- |
+| **plan-build-verify** | Only product OS: specs, priority, Plan / Build / Verify, labels | Implementation tactics inside a Build or Verify run |
+| **pstack** / **ps** | Engineering execution and proof inside Build and Verify; investigation during Plan (`architect` / `how` / `why`) | Planning, labels, approval, or a second issue lifecycle |
+| **okf** / **finalize** | Optional docs-as-knowledge elsewhere; do not run `okf init`/`update` or finalize's OKF step as the roadmap writer | Treating `docs/specs/index.md` as the live roadmap |
+| **kata-linear** | Linear-first repos only | These four GitHub-issue product repos |
+
+Rules:
 
 - Do not skip an unapproved issue because "the best spec is code."
 - For product-shaped work, an architect checkpoint during Plan is investigation only. Do not treat pstack's never-block-on-the-human stance as permission to build past an unapproved spec.
 - A per-repo verification skill and feature map complement `## Demonstration` / `## Verification` on the issue. They do not replace acceptance criteria.
-- Do not invent a second issue tracker or file-based specs. See `references/conventions.md`.
+- Do not invent a second issue tracker or file-based specs. Do not create or maintain product specs under `docs/specs/` except the PBV migration index/archive described in `references/conventions.md`.
+- Install this OS with the plan-build-verify skill alone (for example `npx skills add https://github.com/gannonh/skills --skill plan-build-verify`), not the whole pack, when the goal is product delivery. See `references/conventions.md`.
 
 ## Phase contracts
 
