@@ -9,7 +9,28 @@ Route implementation work through a sequential path where **GitHub Issues are th
 
 ## Read the conventions first
 
-Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, and temporary body files. Every other reference file depends on it.
+Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, temporary body files, and coexistence with pstack and other skills in this pack. Every other reference file depends on it.
+
+## Coexistence with pstack and other skills in this pack
+
+GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. For GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), plan-build-verify is the only product OS.
+
+| Skill / layer | Role | Not its job |
+| ------------- | ---- | ----------- |
+| **plan-build-verify** | Only product OS: specs, priority, Plan / Build / Verify, labels | Implementation tactics inside a Build or Verify run |
+| **pstack** (Cursor plugin) | Engineering execution and proof inside Build and Verify; investigation during Plan (`architect` / `how` / `why`) | Planning, labels, approval, or a second issue lifecycle |
+| **ps** (`/ps` in this pack) | Historical port of pstack; unwieldy; do not install for product delivery | Substitute for the pstack plugin or a second product OS |
+| **okf** / finalize's OKF step | **Retired.** Remains in the library for history only | Any live roadmap or docs-as-spec workflow |
+| **kata-linear** | Linear-first repos only | These four GitHub-issue product repos |
+
+Rules:
+
+- Do not skip an unapproved issue because "the best spec is code."
+- For product-shaped work, an architect checkpoint during Plan is investigation only. Do not treat pstack's never-block-on-the-human stance as permission to build past an unapproved spec.
+- A per-repo verification skill and feature map complement `## Demonstration` / `## Verification` on the issue. They do not replace acceptance criteria.
+- Do not invent a second issue tracker or file-based specs. Do not create or maintain product specs under `docs/specs/` except the PBV migration index/archive described in `references/conventions.md`.
+- Do not run `okf init`, `okf update`, or finalize's OKF step. OKF is retired; it is not an alternative roadmap.
+- Do not install `ps`, `okf`, or `kata-linear` for these product repos. Install project-local skills with `scripts/install-skills.sh` (or the npx command in `references/conventions.md`). Never `npx skills add -g`, and never install the whole `gannonh/skills` pack.
 
 ## Phase contracts
 
@@ -68,6 +89,7 @@ If it is not installed, Verify reads threads with `gh api graphql` instead; the 
 ## Helper scripts
 
 - `scripts/ensure_labels.sh`: idempotently creates this skill's label taxonomy. `--dry-run` reports what would change.
+- `scripts/install-skills.sh`: project-local, non-interactive install of `plan-build-verify` and `address-pr-comments` only. Product repos can copy it. Never `-g`; never installs `ps`, `okf`, or `kata-linear`.
 - `scripts/migrate_specs.sh`: bulk-converts `docs/specs/*.md` into spec issues, archives the sources, rewrites cross-links, and updates the specs index. Run `--assess`, then `--dry-run`, then apply.
 - `scripts/rewrite_spec_links.py`: repoints Markdown links after files move into the archive. Called by the migration script; requires `python3`.
 

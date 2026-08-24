@@ -8,6 +8,64 @@ Shared contract for every mode of this skill. Read this file completely before P
 
 If `gh` fails, stop and report the failure. Do not save the spec as a repo file as a fallback; that recreates the two-sources-of-truth problem this skill exists to remove.
 
+## Coexistence with pstack and other skills in this pack
+
+plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`). It is the only product operating system in those repos. `gannonh/skills` is a library: install named skills per project, never the whole pack, and never globally (`-g`). Cloud VMs need project-local installs.
+
+| Layer | Owns | Does not own |
+| ----- | ---- | ------------ |
+| plan-build-verify | Specs as GitHub Issues, priority, Plan / Build / Verify lifecycle, `kind:*` / `status:*` / `phase:*` / `needs:*` labels, acceptance criteria | Implementation tactics inside a Build or Verify run |
+| pstack (Cursor plugin) | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
+| ps (`/ps` in this pack) | Nothing for product delivery. Historical pstack port; unwieldy; do not npx-install it | Substitute for the pstack Cursor plugin |
+| okf / finalize's OKF step | Nothing. **Retired.** Kept in the library for history only | Any live roadmap (`docs/specs/index.md` or otherwise) |
+| kata-linear | Linear ticket lifecycle in Linear-first repos | Those four GitHub-issue product repos |
+
+Rules:
+
+- Agents must not skip an unapproved issue because "the best spec is code." The issue's `status:*` label and `## Status` section decide readiness for Build.
+- For product-shaped work, run an architect checkpoint during Plan as investigation. Do not use pstack's never-block-on-the-human guidance to build past an unapproved spec.
+- A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
+- Do not invent a second issue tracker. Do not create or maintain product specs under `docs/specs/` except the migration index/archive this skill leaves after Migrate. Temporary body files only, then delete them after the `gh` write.
+- OKF is retired. Do not run `okf init`, `okf update`, or finalize's OKF documentation step as a roadmap writer or as docs-as-spec. Do not present OKF as a live alternative.
+- Do not use `kata-linear` as the work-item lifecycle in those four repos. It is for Linear-first projects only.
+- Install only `plan-build-verify` and `address-pr-comments` for product delivery. Do not install `ps`, `okf`, or `kata-linear`. Use `scripts/install-skills.sh` (canonical copy under this skill) or the raw npx command below. Always project-local and non-interactive (`-y`); never `-g`; never install the whole pack.
+
+### Install skills (product repos)
+
+Canonical installer product repos can copy from this skill:
+
+```bash
+bash scripts/install-skills.sh
+# source of truth in the skills library:
+# plan-build-verify/scripts/install-skills.sh
+```
+
+Equivalent raw command (project-local, non-interactive):
+
+```bash
+npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
+```
+
+### AGENTS.md snippet for product repos
+
+Paste this into the product repo's `AGENTS.md` (adapt the script path if needed):
+
+````markdown
+## Skills
+
+Product OS is `plan-build-verify`. Specs are GitHub Issues, not files under `docs/specs/`.
+
+Install project-local skills (never global `-g`, never the whole `gannonh/skills` pack):
+
+```bash
+bash scripts/install-skills.sh
+# or:
+npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
+```
+
+Cursor engineering execution is the **pstack** plugin, not npx-installed `ps`. Do not install `ps`, `okf`, or `kata-linear` for this repo. OKF is retired.
+````
+
 ## Preflight
 
 Run once per session, before the first `gh` write.
@@ -31,7 +89,7 @@ Record the resolved `<owner>/<repo>` for the session and reuse it.
 
 ## Label taxonomy
 
-This skill owns three namespaces and creates them automatically:
+This skill owns four namespaces and creates them automatically:
 
 | Label                       | Color    | Meaning                                                            |
 | --------------------------- | -------- | ------------------------------------------------------------------ |
@@ -53,9 +111,9 @@ This skill owns three namespaces and creates them automatically:
 Rules:
 
 - `status:*` labels are **mutually exclusive**. Every transition removes the old one and adds the new one in a single `gh issue edit` call.
-- `phase:*` labels are also mutually exclusive and reflect what is happening right now. Remove the `phase:*` label when a phase ends without immediately starting the next one.
+- `phase:*` labels are also mutually exclusive and reflect what is happening right now. Remove the `phase:*` label when a phase ends without immediately starting the next one. Leaving `phase:plan` on a `status:approved` (or later) issue is a triage defect; the draft → approved transition must remove it in the same turn.
 - `needs:*` labels are triage flags. Clear them when the underlying gap is fixed.
-- **Adopt existing repo labels** for area, component, priority, and type. Run `gh label list --limit 200` during preflight and reuse what already exists rather than creating parallel labels. Only the three namespaces above belong to this skill.
+- **Adopt existing repo labels** for area, component, priority, and type (`enhancement`, `feature`, `bug`, and similar). Those are the repo's labels, not a plan-build-verify namespace. Reuse them; do not invent a parallel type system or tell people to replace them. Run `gh label list --limit 200` during preflight. Only the `kind:`, `status:`, `phase:`, and `needs:` namespaces belong to this skill.
 
 Create or repair the taxonomy:
 
@@ -161,7 +219,8 @@ Notes:
 - `## Delivery slices` is mandatory for all specs; an epic parent lists its children, while a sub-spec usually contains one slice. It describes increments of demonstrable behavior, not storage/backend/frontend/testing work packages. A slice crosses whichever technical layers it needs to produce an observable outcome.
 - `## Demonstration` is mandatory for standalone specs and sub-specs. It must name the consumer, action/input, observable result, and evidence that works without waiting for later siblings. A technical-enablement exception records its blocker, minimum scope, contract/integration evidence, and immediate user-facing slice unlocked instead.
 - Every user-facing slice plans a passing public-boundary E2E test. Visual slices also plan required starting/final screenshots. Video is ideal when temporal behavior matters, but its tooling is best-effort: use the documented bounded attempt and skip-and-flag contract instead of making Verify spin.
-- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn.
+- The `## Status` section mirrors the `status:*` label. Both must agree. Update them in the same turn. A mismatch is a triage defect. Do not treat `status:approved` alone as proof the body should say Approved; without independent approval evidence, Triage asks first and defaults to reverting the label (see `references/triage.md`).
+- Keep this template and `.github/ISSUE_TEMPLATE/spec.md` in sync. That file is the canonical GitHub issue form for new specs in this skills repo; product repos should copy it rather than drift.
 - Do not use YAML frontmatter in issue bodies. GitHub renders it as a table or as literal text. Status lives in the `## Status` section and the label.
 
 ## Status transitions
@@ -175,7 +234,7 @@ Notes:
 | any → `status:blocked`                 | Work cannot proceed; reason recorded in a comment      | `gh issue edit N --remove-label <current> --add-label status:blocked`                                |
 | `status:approved` → `status:draft`     | User requests changes after approval                   | `gh issue edit N --remove-label status:approved --add-label status:draft,phase:plan`                 |
 
-Update the `## Status` section in the body to match, in the same turn as the label change.
+Update the `## Status` section in the body to match, in the same turn as the label change. On `status:draft` → `status:approved`, remove `phase:plan` in that same edit; a leftover `phase:plan` after approval is a triage defect.
 
 Close the issue only when it reaches `status:verified`, or when the user decides the work will not be done. A merged PR containing `Closes #N` closes the issue automatically; if Verify has not run, reopen it or record why verification was skipped.
 
@@ -382,7 +441,8 @@ gh issue view <N> --json number,title,labels,body,state
 Report when:
 
 - The issue has no `status:*` label, or more than one.
-- The `## Status` section disagrees with the `status:*` label.
+- The `## Status` section disagrees with the `status:*` label (including leftover `Draft` when the label is `status:approved` or later). For Build, both the `status:*` label and `## Status` must be approved (or later). A Draft body blocks Build even if the label says approved; do not silently follow the label.
+- `phase:plan` remains after the issue has left Plan (`status:approved`, `status:implemented`, or `status:verified`).
 - `## Acceptance criteria` is missing, empty, or contains vague language.
 - A standalone spec or sub-spec has no independently exercisable `## Demonstration` through a human, operator, or API/SDK public interface, unless it documents a justified minimal technical-enablement exception and the immediate user-facing slice it unlocks.
 - An epic has no sub-issues, a sub-issue has no parent, or the children are architecture-layer work packages rather than demonstrable vertical slices.
@@ -390,7 +450,7 @@ Report when:
 - The issue is closed but not `status:verified`.
 - The issue duplicates another open spec issue.
 
-State the findings in one short block, then continue with the requested phase unless a finding blocks it (missing acceptance criteria blocks Build and Verify; an unapproved status blocks Build). To fix hygiene problems across the backlog, run Triage.
+State the findings in one short block, then continue with the requested phase unless a finding blocks it (missing acceptance criteria blocks Build and Verify; label/`## Status` disagreement or an unapproved status blocks Build). To fix hygiene problems across the backlog, run Triage.
 
 ## Safety rules
 

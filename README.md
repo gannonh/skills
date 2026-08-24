@@ -2,15 +2,29 @@
 
 Personal [Agent Skills](https://agentskills.io/) directory. A mix of original skills and modified open source skills for iOS/macOS development, PR workflows, and general engineering tasks.
 
+This repo is a **library**. Install named skills per project with Vercel `npx skills`. Never install the whole pack, and never use global `-g` (cloud VMs need project-local installs).
+
 ## Installation
 
-Copy individual skill directories into your skills path, typically `~/.claude/skills/` or `~/.agents/skills/`.
+For product delivery on GitHub-issue repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), install only the plan-build-verify OS (plus Verify's review-thread helper):
+
+```bash
+bash plan-build-verify/scripts/install-skills.sh
+# or, from a product repo that copied the script:
+bash scripts/install-skills.sh
+# raw equivalent:
+npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
+```
+
+Do not install `ps`, `okf`, or `kata-linear` for those repos. OKF is retired. Cursor engineering execution is the **pstack** plugin, not npx-installed `ps`. See `plan-build-verify/SKILL.md` (coexistence section).
 
 ## Skills
 
-Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. One carries its own README:
+Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. A few carry a stronger product or engineering role:
 
-- [`ps`](./ps/) — rigorous engineering mode. Routes a task to one of 22 playbooks, applies 21 named principles, delegates to parallel subagents, and verifies against the real artifact. Harness-agnostic.
+- [`plan-build-verify`](./plan-build-verify/) — product operating system for GitHub-issue repos. Specs live as Issues; Plan / Build / Verify is the lifecycle.
+- [`ps`](./ps/) — historical `/ps` port of pstack. Unwieldy; do not install for product delivery. Use the Cursor pstack plugin instead.
+- [`okf`](./okf/) — retired. Kept for history only; not a live roadmap.
 
 ## License
 

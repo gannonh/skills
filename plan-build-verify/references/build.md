@@ -36,7 +36,7 @@ gh sub-issue list <N>    # if the issue is an epic
 ```
 
 3. **Check `blockedBy` before writing any code.** If a blocker is still open, stop and report it. Do not start a blocked issue unless the user explicitly acknowledges the blocker and chooses to proceed. If a blocker is already closed or `status:verified`, the edge is stale: clear it with `gh issue edit <N> --remove-blocked-by <BLOCKER>` and say so.
-4. Confirm the issue carries `status:approved` and the body's `## Status` section says `Approved`, or confirm the user explicitly overrode the approval gate. If the label and the body disagree, stop and reconcile with the user before writing code.
+4. Confirm the issue carries `status:approved` and the body's `## Status` section says `Approved`, or confirm the user explicitly overrode the approval gate. Both must be approved (or later). A Draft body is unapproved even if the label is `status:approved`. If the label and the body disagree, stop; do not write code and do not rewrite either side to unblock yourself.
 5. **If the issue is an epic** (`kind:epic`), do not build the parent. Pick the first `status:approved` child with no open blockers. Read the graph rather than assuming the order:
 
 ```bash
@@ -305,7 +305,7 @@ Stop and hand back to the user instead of continuing only when a Red flag below 
 Stop and ask when:
 
 - The issue is not `status:approved` and the user has not explicitly overridden the gate.
-- The `status:*` label and the body's `## Status` section disagree.
+- The `status:*` label and the body's `## Status` section disagree, including `status:approved` with a Draft body. Both must be approved (or later) before Build writes code.
 - The issue is an epic and no child was selected.
 - Blocking open questions remain.
 - The worktree contains unrelated changes.
