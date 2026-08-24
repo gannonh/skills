@@ -9,7 +9,7 @@ Route implementation work through a sequential path where **GitHub Issues are th
 
 ## Read the conventions first
 
-Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, temporary body files, and coexistence with pstack. Every other reference file depends on it.
+Before any mode, read `references/conventions.md` completely. It defines the repo preflight, label taxonomy, issue body template, status transitions, sub-issue mechanics, issue dependencies, temporary body files, and coexistence with pstack, ps, okf, and kata-linear. Every other reference file depends on it.
 
 ## Coexistence with pstack and other skills in this pack
 
