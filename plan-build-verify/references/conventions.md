@@ -10,13 +10,14 @@ If `gh` fails, stop and report the failure. Do not save the spec as a repo file 
 
 ## Coexistence with pstack and other skills in this pack
 
-plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`). It is the only product operating system in those repos. Other skills in this pack stay in their lanes.
+plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`). It is the only product operating system in those repos. `gannonh/skills` is a library: install named skills per project, never the whole pack, and never globally (`-g`). Cloud VMs need project-local installs.
 
 | Layer | Owns | Does not own |
 | ----- | ---- | ------------ |
 | plan-build-verify | Specs as GitHub Issues, priority, Plan / Build / Verify lifecycle, `kind:*` / `status:*` / `phase:*` / `needs:*` labels, acceptance criteria | Implementation tactics inside a Build or Verify run |
-| pstack / ps | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
-| okf / finalize's OKF step | Docs-as-knowledge in repos that still use an OKF bundle | Live roadmap or specs for the four GitHub-issue product repos above |
+| pstack (Cursor plugin) | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
+| ps (`/ps` in this pack) | Nothing for product delivery. Historical pstack port; unwieldy; do not npx-install it | Substitute for the pstack Cursor plugin |
+| okf / finalize's OKF step | Nothing. **Retired.** Kept in the library for history only | Any live roadmap (`docs/specs/index.md` or otherwise) |
 | kata-linear | Linear ticket lifecycle in Linear-first repos | Those four GitHub-issue product repos |
 
 Rules:
@@ -25,9 +26,45 @@ Rules:
 - For product-shaped work, run an architect checkpoint during Plan as investigation. Do not use pstack's never-block-on-the-human guidance to build past an unapproved spec.
 - A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
 - Do not invent a second issue tracker. Do not create or maintain product specs under `docs/specs/` except the migration index/archive this skill leaves after Migrate. Temporary body files only, then delete them after the `gh` write.
-- Do not run `okf init`, `okf update`, or finalize's OKF documentation step as the roadmap writer in the four GitHub-issue product repos. Those steps treat `docs/specs/index.md` as the roadmap; that competes with Issues and is out of bounds there.
+- OKF is retired. Do not run `okf init`, `okf update`, or finalize's OKF documentation step as a roadmap writer or as docs-as-spec. Do not present OKF as a live alternative.
 - Do not use `kata-linear` as the work-item lifecycle in those four repos. It is for Linear-first projects only.
-- When installing skills for product delivery on those repos, install plan-build-verify (and any Build/Verify companions you need), not the whole `gannonh/skills` pack by default. A full-pack install leaves okf, kata-linear, and ps competing for "what is the roadmap?"
+- Install only `plan-build-verify` and `address-pr-comments` for product delivery. Do not install `ps`, `okf`, or `kata-linear`. Use `scripts/install-skills.sh` (canonical copy under this skill) or the raw npx command below. Always project-local and non-interactive (`-y`); never `-g`; never install the whole pack.
+
+### Install skills (product repos)
+
+Canonical installer product repos can copy from this skill:
+
+```bash
+bash scripts/install-skills.sh
+# source of truth in the skills library:
+# plan-build-verify/scripts/install-skills.sh
+```
+
+Equivalent raw command (project-local, non-interactive):
+
+```bash
+npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
+```
+
+### AGENTS.md snippet for product repos
+
+Paste this into the product repo's `AGENTS.md` (adapt the script path if needed):
+
+````markdown
+## Skills
+
+Product OS is `plan-build-verify`. Specs are GitHub Issues, not files under `docs/specs/`.
+
+Install project-local skills (never global `-g`, never the whole `gannonh/skills` pack):
+
+```bash
+bash scripts/install-skills.sh
+# or:
+npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
+```
+
+Cursor engineering execution is the **pstack** plugin, not npx-installed `ps`. Do not install `ps`, `okf`, or `kata-linear` for this repo. OKF is retired.
+````
 
 ## Preflight
 
