@@ -13,7 +13,7 @@ Before any mode, read `references/conventions.md` completely. It defines the rep
 
 ## Coexistence with pstack and other skills in this pack
 
-GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. For GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), plan-build-verify is the only product OS.
+GitHub Issues remain the source of truth for specs, priority, and the Plan / Build / Verify lifecycle. For GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`, `macrokinetic`), plan-build-verify is the only product OS.
 
 | Skill / layer | Role | Not its job |
 | ------------- | ---- | ----------- |
@@ -21,7 +21,7 @@ GitHub Issues remain the source of truth for specs, priority, and the Plan / Bui
 | **pstack** (Cursor plugin) | Engineering execution and proof inside Build and Verify; investigation during Plan (`architect` / `how` / `why`) | Planning, labels, approval, or a second issue lifecycle |
 | **ps** (`/ps` in this pack) | Historical port of pstack; unwieldy; do not install for product delivery | Substitute for the pstack plugin or a second product OS |
 | **okf** / finalize's OKF step | **Retired.** Remains in the library for history only | Any live roadmap or docs-as-spec workflow |
-| **kata-linear** | Linear-first repos only | These four GitHub-issue product repos |
+| **kata-linear** | Linear-first repos only | These five GitHub-issue product repos |
 
 Rules:
 

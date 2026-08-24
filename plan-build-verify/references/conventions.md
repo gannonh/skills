@@ -10,7 +10,7 @@ If `gh` fails, stop and report the failure. Do not save the spec as a repo file 
 
 ## Coexistence with pstack and other skills in this pack
 
-plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`). It is the only product operating system in those repos. `gannonh/skills` is a library: install named skills per project, never the whole pack, and never globally (`-g`). Cloud VMs need project-local installs.
+plan-build-verify sequences product work for GitHub-issue product repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`, `macrokinetic`). It is the only product operating system in those repos. `gannonh/skills` is a library: install named skills per project, never the whole pack, and never globally (`-g`). Cloud VMs need project-local installs.
 
 | Layer | Owns | Does not own |
 | ----- | ---- | ------------ |
@@ -18,7 +18,7 @@ plan-build-verify sequences product work for GitHub-issue product repos (`devbox
 | pstack (Cursor plugin) | Engineering execution and proof inside Build and Verify (poteto-mode, TDD, per-repo verify skill, feature map); investigation during Plan (`architect`, `how`, `why`) | Whether work is approved, roadmap priority, label transitions, or a second spec store |
 | ps (`/ps` in this pack) | Nothing for product delivery. Historical pstack port; unwieldy; do not npx-install it | Substitute for the pstack Cursor plugin |
 | okf / finalize's OKF step | Nothing. **Retired.** Kept in the library for history only | Any live roadmap (`docs/specs/index.md` or otherwise) |
-| kata-linear | Linear ticket lifecycle in Linear-first repos | Those four GitHub-issue product repos |
+| kata-linear | Linear ticket lifecycle in Linear-first repos | Those five GitHub-issue product repos |
 
 Rules:
 
@@ -27,7 +27,7 @@ Rules:
 - A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
 - Do not invent a second issue tracker. Do not create or maintain product specs under `docs/specs/` except the migration index/archive this skill leaves after Migrate. Temporary body files only, then delete them after the `gh` write.
 - OKF is retired. Do not run `okf init`, `okf update`, or finalize's OKF documentation step as a roadmap writer or as docs-as-spec. Do not present OKF as a live alternative.
-- Do not use `kata-linear` as the work-item lifecycle in those four repos. It is for Linear-first projects only.
+- Do not use `kata-linear` as the work-item lifecycle in those five repos. It is for Linear-first projects only.
 - Install only `plan-build-verify` and `address-pr-comments` for product delivery. Do not install `ps`, `okf`, or `kata-linear`. Use `scripts/install-skills.sh` (canonical copy under this skill) or the raw npx command below. Always project-local and non-interactive (`-y`); never `-g`; never install the whole pack.
 
 ### Install skills (product repos)

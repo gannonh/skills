@@ -6,7 +6,7 @@ This repo is a **library**. Install named skills per project with Vercel `npx sk
 
 ## Installation
 
-For product delivery on GitHub-issue repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), install only the plan-build-verify OS (plus Verify's review-thread helper):
+For product delivery on GitHub-issue repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`, `macrokinetic`), install only the plan-build-verify OS (plus Verify's review-thread helper):
 
 ```bash
 bash plan-build-verify/scripts/install-skills.sh
