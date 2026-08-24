@@ -305,7 +305,7 @@ Stop and hand back to the user instead of continuing only when a Red flag below 
 Stop and ask when:
 
 - The issue is not `status:approved` and the user has not explicitly overridden the gate.
-- The `status:*` label and the body's `## Status` section disagree.
+- The `status:*` label and the body's `## Status` section disagree, including `status:approved` with a Draft body. Both must be approved (or later) before Build writes code.
 - The issue is an epic and no child was selected.
 - Blocking open questions remain.
 - The worktree contains unrelated changes.
