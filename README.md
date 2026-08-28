@@ -18,7 +18,11 @@ Install the P-Stack skills from their package subdirectory with:
 npx skills add gannonh/skills/pstack-skills
 ```
 
-The command installs project-local skills by default. It can create agent directories such as `.agents/skills` and write `skills-lock.json`. Add `--list` to inspect the available skills without installing them. Add `-g` only for a user-level installation.
+These commands run the installer interactively. Add `--list` to inspect the available skills without installing them. To install non-interactively to the local projects ./agents/skills directory:
+
+```bash
+npx skills add gannonh/skills/pstack-skills -y --agent codex
+```
 
 Remove project-local skills with:
 
