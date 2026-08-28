@@ -15,6 +15,7 @@ import tempfile
 
 PORT_ROOT = Path(__file__).resolve().parents[1]
 REPO_ROOT = PORT_ROOT.parent
+SKILLS_ROOT = REPO_ROOT / "skills"
 MANIFEST_PATH = PORT_ROOT / "manifest.json"
 OVERLAYS = PORT_ROOT / "overlays"
 PORTABILITY_TRIGGERS = (
@@ -32,7 +33,7 @@ PORTABILITY_TRIGGERS = (
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", type=Path, required=True, help="Cursor Pstack plugin root")
-    parser.add_argument("--destination", type=Path, default=REPO_ROOT)
+    parser.add_argument("--destination", type=Path, default=SKILLS_ROOT)
     parser.add_argument("--check", action="store_true", help="Report drift without writing")
     parser.add_argument("--force", action="store_true", help="Replace an unmarked ps-* target")
     return parser.parse_args()

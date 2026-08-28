@@ -11,7 +11,7 @@ From the `pstack-port` directory, run:
 ```bash
 python3 scripts/port_pstack.py \
   --source /path/to/cursor-pstack-plugin \
-  --destination ..
+  --destination ../skills
 python3 scripts/validate_pstack_port.py ..
 ```
 

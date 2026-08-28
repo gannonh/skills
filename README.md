@@ -9,14 +9,14 @@ This repo is a **library**. Install named skills per project with Vercel `npx sk
 For product delivery on GitHub-issue repos (`devbox`, `kata-code`, `kata-agents`, `kata-symphony`), install only the plan-build-verify OS (plus Verify's review-thread helper):
 
 ```bash
-bash plan-build-verify/scripts/install-skills.sh
+bash skills/plan-build-verify/scripts/install-skills.sh
 # or, from a product repo that copied the script:
 bash scripts/install-skills.sh
 # raw equivalent:
 npx skills add gannonh/skills --skill plan-build-verify --skill address-pr-comments -y
 ```
 
-Do not install `okf` or `kata-linear` for those repos. OKF is retired. See the coexistence section in `plan-build-verify/SKILL.md`.
+Do not install `okf` or `kata-linear` for those repos. OKF is retired. See the coexistence section in `skills/plan-build-verify/SKILL.md`.
 
 ## Install P-Stack
 
@@ -34,11 +34,11 @@ The port generator copies Pstack 0.14.4, applies bounded compatibility changes, 
 
 Most directories here are self-contained; read the `SKILL.md` inside one to see what it does. A few carry a stronger product or engineering role:
 
-- [`plan-build-verify`](./plan-build-verify/): product operating system for GitHub-issue repos. Specs live as Issues. Plan, Build, and Verify form the lifecycle.
-- [`ps-poteto-mode`](./ps-poteto-mode/): common P-Stack routing and execution policy.
-- [`ps-setup-pstack`](./ps-setup-pstack/): deterministic model-tier and harness adapter setup.
+- [`plan-build-verify`](./skills/plan-build-verify/): product operating system for GitHub-issue repos. Specs live as Issues. Plan, Build, and Verify form the lifecycle.
+- [`ps-poteto-mode`](./skills/ps-poteto-mode/): common P-Stack routing and execution policy.
+- [`ps-setup-pstack`](./skills/ps-setup-pstack/): deterministic model-tier and harness adapter setup.
 - [`pstack-port`](./pstack-port/): source manifest, overlays, and port maintenance notes.
-- [`okf`](./okf/): retired and kept only for history.
+- [`okf`](./skills/okf/): retired and kept only for history.
 
 ## License
 

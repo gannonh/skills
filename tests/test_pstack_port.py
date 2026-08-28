@@ -9,7 +9,7 @@ import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIGURE = ROOT / "ps-setup-pstack" / "scripts" / "configure.py"
+CONFIGURE = ROOT / "skills" / "ps-setup-pstack" / "scripts" / "configure.py"
 VALIDATE = ROOT / "pstack-port" / "scripts" / "validate_pstack_port.py"
 
 

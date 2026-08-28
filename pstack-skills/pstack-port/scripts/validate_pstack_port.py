@@ -57,13 +57,14 @@ def validate_link(markdown: Path, raw: str) -> str | None:
 
 def validate(root: Path) -> list[str]:
     manifest_path = root / "pstack-port" / "manifest.json"
+    skills_root = root / "skills"
     if not manifest_path.exists():
         return [f"missing manifest: {manifest_path}"]
     manifest = json.loads(manifest_path.read_text())
     expected = {item["target"] for item in manifest["skills"]}
     actual = {
         path.name
-        for path in root.glob("ps-*")
+        for path in skills_root.glob("ps-*")
         if path.is_dir() and (path / ".ps-port.json").exists()
     }
     errors = []
@@ -76,7 +77,7 @@ def validate(root: Path) -> list[str]:
         + r")\b"
     )
     for name in sorted(expected & actual):
-        directory = root / name
+        directory = skills_root / name
         skill = directory / "SKILL.md"
         if not NAME.fullmatch(name):
             errors.append(f"invalid directory name: {name}")
@@ -100,7 +101,7 @@ def validate(root: Path) -> list[str]:
             errors.append(f"stale generation marker: {name}")
         for markdown in directory.rglob("*.md"):
             text = markdown.read_text()
-            relative = markdown.relative_to(root)
+            relative = markdown.relative_to(skills_root)
             adapter_doc = name == "ps-setup-pstack" or markdown.name == "NOTICE.md"
             if not adapter_doc:
                 match = FORBIDDEN.search(text)
