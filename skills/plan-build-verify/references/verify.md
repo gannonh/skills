@@ -48,9 +48,14 @@ If the user asks for UAT, signoff, merge readiness, or proof that work is comple
 
 ## Step 2: Verify against acceptance criteria
 
-- Read `references/user-acceptance/workflow.md` completely and follow it to verify the **Acceptance criteria** from the issue body.
-- Follow that workflow for evidence capture, UAT reporting, screenshots, recordings, command output, and human test guides.
-- Use scripts under `scripts/user-acceptance/` when the workflow calls for them.
+**Look for a project-local `verify-*` skill first** (slash form `/verify-<app>`). That is the pstack-generated drive path for launching and exercising the real app.
+
+1. Search for a skill named `verify-*`. Typical locations: `.cursor/skills/verify-*/SKILL.md`, then any installed skills path that matches `verify-*`.
+2. If several match, pick the one whose description matches the app under test; if still ambiguous, ask once.
+3. If found: read that `SKILL.md` completely. Use its Launch, Doctor, Drive, Evidence, and Cleanup sections to start the app, doctor-check it, drive the changed feature(s) against the issue's acceptance criteria, and capture evidence. Use the feature map under that skill when deciding what to drive.
+4. Whether or not a `verify-*` skill exists, read `references/user-acceptance/workflow.md` completely and follow it for the PBV evidence contract: matrix shape, `uat-evidence/`, UAT reporting, adversarial review, hard gates, and scripts under `scripts/user-acceptance/`. Map verify-* artifacts into that layout when practical; do not skip the matrix because a verify skill ran.
+5. If none found: drive the app with the bundled user-acceptance playbooks only. Do not generate a verification skill during Verify. You may note that pstack's `/create-verification-skill` can create one later.
+
 - Use an explicit **acceptance-criteria matrix** in the final report.
 - Each criterion shows the verification method, result (`Pass`, `Fail`, `Blocked`, or `Not tested`), and evidence path or note. This keeps Verify tied to the approved scope instead of producing only a general UAT summary.
 

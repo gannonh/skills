@@ -27,7 +27,7 @@ Rules:
 
 - Do not skip an unapproved issue because "the best spec is code."
 - For product-shaped work, an architect checkpoint during Plan is investigation only. Do not treat pstack's never-block-on-the-human stance as permission to build past an unapproved spec.
-- A per-repo verification skill and feature map complement `## Demonstration` / `## Verification` on the issue. They do not replace acceptance criteria.
+- A per-repo `verify-*` skill (slash form `/verify-<app>`, typically under `.cursor/skills/verify-*/`) and its feature map complement `## Demonstration` / `## Verification` on the issue. They do not replace acceptance criteria. During Verify, look for and follow `/verify-*` before relying only on bundled UAT playbooks. Do not generate one mid-Verify.
 - Do not invent a second issue tracker or file-based specs. Do not create or maintain product specs under `docs/specs/` except the PBV migration index/archive described in `references/conventions.md`.
 - Do not run `okf init`, `okf update`, or finalize's OKF step. OKF is retired; it is not an alternative roadmap.
 - Do not install `ps`, `okf`, or `kata-linear` for these product repos. Install project-local skills with `scripts/install-skills.sh` (or the npx command in `references/conventions.md`). Never `npx skills add -g`, and never install the whole `gannonh/skills` pack.
@@ -73,10 +73,10 @@ For tiny, clearly bounded edits such as a copy change or single config tweak, do
 
 Build and Verify load bundled workflows from this skill directory. Read the entry point completely; follow linked files and scripts under the same subtree.
 
-| Phase  | Workflow        | Entry point                              |
-| ------ | --------------- | ---------------------------------------- |
-| Build  | TDD             | `references/tdd/workflow.md`             |
-| Verify | User acceptance | `references/user-acceptance/workflow.md` |
+| Phase  | Workflow        | Entry point                                                                 |
+| ------ | --------------- | --------------------------------------------------------------------------- |
+| Build  | TDD             | `references/tdd/workflow.md`                                                |
+| Verify | User acceptance | Project-local `verify-*` if present, else `references/user-acceptance/workflow.md` |
 
 Verify's convergence loop (Step 7) drives CI with `gh pr checks --watch` and `gh run` directly. For review threads it uses one sibling skill, resolved against the installed skills directory:
 

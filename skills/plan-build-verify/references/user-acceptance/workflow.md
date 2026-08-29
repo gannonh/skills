@@ -72,6 +72,8 @@ If the requested target is outside this list, ask whether to proceed with a best
 
 ## Tool selection
 
+**Prefer a project-local `verify-*` skill when one exists.** Search `.cursor/skills/verify-*/SKILL.md` and any installed skills path matching `verify-*` (slash form `/verify-<app>`). If found, read it completely; its Launch and Drive instructions win over the generic playbook defaults below for starting and exercising the app. Still apply this workflow's hard gates, evidence workspace, matrix/report contract, and scripts. If none exists, use the preferred-tools table and playbooks as the fallback. Do not generate a verification skill during this workflow.
+
 Load and use the best available skill or CLI for the target. Install missing tooling when it is needed for required E2E or screenshot evidence and installation is safe in the environment. Do not install or spend unbounded time debugging tooling solely for optional video; use the skip-and-flag contract instead.
 
 | Target | Preferred tools | Evidence to capture |
@@ -201,6 +203,7 @@ For `mode: technical-enablement`, replace `technical_enablement: null` with:
 
 ### 2. Prepare the app or service
 
+- If a project-local `verify-*` skill exists, follow its Launch and Doctor sections to start and health-check the app before any playbook defaults.
 - Start the dev server, service, CLI, TUI, API, SDK fixture, or native/Electron-type app needed for the walkthrough.
 - Prefer real local behavior over mocks.
 - For web and native/Electron-type targets, check ports and existing processes before launch. Record any cleanup in `logs/`.
@@ -210,7 +213,7 @@ For `mode: technical-enablement`, replace `technical_enablement: null` with:
 
 ### 3. Execute the feature path
 
-Use the matching playbook (paths relative to `references/user-acceptance/`):
+If a project-local `verify-*` skill exists, drive the changed features with its Drive section and feature map. Otherwise use the matching playbook (paths relative to `references/user-acceptance/`):
 
 - Web app UI flows: `web-playbook.md`
 - Native/Electron-type UI flows: `native-electron-playbook.md`

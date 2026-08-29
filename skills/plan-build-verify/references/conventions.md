@@ -24,7 +24,7 @@ Rules:
 
 - Agents must not skip an unapproved issue because "the best spec is code." The issue's `status:*` label and `## Status` section decide readiness for Build.
 - For product-shaped work, run an architect checkpoint during Plan as investigation. Do not use pstack's never-block-on-the-human guidance to build past an unapproved spec.
-- A per-repo verification skill and feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue.
+- A per-repo `verify-*` skill (slash form `/verify-<app>`, typically `.cursor/skills/verify-*/SKILL.md`) and its feature map complement the issue's `## Demonstration` and `## Verification` sections. They do not replace acceptance criteria on the issue. During Verify, discover and follow `/verify-*` for launch and drive before falling back to bundled UAT playbooks. Do not generate a verification skill mid-Verify.
 - Do not invent a second issue tracker. Do not create or maintain product specs under `docs/specs/` except the migration index/archive this skill leaves after Migrate. Temporary body files only, then delete them after the `gh` write.
 - OKF is retired. Do not run `okf init`, `okf update`, or finalize's OKF documentation step as a roadmap writer or as docs-as-spec. Do not present OKF as a live alternative.
 - Do not use `kata-linear` as the work-item lifecycle in those four repos. It is for Linear-first projects only.

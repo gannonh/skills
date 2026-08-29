@@ -220,7 +220,7 @@ After all tasks pass their per-task gates:
 
 1. Capture final head SHA.
 2. Run the full verification command set from the issue, including the checked-in public-boundary E2E test for a user-facing slice or contract test for approved technical enablement.
-3. Exercise the issue's `## Demonstration` through the public interface. For an approved technical-enablement exception, run the documented contract/integration check proving the next slice can consume it.
+3. Exercise the issue's `## Demonstration` through the public interface. If a project-local `verify-*` skill exists, use it for the demonstration path. For an approved technical-enablement exception, run the documented contract/integration check proving the next slice can consume it.
 4. Dispatch or perform a final whole-branch review against the issue body.
 5. Fix final-review issues.
 6. Re-run final review until no blocking issues remain.
