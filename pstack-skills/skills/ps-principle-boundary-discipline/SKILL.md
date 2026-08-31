@@ -4,7 +4,7 @@ description: "Apply when wiring validation, error handling, or framework adapter
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-boundary-discipline
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Boundary Discipline

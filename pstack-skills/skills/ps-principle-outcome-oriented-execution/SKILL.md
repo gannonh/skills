@@ -4,7 +4,7 @@ description: "Apply during planned rewrites and migrations with explicit phase b
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-outcome-oriented-execution
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Outcome-Oriented Execution

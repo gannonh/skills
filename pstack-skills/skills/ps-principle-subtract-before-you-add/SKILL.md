@@ -4,7 +4,7 @@ description: "Apply when sequencing an addition, refactor, or rewrite. Remove de
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-subtract-before-you-add
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Subtract Before You Add

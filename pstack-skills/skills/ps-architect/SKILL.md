@@ -4,7 +4,7 @@ description: "Sketch types, signatures, and module structure before code, then s
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: architect
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Architect

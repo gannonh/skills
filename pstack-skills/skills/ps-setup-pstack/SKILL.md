@@ -4,7 +4,7 @@ description: Configure P-Stack for Pi, Codex, Cursor, OpenCode, and Claude Code.
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: setup-pstack
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Set up P-Stack

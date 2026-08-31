@@ -4,7 +4,7 @@ description: "Apply when context is filling up: large outputs, long files, repea
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-guard-the-context-window
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Guard the Context Window

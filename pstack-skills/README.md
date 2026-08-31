@@ -22,7 +22,7 @@ The `skills/` directory contains the ported skills with the `ps-` prefix. The `p
 
 These skills are derived from [Pstack](https://github.com/cursor/plugins/tree/main/pstack), a Cursor plugin authored by [Lauren Tan](https://github.com/poteto). The upstream plugin is distributed under the MIT license.
 
-This port uses Pstack 0.14.4 as its source baseline. The version and source tree hash are recorded in [`pstack-port/manifest.json`](pstack-port/manifest.json). Each generated skill retains its upstream `LICENSE.txt` and `NOTICE.md` files.
+This port uses Pstack 0.14.5 as its source baseline. The version and source tree hash are recorded in [`pstack-port/manifest.json`](pstack-port/manifest.json). Each generated skill retains its upstream `LICENSE.txt` and `NOTICE.md` files.
 
 This directory is an independent Agent Skills port. It is not the original Cursor plugin.
 

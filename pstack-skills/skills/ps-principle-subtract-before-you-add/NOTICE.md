@@ -1,6 +1,6 @@
 # ps-principle-subtract-before-you-add attribution
 
-Derived from `principle-subtract-before-you-add` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `principle-subtract-before-you-add` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

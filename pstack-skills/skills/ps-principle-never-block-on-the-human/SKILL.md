@@ -4,7 +4,7 @@ description: "Apply when tempted to ask 'should I do X?' on reversible work. Pro
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-never-block-on-the-human
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Never Block on the Human

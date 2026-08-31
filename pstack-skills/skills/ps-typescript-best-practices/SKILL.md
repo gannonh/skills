@@ -4,7 +4,7 @@ description: TypeScript best practices. Use when reading or editing any .ts or .
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: typescript-best-practices
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # TypeScript best practices

@@ -4,7 +4,7 @@ description: "Keep a reviewable decision trail for long-running or unattended wo
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: show-me-your-work
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Show me your work

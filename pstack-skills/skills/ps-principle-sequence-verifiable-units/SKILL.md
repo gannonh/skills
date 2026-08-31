@@ -4,7 +4,7 @@ description: "Apply to multi-step work (sweeps, migrations, runs of similar edit
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-sequence-verifiable-units
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Sequence work into verifiable units

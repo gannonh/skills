@@ -4,7 +4,7 @@ description: "Spawn N parallel candidates at the same task, pick a base, graft t
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: arena
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Arena

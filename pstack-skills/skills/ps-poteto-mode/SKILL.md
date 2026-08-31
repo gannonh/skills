@@ -4,7 +4,7 @@ description: poteto's agent style for concise, detailed responses, deliberate su
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: poteto-mode
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Poteto mode

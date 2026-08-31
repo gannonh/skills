@@ -4,7 +4,7 @@ description: "Explain a body of work plainly so a person actually understands it
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: teach
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Teach

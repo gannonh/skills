@@ -4,7 +4,7 @@ description: "Fan out N parallel workers, drain them, and return one report. Use
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: swarm
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Swarm

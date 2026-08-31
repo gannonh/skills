@@ -4,7 +4,7 @@ description: "Spawn Comment Sicko, fix accepted findings, and offer encodings fo
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: no-comments
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # No comments

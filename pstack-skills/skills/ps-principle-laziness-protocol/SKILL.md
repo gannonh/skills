@@ -4,7 +4,7 @@ description: "Apply when refactoring, evaluating diff size, or tempted to add ab
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-laziness-protocol
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Laziness Protocol

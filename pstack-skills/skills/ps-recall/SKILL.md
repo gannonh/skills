@@ -4,7 +4,7 @@ description: "Reconstruct your recent working context from your own chat history
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: recall
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Recall

@@ -4,7 +4,7 @@ description: Cut AI tells from any writing. Must always apply.
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: unslop
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Unslop

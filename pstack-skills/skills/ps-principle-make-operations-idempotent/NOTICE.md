@@ -1,6 +1,6 @@
 # ps-principle-make-operations-idempotent attribution
 
-Derived from `principle-make-operations-idempotent` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `principle-make-operations-idempotent` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

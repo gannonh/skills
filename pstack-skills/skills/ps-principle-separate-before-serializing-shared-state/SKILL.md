@@ -4,7 +4,7 @@ description: "Apply when concurrent actors might write to the same file, branch,
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-separate-before-serializing-shared-state
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Separate Before Serializing Shared State

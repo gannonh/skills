@@ -1,6 +1,6 @@
 # ps-technical-writing attribution
 
-Derived from `technical-writing` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `technical-writing` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

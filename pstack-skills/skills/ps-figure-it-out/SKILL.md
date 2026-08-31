@@ -4,7 +4,7 @@ description: "Design an auditable playbook when no narrower one fits: a large mi
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: figure-it-out
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Figure it out

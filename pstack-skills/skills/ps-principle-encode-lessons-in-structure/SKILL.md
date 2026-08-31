@@ -4,7 +4,7 @@ description: "Apply when you catch yourself writing the same instruction a secon
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-encode-lessons-in-structure
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Encode Lessons in Structure

@@ -1,6 +1,6 @@
 # ps-principle-exhaust-the-design-space attribution
 
-Derived from `principle-exhaust-the-design-space` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `principle-exhaust-the-design-space` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

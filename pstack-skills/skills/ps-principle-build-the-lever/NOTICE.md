@@ -1,6 +1,6 @@
 # ps-principle-build-the-lever attribution
 
-Derived from `principle-build-the-lever` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `principle-build-the-lever` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

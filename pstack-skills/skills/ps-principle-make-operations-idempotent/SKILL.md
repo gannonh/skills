@@ -4,7 +4,7 @@ description: "Apply when designing commands, lifecycle steps, or processing loop
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-make-operations-idempotent
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Make Operations Idempotent

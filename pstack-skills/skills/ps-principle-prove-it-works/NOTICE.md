@@ -1,6 +1,6 @@
 # ps-principle-prove-it-works attribution
 
-Derived from `principle-prove-it-works` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `principle-prove-it-works` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

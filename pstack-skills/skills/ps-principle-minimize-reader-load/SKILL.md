@@ -4,7 +4,7 @@ description: "Apply when reviewing or shaping code that's hard to trace. Count l
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-minimize-reader-load
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Minimize Reader Load

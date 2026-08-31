@@ -4,7 +4,7 @@ description: "Use for \"automate me\", \"create/update/refresh my -mode skill\",
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: automate-me
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Automate me

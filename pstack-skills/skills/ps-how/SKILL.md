@@ -4,7 +4,7 @@ description: "Use for \"how does X work\", code walkthroughs before changing som
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: how
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # How

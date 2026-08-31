@@ -1,6 +1,6 @@
 # ps-reflect attribution
 
-Derived from `reflect` in Cursor Pstack 0.14.4 by Lauren Tan.
+Derived from `reflect` in Cursor Pstack 0.14.5 by Lauren Tan.
 
 Upstream: https://github.com/cursor/plugins/tree/main/pstack
 

@@ -4,7 +4,7 @@ description: "Generate a project-local verification skill that drives your app t
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: create-verification-skill
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Create a verification skill

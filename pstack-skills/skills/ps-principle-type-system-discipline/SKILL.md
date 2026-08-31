@@ -4,7 +4,7 @@ description: "Apply when designing types, reviewing a function signature, or wri
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-type-system-discipline
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Type System Discipline

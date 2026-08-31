@@ -2,9 +2,9 @@
   "schema_version": 1,
   "upstream": {
     "name": "pstack",
-    "version": "0.14.4",
+    "version": "0.14.5",
     "repository": "https://github.com/cursor/plugins/tree/main/pstack",
-    "tree_sha256": "f4db0c960b8e9bf2e9f69bbf0864c903e79408605c716d089eb5adf7ae8c47a0"
+    "tree_sha256": "ecb93daa76fd87c7becb765f5305bdf20a1028b7370ce0e87c0185e2523722d4"
   },
   "prefix": "ps-",
   "skills": [
@@ -15,7 +15,7 @@
     {"source": "bro", "target": "ps-bro"},
     {"source": "create-verification-skill", "target": "ps-create-verification-skill"},
     {"source": "figure-it-out", "target": "ps-figure-it-out"},
-    {"source": "grokbot/make-bot-ui", "target": "ps-make-bot-ui"},
+    {"source": "make-bot-ui", "target": "ps-make-bot-ui"},
     {"source": "how", "target": "ps-how"},
     {"source": "interrogate", "target": "ps-interrogate"},
     {"source": "maintain-verification-skill", "target": "ps-maintain-verification-skill"},

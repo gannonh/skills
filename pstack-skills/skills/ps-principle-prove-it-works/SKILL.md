@@ -4,7 +4,7 @@ description: "Apply after completing a task, before declaring done. Verify again
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-prove-it-works
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Prove It Works

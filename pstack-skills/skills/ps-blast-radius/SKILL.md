@@ -4,7 +4,7 @@ description: "Find what a change could break somewhere else before it ships, bey
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: blast-radius
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Blast radius

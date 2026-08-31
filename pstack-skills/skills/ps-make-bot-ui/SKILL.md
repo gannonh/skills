@@ -3,8 +3,8 @@ name: ps-make-bot-ui
 description: >-
 license: MIT. See LICENSE.txt
 metadata:
-  ps-upstream-name: grokbot/make-bot-ui
-  ps-upstream-version: "0.14.4"
+  ps-upstream-name: make-bot-ui
+  ps-upstream-version: "0.14.5"
 ---
 # How to make a bot UI
 

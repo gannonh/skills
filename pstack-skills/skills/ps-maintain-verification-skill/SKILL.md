@@ -4,7 +4,7 @@ description: "Periodic pass that keeps a project's verification skill and featur
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: maintain-verification-skill
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Maintain a verification skill

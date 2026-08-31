@@ -4,7 +4,7 @@ description: "Apply when integrating a new requirement into an existing design. 
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: principle-redesign-from-first-principles
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Redesign From First Principles

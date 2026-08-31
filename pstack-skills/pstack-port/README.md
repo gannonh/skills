@@ -1,6 +1,6 @@
 # P-Stack Agent Skills port
 
-This directory defines the reproducible port of Cursor Pstack 0.14.4 into independent Agent Skills.
+This directory defines the reproducible port of Cursor Pstack 0.14.5 into independent Agent Skills.
 
 The generated skill names use the lowercase `ps-` prefix because the Agent Skills specification rejects uppercase names. This is the standards-compliant form of the requested `PS-` grouping.
 

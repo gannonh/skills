@@ -4,7 +4,7 @@ description: Spawn three parallel review subagents over the active transcript, s
 license: MIT. See LICENSE.txt
 metadata:
   ps-upstream-name: reflect
-  ps-upstream-version: "0.14.4"
+  ps-upstream-version: "0.14.5"
 ---
 
 # Reflect
