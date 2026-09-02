@@ -145,12 +145,6 @@
       "skillPath": "skills/orchestrate/SKILL.md",
       "computedHash": "7fe840478ade3dfa98532de18e88c8f4676f43eb915aa1f6f5aff76bab7afeed"
     },
-    "plan-build-verify": {
-      "source": "gannonh/skills",
-      "sourceType": "github",
-      "skillPath": "skills/plan-build-verify/SKILL.md",
-      "computedHash": "8bbb2c0ace87821b0811740f9fb95e4f4a5600a12eb27532e351b1adfcaa5c90"
-    },
     "ps-architect": {
       "source": "gannonh/skills",
       "sourceType": "github",
